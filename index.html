@@ -1,180 +1,46 @@
 <!DOCTYPE html>
-<html lang="es" dir="ltr">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'none'; script-src 'none'">
-  <meta name="description" content="Descubre cómo se dice Hola en 12 idiomas del mundo. Un recorrido multilenguaje por las culturas y saludos más representativos del planeta.">
-  <meta name="author" content="Equipo de Desarrollo">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <meta name="description" content="TSOFT — Saludos internacionales y coloquiales desde cada oficina alrededor del mundo.">
+  <meta name="author" content="TSOFT">
   <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#6C63FF">
-
-  <title>Hola Mundo Multilenguaje - Hello World in 12 Languages</title>
-
-  <link rel="stylesheet" type="text/css" href="css/reset.css">
-  <link rel="stylesheet" type="text/css" href="css/variables.css">
-  <link rel="stylesheet" type="text/css" href="css/layout.css">
-  <link rel="stylesheet" type="text/css" href="css/components.css">
-  <link rel="stylesheet" type="text/css" href="css/responsive.css">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans:wght@400;700&display=swap">
+  <title>Hola TSOFT — Saludos desde el Mundo</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
 </head>
 <body>
 
-  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
-
   <header role="banner">
-    <div class="header-container">
-      <div class="header-brand">
-        <h1 class="site-title">
-          <span class="title-main">Hola Mundo</span>
-          <span class="title-sub">Hello World · Bonjour le Monde</span>
-        </h1>
+    <nav role="navigation" aria-label="Selector de idioma">
+      <div class="lang-switcher">
+        <button id="btn-lang-es" data-lang="es" aria-pressed="true">ES</button>
+        <button id="btn-lang-en" data-lang="en" aria-pressed="false">EN</button>
       </div>
-      <p class="header-description">Un recorrido por 12 idiomas del mundo. Descubre cómo se saluda en cada cultura.</p>
-      <div class="header-meta">
-        <span class="language-count">12 idiomas</span>
-        <span class="separator">·</span>
-        <span class="region-count">6 regiones del mundo</span>
-      </div>
+    </nav>
+    <div class="header-brand">
+      <h1 id="main-title">Hola, Mundo TSOFT</h1>
+      <p id="main-subtitle">Saludos coloquiales desde cada oficina</p>
     </div>
   </header>
 
-  <main id="main-content" role="main" aria-label="Contenido principal: saludos en múltiples idiomas">
-
-    <section class="intro-section" aria-labelledby="intro-heading">
-      <h2 id="intro-heading" class="section-title">¿Cómo se dice Hola en el mundo?</h2>
-      <p class="intro-text">El mundo alberga una extraordinaria diversidad lingüística. Cada idioma es una ventana única a una cultura, una historia y una forma de ver la realidad. Explorar cómo las personas se saludan en distintos rincones del planeta es una manera de celebrar esa riqueza compartida.</p>
-      <div class="intro-stats">
-        <article class="stat-card">
-          <span class="stat-number">7,000+</span>
-          <span class="stat-label">Idiomas en el mundo</span>
-        </article>
-        <article class="stat-card">
-          <span class="stat-number">12</span>
-          <span class="stat-label">Idiomas en esta página</span>
-        </article>
-        <article class="stat-card">
-          <span class="stat-number">6</span>
-          <span class="stat-label">Regiones representadas</span>
-        </article>
-      </div>
+  <main role="main" id="main-content">
+    <section id="greetings-section" aria-label="Saludos por país">
+      <div id="greetings-grid" class="greetings-grid"></div>
+      <div id="loading-state" class="loading-state" aria-live="polite">Cargando saludos...</div>
     </section>
-
-    <section class="languages-section" aria-labelledby="languages-heading">
-      <h2 id="languages-heading" class="section-title">Saludos del Mundo</h2>
-      <div class="languages-grid">
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-spanish" data-region="Europa" data-language="spanish">
-          <h2 id="card-heading-spanish" class="card-language-name">Español</h2>
-          <p class="card-greeting" lang="es">¡Hola!</p>
-          <p class="card-pronunciation">/ ˈo.la /</p>
-          <p class="card-region">Europa · América Latina</p>
-          <p class="card-description">El español es la segunda lengua más hablada del mundo por número de hablantes nativos, con más de 480 millones de personas.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-english" data-region="Europa" data-language="english">
-          <h2 id="card-heading-english" class="card-language-name">Inglés</h2>
-          <p class="card-greeting" lang="en">Hello!</p>
-          <p class="card-pronunciation">/ həˈloʊ /</p>
-          <p class="card-region">Europa · América del Norte</p>
-          <p class="card-description">El inglés es la lengua franca internacional, utilizada como idioma oficial o co-oficial en más de 60 países alrededor del mundo.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-french" data-region="Europa" data-language="french">
-          <h2 id="card-heading-french" class="card-language-name">Francés</h2>
-          <p class="card-greeting" lang="fr">Bonjour!</p>
-          <p class="card-pronunciation">/ bɔ̃.ʒuʁ /</p>
-          <p class="card-region">Europa · África</p>
-          <p class="card-description">El francés es hablado por más de 300 millones de personas en 29 países y es uno de los idiomas oficiales de la Unión Europea y la ONU.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-german" data-region="Europa" data-language="german">
-          <h2 id="card-heading-german" class="card-language-name">Alemán</h2>
-          <p class="card-greeting" lang="de">Hallo!</p>
-          <p class="card-pronunciation">/ ˈha.lo /</p>
-          <p class="card-region">Europa Central</p>
-          <p class="card-description">El alemán es la lengua materna más hablada de la Unión Europea, con aproximadamente 100 millones de hablantes nativos.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-italian" data-region="Europa" data-language="italian">
-          <h2 id="card-heading-italian" class="card-language-name">Italiano</h2>
-          <p class="card-greeting" lang="it">Ciao!</p>
-          <p class="card-pronunciation">/ ˈtʃa.o /</p>
-          <p class="card-region">Europa del Sur</p>
-          <p class="card-description">El italiano es la lengua del arte, la música y la gastronomía. Es hablado por más de 65 millones de personas en todo el mundo.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-portuguese" data-region="Europa" data-language="portuguese">
-          <h2 id="card-heading-portuguese" class="card-language-name">Portugués</h2>
-          <p class="card-greeting" lang="pt">Olá!</p>
-          <p class="card-pronunciation">/ oˈla /</p>
-          <p class="card-region">Europa · América del Sur</p>
-          <p class="card-description">El portugués es hablado por más de 250 millones de personas, siendo Brasil el país con mayor número de hablantes nativos.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-japanese" data-region="Asia" data-language="japanese">
-          <h2 id="card-heading-japanese" class="card-language-name">Japonés</h2>
-          <p class="card-greeting" lang="ja">こんにちは！</p>
-          <p class="card-pronunciation">/ kon.ni.chi.wa /</p>
-          <p class="card-region">Asia Oriental</p>
-          <p class="card-description">El japonés es hablado por más de 125 millones de personas. Su sistema de escritura combina tres alfabetos: hiragana, katakana y kanji.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-chinese" data-region="Asia" data-language="chinese">
-          <h2 id="card-heading-chinese" class="card-language-name">Chino</h2>
-          <p class="card-greeting" lang="zh">你好！</p>
-          <p class="card-pronunciation">/ nǐ hǎo /</p>
-          <p class="card-region">Asia Oriental</p>
-          <p class="card-description">El chino mandarín es el idioma con más hablantes nativos del mundo, con más de 900 millones de personas que lo hablan como lengua materna.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-arabic" data-region="Medio Oriente" data-language="arabic">
-          <h2 id="card-heading-arabic" class="card-language-name">Árabe</h2>
-          <p class="card-greeting" lang="ar" dir="rtl">مرحبا!</p>
-          <p class="card-pronunciation">/ mar.ħa.ban /</p>
-          <p class="card-region">Medio Oriente · África del Norte</p>
-          <p class="card-description">El árabe es hablado por más de 420 millones de personas y es el idioma oficial de 22 países. Se escribe de derecha a izquierda.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-russian" data-region="Europa" data-language="russian">
-          <h2 id="card-heading-russian" class="card-language-name">Ruso</h2>
-          <p class="card-greeting" lang="ru">Привет!</p>
-          <p class="card-pronunciation">/ prʲɪˈvʲet /</p>
-          <p class="card-region">Europa del Este · Asia</p>
-          <p class="card-description">El ruso es el idioma eslavo más hablado del mundo, con más de 150 millones de hablantes nativos y utiliza el alfabeto cirílico.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-hindi" data-region="Asia" data-language="hindi">
-          <h2 id="card-heading-hindi" class="card-language-name">Hindi</h2>
-          <p class="card-greeting" lang="hi">नमस्ते!</p>
-          <p class="card-pronunciation">/ nə.məs.teː /</p>
-          <p class="card-region">Asia del Sur</p>
-          <p class="card-description">El hindi es uno de los idiomas oficiales de India y es hablado por más de 600 millones de personas. Se escribe en el alfabeto devanagari.</p>
-        </article>
-
-        <article class="language-card" role="article" aria-labelledby="card-heading-korean" data-region="Asia" data-language="korean">
-          <h2 id="card-heading-korean" class="card-language-name">Coreano</h2>
-          <p class="card-greeting" lang="ko">안녕하세요!</p>
-          <p class="card-pronunciation">/ an.njʌŋ.ha.se.jo /</p>
-          <p class="card-region">Asia Oriental</p>
-          <p class="card-description">El coreano es hablado por más de 77 millones de personas. Su sistema de escritura, el hangul, fue creado en el siglo XV por el rey Sejong.</p>
-        </article>
-
-      </div>
-    </section>
-
   </main>
 
   <footer role="contentinfo">
-    <div class="footer-container">
-      <p class="footer-text">Hola Mundo Multilenguaje &mdash; Celebrando la diversidad lingüística del planeta.</p>
-      <p class="footer-credits">Construido con HTML5 semántico y CSS3 puro &middot; Sin dependencias externas de JavaScript</p>
-    </div>
+    <p class="footer-copy">© 2024 TSOFT. Todos los derechos reservados.</p>
+    <p class="footer-security">Sitio protegido con Content Security Policy.</p>
   </footer>
+
+  <script src="assets/js/greetings-data.js"></script>
+  <script src="assets/js/app.js"></script>
 
 </body>
 </html>

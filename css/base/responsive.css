@@ -1,0 +1,163 @@
+/* =============================================================================
+   css/base/responsive.css
+   Propósito: Gestión exclusiva del layout responsivo mediante media queries nativas.
+   Estrategia: Mobile-first (base 320px, sin media query envolvente).
+   Breakpoints gestionados:
+     - Base: 320px (mobile, sin media query)
+     - Tablet: min-width 768px
+     - Desktop: min-width 1024px
+   Restricciones: Sin colores, tipografías, variables, animaciones ni vendor prefixes.
+============================================================================= */
+
+
+/* =============================================================================
+   1. REGLAS BASE — MOBILE (320px, sin media query)
+============================================================================= */
+
+/* --- Layout general --- */
+
+.site-header {
+  width: 100%;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.site-header__title {
+  text-align: center;
+}
+
+.lang-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lang-nav__btn {
+  padding: 0.75rem 1rem;
+  min-height: 44px;
+}
+
+/* --- Grid de tarjetas --- */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* --- Tarjetas individuales --- */
+
+.country-card {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.country-card__flag {
+  font-size: 2.5rem;
+}
+
+.country-card__name {
+  font-size: 1rem;
+}
+
+.country-card__phrase {
+  font-size: 0.875rem;
+}
+
+/* --- Footer --- */
+
+.site-footer {
+  padding: 1rem;
+  text-align: center;
+}
+
+
+/* =============================================================================
+   2. TABLET — min-width: 768px
+============================================================================= */
+
+@media (min-width: 768px) {
+
+  /* --- Header --- */
+
+  .site-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+  }
+
+  .site-header__title {
+    text-align: left;
+  }
+
+  /* --- Grid de tarjetas --- */
+
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  /* --- Tarjetas individuales --- */
+
+  .country-card__flag {
+    font-size: 3rem;
+  }
+
+  .country-card__name {
+    font-size: 1.125rem;
+  }
+
+}
+
+
+/* =============================================================================
+   3. DESKTOP — min-width: 1024px
+============================================================================= */
+
+@media (min-width: 1024px) {
+
+  /* --- Grid de tarjetas --- */
+
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+
+  /* --- Tarjetas individuales --- */
+
+  .country-card {
+    padding: 1.5rem;
+    min-height: 160px;
+  }
+
+  .country-card__flag {
+    font-size: 3.5rem;
+  }
+
+  .country-card__name {
+    font-size: 1.25rem;
+  }
+
+  .country-card__phrase {
+    font-size: 1rem;
+  }
+
+}

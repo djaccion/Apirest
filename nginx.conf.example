@@ -1,0 +1,83 @@
+server {
+    # Redireccion HTTP a HTTPS - fuerza el uso de HTTPS en toda la aplicacion
+    listen 80;
+    server_name _;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    # Puerto 443 con SSL habilitado
+    # HTTP/2 mejora el rendimiento de carga de assets estaticos al permitir multiplexacion
+    listen 443 ssl http2;
+
+    # Reemplazar con el dominio real del servidor
+    server_name example.tsoft.com;
+
+    # Rutas a los certificados SSL
+    # Se recomienda usar Let's Encrypt con Certbot como opcion gratuita y automatizable
+    # Ejemplo: certbot --nginx -d example.tsoft.com
+    ssl_certificate     /etc/letsencrypt/live/example.tsoft.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.tsoft.com/privkey.pem;
+
+    # Solo TLSv1.2 y TLSv1.3 - versiones anteriores (SSLv3, TLSv1.0, TLSv1.1) son inseguras y estan descartadas
+    # Esta configuracion cumple con los estandares modernos de seguridad TLS (NIST, Mozilla Modern)
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    # Cifrados que priorizan ECDHE y AES-GCM para Perfect Forward Secrecy
+    # Se excluyen explicitamente cifrados debiles: RC4, MD5, 3DES y exportacion
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:!RC4:!MD5:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!DSS;
+
+    # El servidor impone su orden de cifrados sobre el del cliente
+    ssl_prefer_server_ciphers on;
+
+    # HSTS - fuerza HTTPS por 1 anio en todos los subdominios
+    # ADVERTENCIA: una vez activado con este valor (31536000 segundos = 1 anio), revertir a HTTP
+    # en este dominio es extremadamente complejo. Activar SOLO cuando HTTPS este completamente
+    # estable y verificado en produccion.
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Ruta raiz del proyecto estatico - ajustar a la ruta real del servidor
+    root /var/www/hola-tsoft;
+    index index.html;
+
+    # Previene ataques de clickjacking impidiendo que la pagina sea embebida en iframes
+    add_header X-Frame-Options "DENY" always;
+
+    # Impide que el navegador intente inferir el tipo MIME de los recursos, previniendo ataques de MIME sniffing
+    add_header X-Content-Type-Options "nosniff" always;
+
+    # Activa el filtro XSS del navegador en navegadores legacy que no soporten CSP completo
+    add_header X-XSS-Protection "1; mode=block" always;
+
+    # Controla la informacion de referencia enviada en solicitudes cross-origin
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Principio de minimo privilegio: la aplicacion no requiere acceso a ningun hardware del dispositivo
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()" always;
+
+    # Politica de seguridad de contenido coherente con el meta tag CSP definido en el HTML
+    # NOTA: la configuracion a nivel servidor tiene precedencia sobre el meta tag CSP del HTML
+    # Se bloquean conexiones externas (connect-src none), objetos embebidos (object-src none)
+    # y se impide el uso de esta pagina como frame en cualquier origen (frame-ancestors none)
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
+
+    # Cache agresivo para assets estaticos con hash en el nombre de archivo (CSS, JS, imagenes, etc.)
+    # NOTA: estos valores (1 anio, immutable) son apropiados SOLO para assets cuyo nombre de archivo
+    # incluye un hash de contenido (ej: app.a3f9c1.js). Para archivos sin hash usar cache mas corto.
+    # index.html tiene su propio bloque de cache mas abajo - ver location /index.html
+    location ~* \.(html|css|js|ico|png|jpg|svg|webp)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Cache especifico para index.html - nunca debe ser cacheado por el navegador
+    # ya que es el punto de entrada de la SPA y debe reflejar siempre la version mas reciente
+    location = /index.html {
+        expires -1;
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

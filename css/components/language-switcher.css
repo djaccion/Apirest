@@ -1,0 +1,284 @@
+css/components/language-switcher.css
+
+```css
+/* ==========================================================================
+   LANGUAGE SWITCHER COMPONENT
+   Archivo: css/components/language-switcher.css
+   Descripción: Estilos exclusivos del componente de cambio de idioma (ES/EN).
+   Dependencias: css/base/variables.css (variables CSS globales requeridas)
+   
+   NOTAS DE ACCESIBILIDAD PARA DESARROLLADORES:
+   - Agregar atributo `aria-pressed="true"` al botón activo en el HTML/JS
+   - Agregar atributo `aria-label="Cambiar idioma a inglés"` (o equivalente) a cada botón
+   - El elemento `.lang-btn__flag` debe llevar `aria-hidden="true"` en el HTML
+   - El atributo `lang` del documento debe actualizarse dinámicamente al cambiar idioma
+   - Verificar ratio de contraste mínimo 4.5:1 (WCAG 2.1 AA) con los colores reales
+     de las variables globales antes de desplegar en producción
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   CONTENEDOR PRINCIPAL
+   .language-switcher
+   - Transparente, sin fondo propio
+   - Flexible, adaptable a header y footer sin romper layout
+   - Posicionamiento relativo para hijos con posicionamiento absoluto futuro
+   -------------------------------------------------------------------------- */
+
+.language-switcher {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-xs, 8px);
+  background-color: transparent;
+  position: relative;
+
+  /* Evitar que el componente crezca más de lo necesario en contextos flex */
+  flex-shrink: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   BOTÓN BASE
+   .lang-btn
+   - Apariencia pill/cápsula
+   - Sin borde visible por defecto (borde semi-transparente sutil)
+   - Transición suave en propiedades visuales clave
+   -------------------------------------------------------------------------- */
+
+.lang-btn {
+  /* Reset de estilos de botón nativo */
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+
+  /* Borde sutil semi-transparente para dar forma sin peso visual excesivo */
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 20px;
+
+  /* Espaciado interno */
+  padding: 6px 12px;
+
+  /* Tipografía */
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  line-height: 1;
+
+  /* Color de texto: variable de color de texto sobre fondo oscuro (header) */
+  color: var(--color-text-on-dark, var(--color-secondary, #ffffff));
+
+  /* Interacción */
+  cursor: pointer;
+
+  /* Área mínima táctil de 44x44px (WCAG 2.1 guideline táctil).
+     Se usa min-height y min-width para garantizar el área sin alterar
+     el diseño visual. El padding vertical de 6px + line-height puede
+     no alcanzar 44px; se complementa con min-height. */
+  min-height: 44px;
+  min-width: 44px;
+
+  /* Alineación interna del contenido del botón */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Transición suave en propiedades relevantes */
+  transition:
+    background-color 200ms ease-in-out,
+    color 200ms ease-in-out,
+    border-color 200ms ease-in-out;
+
+  /* Outline accesible base — se define en :focus-visible,
+     aquí se asegura que no haya outline residual de estilos del navegador
+     que no sea reemplazado. Se usa outline: 2px transparent para
+     mantener el espacio sin mostrar nada hasta focus-visible. */
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+
+  /* Evitar selección de texto accidental al hacer clic rápido */
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Evitar que el botón sea arrastrable */
+  -webkit-user-drag: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   ESTADO HOVER — Solo cuando el botón NO está activo y NO está disabled
+   .lang-btn:hover
+   - Fondo semi-transparente del color primario (~12% opacidad)
+   - Texto cambia al color primario
+   - Borde cambia al color primario
+   -------------------------------------------------------------------------- */
+
+.lang-btn:hover:not(.lang-btn--active):not(:disabled) {
+  /* Fondo semi-transparente: se usa rgba con fallback.
+     Si el proyecto soporta color-mix (navegadores modernos), se puede
+     reemplazar por: color-mix(in srgb, var(--color-primary) 12%, transparent) */
+  background-color: var(
+    --color-primary-hover-bg,
+    rgba(var(--color-primary-rgb, 0, 123, 255), 0.12)
+  );
+  color: var(--color-primary, #007bff);
+  border-color: var(--color-primary, #007bff);
+}
+
+
+/* --------------------------------------------------------------------------
+   ESTADO FOCUS-VISIBLE — Accesibilidad teclado
+   .lang-btn:focus-visible
+   - Outline visible de 2px con color de acento de la marca
+   - Se usa :focus-visible para no afectar usuarios de mouse
+   - NUNCA se usa outline: none sin reemplazo funcional
+   -------------------------------------------------------------------------- */
+
+.lang-btn:focus-visible {
+  outline: 2px solid var(--color-accent, var(--color-primary, #007bff));
+  outline-offset: 3px;
+
+  /* Refuerzo visual adicional: leve sombra de foco para mayor visibilidad
+     en fondos complejos */
+  box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb, 0, 123, 255), 0.2);
+}
+
+
+/* --------------------------------------------------------------------------
+   ESTADO ACTIVO / SELECCIONADO
+   .lang-btn--active
+   - Botón "lleno" con color primario de la marca
+   - Texto de alto contraste sobre fondo primario (mínimo 4.5:1 WCAG AA)
+   - No tiene hover para evitar confusión visual
+   - cursor: default porque ya está seleccionado
+   -------------------------------------------------------------------------- */
+
+.lang-btn--active {
+  background-color: var(--color-primary, #007bff);
+  color: var(--color-text-on-primary, #ffffff);
+  border-color: var(--color-primary, #007bff);
+  font-weight: 700;
+  cursor: default;
+}
+
+/* Neutralizar hover en estado activo explícitamente */
+.lang-btn--active:hover {
+  background-color: var(--color-primary, #007bff);
+  color: var(--color-text-on-primary, #ffffff);
+  border-color: var(--color-primary, #007bff);
+}
+
+/* Mantener outline de foco accesible también en estado activo */
+.lang-btn--active:focus-visible {
+  outline: 2px solid var(--color-accent, var(--color-primary, #007bff));
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb, 0, 123, 255), 0.2);
+}
+
+
+/* --------------------------------------------------------------------------
+   ESTADO DISABLED
+   .lang-btn:disabled
+   - Opacidad reducida para indicar no disponibilidad
+   - cursor: not-allowed
+   - Hover neutralizado cuando está disabled
+   -------------------------------------------------------------------------- */
+
+.lang-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Neutralizar hover cuando está disabled */
+.lang-btn:disabled:hover {
+  background-color: transparent;
+  color: var(--color-text-on-dark, var(--color-secondary, #ffffff));
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+
+/* --------------------------------------------------------------------------
+   ELEMENTO DE BANDERA / ÍCONO EMOJI
+   .lang-btn__flag
+   - Separación del texto mediante margin-right
+   - Tamaño ligeramente mayor para legibilidad del emoji
+   - pointer-events: none para que los clicks pasen al botón padre
+   
+   NOTA: El atributo aria-hidden="true" debe estar en el HTML del elemento,
+   no se puede establecer desde CSS.
+   -------------------------------------------------------------------------- */
+
+.lang-btn__flag {
+  display: inline-block;
+  margin-right: 4px;
+  font-size: 1rem;
+  line-height: 1;
+
+  /* Evitar que el emoji capture eventos de puntero */
+  pointer-events: none;
+
+  /* Evitar que el emoji afecte la alineación vertical del texto */
+  vertical-align: middle;
+}
+
+
+/* ==========================================================================
+   RESPONSIVIDAD
+   Mobile-first: los valores base ya son compactos.
+   Se ajustan únicamente los valores que necesitan reducirse en mobile.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   MOBILE — hasta 767px
+   - Padding horizontal reducido
+   - Font-size ligeramente menor
+   - Gap reducido entre botones
+   - Ancho total máximo del componente: 120px
+   -------------------------------------------------------------------------- */
+
+@media screen and (max-width: 767px) {
+  .language-switcher {
+    gap: var(--spacing-xxs, 4px);
+    max-width: 120px;
+  }
+
+  .lang-btn {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+
+    /* Mantener área táctil mínima de 44px en mobile (crítico para usabilidad) */
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .lang-btn__flag {
+    /* En pantallas muy pequeñas, ocultar la bandera si el espacio es crítico.
+       NOTA: No se usa display:none aquí para no romper el layout por defecto.
+       Si se necesita ocultar, hacerlo con clase utilitaria desde JS según
+       el ancho disponible del contenedor padre. */
+    margin-right: 2px;
+    font-size: 0.9rem;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   TABLET Y DESKTOP — 768px en adelante
+   - Mantener valores base definidos en los estilos principales
+   - No se requieren cambios significativos
+   -------------------------------------------------------------------------- */
+
+@media screen and (min-width: 768px) {
+  /* Los valores base ya son correctos para tablet y desktop.
+     Este bloque se mantiene como placeholder documentado para
+     futuras modificaciones específicas de breakpoints superiores. */
+
+  .language-switcher {
+    /* Sin cambios respecto al base */
+  }
+
+  .lang-btn {
+    /* Sin cambios respecto al base */
+  }
+}

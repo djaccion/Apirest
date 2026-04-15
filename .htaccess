@@ -1,0 +1,570 @@
+Options -Indexes -ExecCGI -FollowSymLinks
+
+# =============================================================================
+# HOLA TSOFT — Configuración Apache (.htaccess)
+# Proyecto: XP-8 | Arquitectura: SPA-lite estática
+# Seguridad: DevSecOps — Headers HTTP, HTTPS forzado, control de acceso
+# =============================================================================
+# REQUISITOS DE MÓDULOS APACHE:
+#   - mod_rewrite   → Redirección HTTP a HTTPS
+#   - mod_headers   → Headers de seguridad HTTP
+#   - mod_deflate   → Compresión GZIP
+#   - mod_expires   → Control de caché
+#   - mod_mime      → Tipos MIME
+#
+# Si algún módulo no está disponible, la sección correspondiente
+# generará un error 500. Comentar la sección afectada y notificar
+# al administrador del servidor para habilitar el módulo requerido.
+# =============================================================================
+
+
+# =============================================================================
+# SECCIÓN 1 — OPCIONES GENERALES DE DIRECTORIO
+# Deshabilita listado de directorios, ejecución CGI y symlinks externos.
+# Aplica recursivamente a todas las subcarpetas del proyecto.
+# =============================================================================
+
+# -Indexes   → El servidor retorna 403 si no existe archivo index en la carpeta
+# -ExecCGI   → Deshabilita ejecución de scripts CGI en este directorio
+# -FollowSymLinks → No seguir enlaces simbólicos fuera del directorio raíz
+# MultiViews deshabilitado para evitar negociación de contenido no controlada
+Options -Indexes -ExecCGI -FollowSymLinks -MultiViews
+
+# Deshabilitar override de configuración en subdirectorios para mayor control
+# (solo aplica si este .htaccess está en el DocumentRoot)
+# AllowOverride None  ← Configurar en httpd.conf, no aquí
+
+
+# =============================================================================
+# SECCIÓN 2 — REDIRECCIÓN FORZADA DE HTTP A HTTPS
+# Requiere: mod_rewrite habilitado en el servidor Apache.
+# Redirige permanentemente (301) cualquier petición HTTP a su equivalente HTTPS.
+# Esta sección debe ejecutarse ANTES que cualquier otra regla de rewrite.
+# =============================================================================
+
+<IfModule mod_rewrite.c>
+    # Activar el motor de rewrite
+    RewriteEngine On
+
+    # Establecer la base del rewrite en la raíz del sitio
+    RewriteBase /
+
+    # CONDICIÓN: Solo aplicar si HTTPS no está ya activo
+    # %{HTTPS} off → La conexión actual NO es HTTPS
+    # OR
+    # %{HTTP:X-Forwarded-Proto} !https → Para entornos detrás de proxy/load balancer
+    RewriteCond %{HTTPS} off [OR]
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+
+    # REGLA: Redirigir cualquier URL al equivalente HTTPS con código 301 (permanente)
+    # [L]  → Last rule, detener procesamiento de reglas adicionales
+    # [R=301] → Redirección permanente (cacheable por navegadores y buscadores)
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# NOTA PARA ADMINISTRADOR: Si mod_rewrite no está disponible, configurar
+# la redirección HTTP→HTTPS directamente en el VirtualHost de Apache:
+#   <VirtualHost *:80>
+#       Redirect permanent / https://tudominio.com/
+#   </VirtualHost>
+
+
+# =============================================================================
+# SECCIÓN 3 — HEADERS DE SEGURIDAD HTTP
+# Requiere: mod_headers habilitado en el servidor Apache.
+# "Header always set" garantiza que el header se envíe en TODAS las respuestas,
+# incluyendo respuestas de error (4xx, 5xx).
+# =============================================================================
+
+<IfModule mod_headers.c>
+
+    # -------------------------------------------------------------------------
+    # STRICT-TRANSPORT-SECURITY (HSTS)
+    # Fuerza al navegador a usar HTTPS para todas las peticiones futuras
+    # durante el período especificado en max-age (31536000 = 1 año en segundos).
+    # includeSubDomains → Aplica también a todos los subdominios del dominio.
+    #
+    # ⚠️  ADVERTENCIA PRELOAD: La directiva "preload" NO está incluida
+    # intencionalmente. Para añadirla, el dominio DEBE estar registrado
+    # previamente en la lista HSTS Preload de Google:
+    # https://hstspreload.org/
+    # Una vez en la lista preload, los navegadores bloquearán HTTP incluso
+    # en la primera visita. Este proceso es IRREVERSIBLE a corto plazo.
+    # Consultar con el administrador del dominio antes de añadir "preload".
+    # -------------------------------------------------------------------------
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+    # -------------------------------------------------------------------------
+    # X-FRAME-OPTIONS
+    # Previene que esta página sea embebida dentro de un <iframe>, <frame>
+    # o <object> desde CUALQUIER origen, incluyendo el mismo dominio.
+    # Protección contra ataques de Clickjacking.
+    # DENY → Bloqueo total. Alternativa: SAMEORIGIN (permite mismo dominio).
+    # -------------------------------------------------------------------------
+    Header always set X-Frame-Options "DENY"
+
+    # -------------------------------------------------------------------------
+    # X-CONTENT-TYPE-OPTIONS
+    # Impide que el navegador intente "adivinar" (sniff) el tipo MIME de un
+    # recurso ignorando el Content-Type declarado por el servidor.
+    # Previene ataques donde un archivo malicioso se sirve con MIME incorrecto
+    # y el navegador lo ejecuta como script o HTML.
+    # -------------------------------------------------------------------------
+    Header always set X-Content-Type-Options "nosniff"
+
+    # -------------------------------------------------------------------------
+    # X-XSS-PROTECTION
+    # Activa el filtro XSS integrado en navegadores legacy (IE, Chrome antiguo).
+    # mode=block → En lugar de sanitizar, bloquea completamente la página.
+    # NOTA: Este header es considerado obsoleto en navegadores modernos
+    # (Chrome 78+, Firefox, Edge Chromium) que ya no lo implementan.
+    # Se mantiene por compatibilidad con navegadores antiguos que puedan
+    # acceder al sitio desde redes corporativas o dispositivos legacy.
+    # La protección principal contra XSS la provee el CSP definido más abajo.
+    # -------------------------------------------------------------------------
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # -------------------------------------------------------------------------
+    # REFERRER-POLICY
+    # Controla qué información del URL de origen (Referer) se envía al navegar
+    # hacia otros sitios o al cargar recursos externos.
+    # strict-origin-when-cross-origin:
+    #   - Mismo origen → Envía URL completa como referrer
+    #   - Cross-origin HTTPS→HTTPS → Envía solo el origen (dominio)
+    #   - Cross-origin HTTPS→HTTP → No envía referrer (protege datos sensibles)
+    # -------------------------------------------------------------------------
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # -------------------------------------------------------------------------
+    # PERMISSIONS-POLICY (antes Feature-Policy)
+    # Deshabilita explícitamente APIs del navegador que no son necesarias
+    # para este proyecto estático de saludos internacionales.
+    # Formato: api=() → Deshabilita completamente para todos los orígenes.
+    # APIs deshabilitadas:
+    #   camera       → No se usa captura de video/foto
+    #   microphone   → No se usa captura de audio
+    #   geolocation  → No se usa ubicación del usuario
+    #   payment      → No hay procesamiento de pagos
+    #   usb          → No hay acceso a dispositivos USB
+    # -------------------------------------------------------------------------
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+    # -------------------------------------------------------------------------
+    # CONTENT-SECURITY-POLICY (CSP)
+    # Header de seguridad más crítico. Define exactamente qué recursos puede
+    # cargar y ejecutar el navegador, y desde qué orígenes.
+    # Una CSP mal configurada puede romper el sitio; una bien configurada
+    # previene XSS, data injection y otros ataques de inyección de contenido.
+    #
+    # Directivas implementadas:
+    #   default-src 'self'
+    #     → Política base: solo recursos del mismo origen. Aplica a cualquier
+    #       tipo de recurso no especificado explícitamente.
+    #
+    #   script-src 'self'
+    #     → Solo scripts servidos desde el mismo dominio.
+    #       SIN 'unsafe-inline' → Bloquea scripts inline (<script>alert()</script>)
+    #       SIN 'unsafe-eval'   → Bloquea eval(), Function(), setTimeout(string)
+    #
+    #   style-src 'self'
+    #     → Solo hojas de estilo del mismo dominio.
+    #       SIN 'unsafe-inline' → Bloquea estilos inline (style="...")
+    #       NOTA: Si se usan estilos inline en el HTML, añadir hash o nonce.
+    #
+    #   img-src 'self' data:
+    #     → Imágenes del mismo dominio + data URIs (base64).
+    #       data: es necesario para emojis de banderas renderizados como
+    #       data URI y para cualquier imagen embebida en base64.
+    #
+    #   font-src 'self'
+    #     → Solo fuentes tipográficas del mismo dominio.
+    #       Sin Google Fonts ni CDNs externos.
+    #
+    #   connect-src 'self'
+    #     → Solo peticiones XHR/fetch/WebSocket al mismo dominio.
+    #       El proyecto no hace llamadas a APIs externas.
+    #
+    #   frame-ancestors 'none'
+    #     → Refuerza X-Frame-Options: ningún origen puede embeber esta página.
+    #       CSP frame-ancestors tiene precedencia sobre X-Frame-Options
+    #       en navegadores modernos.
+    #
+    #   base-uri 'self'
+    #     → Restringe el elemento <base href=""> al mismo origen.
+    #       Previene ataques de base tag hijacking.
+    #
+    #   form-action 'none'
+    #     → Bloquea el envío de formularios a cualquier destino.
+    #       El proyecto no tiene formularios; esta directiva es preventiva.
+    #
+    #   object-src 'none'
+    #     → Bloquea plugins (<object>, <embed>, <applet>).
+    #       Flash, Java applets y similares están completamente deshabilitados.
+    #
+    #   upgrade-insecure-requests
+    #     → Instruye al navegador a convertir automáticamente URLs HTTP
+    #       embebidas en el HTML a HTTPS antes de hacer la petición.
+    #       Complementa la redirección HTTPS de la Sección 2.
+    # -------------------------------------------------------------------------
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'; object-src 'none'; upgrade-insecure-requests"
+
+</IfModule>
+
+# NOTA PARA ADMINISTRADOR: Si mod_headers no está disponible, estos headers
+# deben configurarse en el bloque <VirtualHost> o <Directory> del httpd.conf
+# o en el archivo de configuración del sitio en sites-available/.
+
+
+# =============================================================================
+# SECCIÓN 4 — CONTROL DE ACCESO A ARCHIVOS SENSIBLES
+# Bloquea el acceso directo desde el navegador a archivos que no deben
+# ser públicamente accesibles. Retorna HTTP 403 Forbidden.
+# =============================================================================
+
+# -------------------------------------------------------------------------
+# ARCHIVOS DE CONFIGURACIÓN DEL SERVIDOR
+# .htaccess y .htpasswd contienen configuración de seguridad y credenciales.
+# Exponerlos revelaría la configuración interna del servidor y posibles
+# vectores de ataque o credenciales de autenticación básica.
+# -------------------------------------------------------------------------
+<FilesMatch "^\.ht(access|passwd)$">
+    # Apache 2.4+
+    Require all denied
+    # Apache 2.2 (compatibilidad legacy — comentar si usa Apache 2.4+)
+    # Order allow,deny
+    # Deny from all
+</FilesMatch>
+
+# -------------------------------------------------------------------------
+# ARCHIVOS DE VARIABLES DE ENTORNO
+# Los archivos .env contienen credenciales, API keys, configuración de
+# base de datos y otros secretos que NUNCA deben ser accesibles públicamente.
+# Incluye variantes comunes de entornos de desarrollo, staging y producción.
+# -------------------------------------------------------------------------
+<FilesMatch "^\.env(\.local|\.production|\.staging|\.development|\.test)?$">
+    Require all denied
+</FilesMatch>
+
+# -------------------------------------------------------------------------
+# ARCHIVOS DE CONTROL DE VERSIONES
+# Los archivos de Git exponen el historial completo del código fuente,
+# incluyendo commits con credenciales accidentalmente commiteadas,
+# estructura interna del proyecto y metadatos de desarrollo.
+# -------------------------------------------------------------------------
+<FilesMatch "^\.git(ignore|attributes|modules|keep)?$">
+    Require all denied
+</FilesMatch>
+
+# -------------------------------------------------------------------------
+# ARCHIVOS DE DOCUMENTACIÓN INTERNA
+# README.md y SECURITY.md contienen información sobre la arquitectura,
+# vulnerabilidades conocidas, políticas de seguridad y detalles de
+# implementación que no deben ser indexados ni accedidos directamente.
+# -------------------------------------------------------------------------
+<FilesMatch "^(README|SECURITY|CHANGELOG|CONTRIBUTING|LICENSE)(\.md|\.txt|\.rst)?$">
+    Require all denied
+</FilesMatch>
+
+# -------------------------------------------------------------------------
+# ARCHIVOS DE LOG
+# Los archivos de log pueden contener información sensible como IPs de
+# usuarios, rutas de archivos del servidor, errores con stack traces,
+# datos de sesión y patrones de uso que facilitan el reconocimiento.
+# -------------------------------------------------------------------------
+<FilesMatch "\.log$">
+    Require all denied
+</FilesMatch>
+
+# -------------------------------------------------------------------------
+# ARCHIVOS DE CONFIGURACIÓN DE HERRAMIENTAS DE DESARROLLO
+# Archivos de configuración de editores, linters, bundlers y herramientas
+# de CI/CD que revelan la estructura del proyecto y dependencias usadas.
+# -------------------------------------------------------------------------
+<FilesMatch "\.(bak|config|sql|fla|psd|ini|sh|inc|swp|dist|lock)$">
+    Require all denied
+</FilesMatch>
+
+# -------------------------------------------------------------------------
+# ARCHIVOS DE PACKAGE MANAGERS
+# package.json, composer.json y similares revelan dependencias, versiones
+# y posibles vulnerabilidades conocidas en las librerías utilizadas.
+# -------------------------------------------------------------------------
+<FilesMatch "^(package|composer|Gemfile|Pipfile)(\.json|\.lock|\.yaml)?$">
+    Require all denied
+</FilesMatch>
+
+
+# =============================================================================
+# SECCIÓN 5 — TIPOS MIME CORRECTOS
+# Declara explícitamente los tipos MIME para todos los recursos del proyecto.
+# Previene ataques de MIME sniffing y complementa X-Content-Type-Options.
+# Requiere: mod_mime habilitado en el servidor Apache.
+# =============================================================================
+
+<IfModule mod_mime.c>
+
+    # -------------------------------------------------------------------------
+    # JAVASCRIPT
+    # application/javascript es el tipo MIME estándar según RFC 4329.
+    # Algunos servidores legacy usan text/javascript (obsoleto pero aceptado).
+    # -------------------------------------------------------------------------
+    AddType application/javascript .js .mjs
+
+    # -------------------------------------------------------------------------
+    # CSS
+    # text/css es el único tipo MIME válido para hojas de estilo CSS.
+    # -------------------------------------------------------------------------
+    AddType text/css .css
+
+    # -------------------------------------------------------------------------
+    # HTML
+    # Incluir charset=UTF-8 explícitamente para garantizar la correcta
+    # interpretación de caracteres especiales, tildes y emojis de banderas.
+    # -------------------------------------------------------------------------
+    AddType "text/html; charset=UTF-8" .html .htm
+
+    # -------------------------------------------------------------------------
+    # JSON
+    # application/json es el tipo MIME estándar para datos JSON.
+    # Usado para el archivo greetings-data.js si se sirve como JSON puro.
+    # -------------------------------------------------------------------------
+    AddType application/json .json
+
+    # -------------------------------------------------------------------------
+    # SVG
+    # image/svg+xml es el tipo MIME correcto para gráficos vectoriales SVG.
+    # Importante para logos e iconos del proyecto.
+    # -------------------------------------------------------------------------
+    AddType image/svg+xml .svg .svgz
+
+    # -------------------------------------------------------------------------
+    # FAVICON
+    # image/x-icon para el formato .ico tradicional de favicons.
+    # -------------------------------------------------------------------------
+    AddType image/x-icon .ico
+
+    # -------------------------------------------------------------------------
+    # WEBP
+    # image/webp para el formato de imagen moderno WebP.
+    # Algunos servidores Apache legacy no lo reconocen por defecto.
+    # -------------------------------------------------------------------------
+    AddType image/webp .webp
+
+    # -------------------------------------------------------------------------
+    # FUENTES WEB (por si se añaden fuentes locales en el futuro)
+    # -------------------------------------------------------------------------
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
+    AddType font/ttf .ttf
+    AddType font/otf .otf
+
+    # -------------------------------------------------------------------------
+    # MANIFEST Y SERVICE WORKER (preparado para PWA futura)
+    # -------------------------------------------------------------------------
+    AddType application/manifest+json .webmanifest
+
+</IfModule>
+
+
+# =============================================================================
+# SECCIÓN 6 — COMPRESIÓN GZIP
+# Reduce el tamaño de los archivos transferidos para mejorar el rendimiento.
+# Requiere: mod_deflate habilitado en el servidor Apache.
+# =============================================================================
+
+<IfModule mod_deflate.c>
+
+    # Activar compresión para los siguientes tipos MIME
+    # Texto y markup
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/javascript
+
+    # JavaScript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+
+    # JSON y datos estructurados
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/ld+json
+    AddOutputFilterByType DEFLATE application/manifest+json
+
+    # SVG (es XML, se comprime muy bien)
+    AddOutputFilterByType DEFLATE image/svg+xml
+
+    # Fuentes web
+    AddOutputFilterByType DEFLATE font/woff
+    AddOutputFilterByType DEFLATE font/woff2
+    AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE application/font-woff
+    AddOutputFilterByType DEFLATE application/font-woff2
+
+    # -------------------------------------------------------------------------
+    # EXCLUSIONES DE COMPRESIÓN
+    # Archivos ya comprimidos no deben comprimirse de nuevo (overhead sin ganancia)
+    # -------------------------------------------------------------------------
+
+    # Excluir imágenes binarias (ya comprimidas internamente)
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|ico|bmp)$ no-gzip dont-vary
+
+    # Excluir archivos de video y audio (ya comprimidos)
+    SetEnvIfNoCase Request_URI \.(?:mp4|mp3|ogg|ogv|webm|flv|avi|mov)$ no-gzip dont-vary
+
+    # Excluir archivos ZIP, PDF y otros formatos ya comprimidos
+    SetEnvIfNoCase Request_URI \.(?:zip|gz|bz2|rar|7z|pdf)$ no-gzip dont-vary
+
+    # -------------------------------------------------------------------------
+    # COMPATIBILIDAD CON PROXIES Y CDN
+    # Añadir header Vary para que proxies cacheen versiones comprimidas
+    # y no comprimidas por separado según el Accept-Encoding del cliente.
+    # -------------------------------------------------------------------------
+    <IfModule mod_headers.c>
+        Header append Vary Accept-Encoding
+    </IfModule>
+
+    # -------------------------------------------------------------------------
+    # WORKAROUND PARA NAVEGADORES LEGACY
+    # Algunos navegadores muy antiguos (Netscape 4.x) tienen bugs con GZIP.
+    # Deshabilitar compresión para CSS y JS en esos navegadores específicos.
+    # -------------------------------------------------------------------------
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+</IfModule>
+
+
+# =============================================================================
+# SECCIÓN 7 — CONTROL DE CACHÉ (mod_expires)
+# Define políticas de caché para optimizar el rendimiento y reducir
+# peticiones repetidas al servidor.
+# Requiere: mod_expires habilitado en el servidor Apache.
+# =============================================================================
+
+<IfModule mod_expires.c>
+
+    # Activar el sistema de expiración de caché
+    ExpiresActive On
+
+    # Política base: sin caché por defecto (seguro para contenido dinámico)
+    ExpiresDefault "access plus 0 seconds"
+
+    # HTML → Sin caché o caché muy corta (el contenido puede cambiar)
+    ExpiresByType text/html "access plus 1 hour"
+
+    # CSS y JavaScript → Caché de 1 mes (usar versionado en nombres de archivo)
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+
+    # Imágenes → Caché de 1 año (raramente cambian)
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+
+    # Fuentes → Caché de 1 año (no cambian)
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/ttf "access plus 1 year"
+
+    # JSON de datos → Caché corta (puede actualizarse con nuevos saludos)
+    ExpiresByType application/json "access plus 1 day"
+
+</IfModule>
+
+# Complementar mod_expires con Cache-Control headers explícitos
+<IfModule mod_headers.c>
+    # Asegurar que el HTML siempre se revalide
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    # CSS y JS con caché larga (requiere cache-busting en nombres de archivo)
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=2592000, immutable"
+    </FilesMatch>
+
+    # Imágenes con caché muy larga
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+
+# =============================================================================
+# SECCIÓN 8 — PÁGINAS DE ERROR PERSONALIZADAS
+# Redirige los errores HTTP comunes a páginas personalizadas que no
+# revelen información del servidor (versión de Apache, rutas internas, etc.)
+# =============================================================================
+
+# Ocultar la versión de Apache en las páginas de error por defecto
+# (Requiere ServerTokens Prod en httpd.conf — documentado para el admin)
+# NOTA ADMIN: Añadir en httpd.conf:
+#   ServerTokens Prod
+#   ServerSignature Off
+
+# Páginas de error personalizadas (crear estos archivos en el proyecto)
+ErrorDocument 400 /error/400.html
+ErrorDocument 401 /error/401.html
+ErrorDocument 403 /error/403.html
+ErrorDocument 404 /error/404.html
+ErrorDocument 500 /error/500.html
+ErrorDocument 503 /error/503.html
+
+
+# =============================================================================
+# SECCIÓN 9 — CONFIGURACIÓN DE CHARSET
+# Fuerza UTF-8 como charset por defecto para todos los archivos de texto.
+# Garantiza la correcta visualización de caracteres especiales y emojis.
+# =============================================================================
+
+# Charset por defecto para todos los archivos de texto
+AddDefaultCharset UTF-8
+
+# Charset específico para tipos de archivo críticos
+<IfModule mod_mime.c>
+    AddCharset UTF-8 .html .htm .css .js .json .xml .txt .svg
+</IfModule>
+
+
+# =============================================================================
+# SECCIÓN 10 — ELIMINACIÓN DE HEADERS QUE REVELAN INFORMACIÓN DEL SERVIDOR
+# Oculta headers que exponen tecnología, versiones y configuración interna.
+# Requiere: mod_headers habilitado.
+# =============================================================================
+
+<IfModule mod_headers.c>
+
+    # Eliminar header X-Powered-By (expone versión de PHP u otros lenguajes)
+    Header unset X-Powered-By
+
+    # Eliminar header Server si es posible (requiere mod_security o configuración
+    # adicional en httpd.conf con ServerTokens Prod)
+    # Header unset Server  ← Apache no permite eliminar este header desde .htaccess
+    # NOTA ADMIN: Para ocultar la versión de Apache, configurar en httpd.conf:
+    #   ServerTokens Prod    → Muestra solo "Apache" sin versión
+    #   ServerSignature Off  → Elimina firma de Apache en páginas de error
+
+    # Eliminar header ETag para evitar filtración de inodos del servidor
+    # (alternativa: configurar FileETag None en httpd.conf)
+    Header unset ETag
+
+</IfModule>
+
+# Deshabilitar ETags basados en inodos (pueden revelar información del servidor)
+FileETag None
+
+
+# =============================================================================
+# FIN DE CONFIGURACIÓN — HOLA TSOFT (.htaccess)
+# Versión: 1.0.0 | Proyecto: XP-8
+# Última revisión: 2025
+# Revisar y actualizar headers de seguridad periódicamente en:
+#   https://securityheaders.com/
+#   https://observatory.mozilla.org/
+# =============================================================================
