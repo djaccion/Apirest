@@ -1,69 +1,102 @@
 /* ==========================================================================
    css/reset.css
-   Normalización cross-browser. Base predecible para todos los elementos.
-   Debe cargarse antes que cualquier otro archivo CSS.
+   Propósito: Normalización cross-browser. Elimina inconsistencias de estilos
+   por defecto entre Chrome, Firefox, Safari y Edge sin imponer estilos visuales.
+   Debe cargarse PRIMERO antes que cualquier otro archivo CSS.
+   Autor: [Autor Placeholder]
+   Fecha: [Fecha Placeholder]
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   1. Box Model Universal
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   1. BOX SIZING UNIVERSAL
+   Garantiza que padding y border se incluyan dentro del ancho/alto declarado
+   en todos los elementos sin excepción.
+   ========================================================================== */
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/* ==========================================================================
+   2. RESET DE MÁRGENES Y PADDING
+   Elimina márgenes y padding por defecto que los navegadores aplican
+   de forma inconsistente a elementos como body, headings, p, ul, ol, etc.
+   ========================================================================== */
+
+* {
   margin: 0;
   padding: 0;
 }
 
-/* --------------------------------------------------------------------------
-   2. HTML Raíz
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   3. NORMALIZACIÓN DE HTML Y BODY
+   Establece bases para escala rem, scroll suave, ajuste de texto en móviles
+   y renderizado de fuentes optimizado.
+   ========================================================================== */
+
 html {
   font-size: 100%;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-/* --------------------------------------------------------------------------
-   3. Body
-   -------------------------------------------------------------------------- */
 body {
-  line-height: 1;
   min-height: 100vh;
+  line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* --------------------------------------------------------------------------
-   4. Tipografía: Encabezados y Párrafos
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   4. RESET DE LISTAS
+   Usa selector con atributo role para evitar romper la semántica en
+   VoiceOver de Safari, que ignora el rol de lista cuando se elimina
+   list-style sin esta condición.
+   ========================================================================== */
+
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+}
+
+li {
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   5. ELEMENTOS DE TEXTO Y OVERFLOW
+   Previene desbordamiento de texto largo en contenedores estrechos.
+   Crítico para saludos en árabe, japonés, chino y otros idiomas con
+   caracteres especiales o palabras largas sin espacios.
+   ========================================================================== */
+
+p,
 h1,
 h2,
 h3,
 h4,
 h5,
-h6,
-p {
-  font-size: inherit;
-  font-weight: inherit;
+h6 {
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
-/* --------------------------------------------------------------------------
-   5. Listas
-   -------------------------------------------------------------------------- */
-ul,
-ol {
-  list-style: none;
-}
+/* ==========================================================================
+   6. IMÁGENES Y MEDIOS
+   Elimina el espacio inferior fantasma generado por display inline por defecto
+   y garantiza responsividad base para todos los medios.
+   ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   6. Multimedia
-   -------------------------------------------------------------------------- */
 img,
+picture,
 video,
 canvas,
-svg,
-picture {
+svg {
   display: block;
   max-width: 100%;
 }
@@ -72,68 +105,82 @@ img {
   height: auto;
 }
 
-/* --------------------------------------------------------------------------
-   7. Anclas
-   -------------------------------------------------------------------------- */
-a {
-  color: inherit;
-  text-decoration: none;
-}
+/* ==========================================================================
+   7. FORMULARIOS PREVENTIVO
+   Reset preventivo aunque el proyecto no tiene formularios activos.
+   Garantiza herencia de tipografía del documento, ya que los navegadores
+   no aplican herencia a elementos de formulario por defecto.
+   Previene inconsistencias si en el futuro se agregan elementos interactivos.
+   ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   8. Formularios e Interactivos
-   -------------------------------------------------------------------------- */
-button,
 input,
-select,
-textarea {
-  font-family: inherit;
-  font-size: inherit;
-  border: none;
-  background: none;
-  appearance: none;
-  -webkit-appearance: none;
+button,
+textarea,
+select {
+  font: inherit;
 }
 
-/* --------------------------------------------------------------------------
-   9. Tablas
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   8. TABLAS
+   Normalización preventiva para consistencia cross-browser en el modelo
+   de caja de tablas.
+   ========================================================================== */
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* --------------------------------------------------------------------------
-   10. Citas y Código
-   -------------------------------------------------------------------------- */
-blockquote,
-q {
-  quotes: none;
+/* ==========================================================================
+   9. TEXTO ESPECIAL - STRONG, B, EM, I
+   Establece valores explícitos para peso e itálica respetando la escala
+   relativa al elemento padre.
+   ========================================================================== */
+
+strong,
+b {
+  font-weight: bolder;
 }
 
-blockquote::before,
-blockquote::after,
-q::before,
-q::after {
-  content: '';
-  content: none;
+em,
+i {
+  font-style: italic;
 }
 
-code,
-pre,
-kbd {
-  font-family: monospace, monospace;
-  font-size: 1em;
-}
+/* ==========================================================================
+   10. ATRIBUTO HIDDEN
+   Garantiza que el atributo HTML hidden funcione correctamente en todos
+   los navegadores incluyendo versiones antiguas de IE.
+   NOTA: Este es el único uso permitido de !important en este archivo.
+   ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   11. Accesibilidad
-   -------------------------------------------------------------------------- */
 [hidden] {
-  display: none;
+  display: none !important;
 }
 
-*:focus-visible {
-  outline: 2px solid;
-  outline-offset: 2px;
+/* ==========================================================================
+   11. FOCUS VISIBLE BASE
+   Normaliza el comportamiento base del foco visible.
+   Se usa :focus-visible (NO :focus) para no afectar usuarios de ratón.
+   NOTA: El outline accesible real con colores y estilos de marca se
+   redefine en components.css usando las custom properties de color
+   definidas en variables.css.
+   ========================================================================== */
+
+:focus-visible {
+  outline: none;
+}
+
+/* ==========================================================================
+   12. PREFERS REDUCED MOTION
+   Respeta la configuración de accesibilidad del sistema operativo del usuario
+   que indica preferencia por reducción de movimiento y animaciones.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
 }

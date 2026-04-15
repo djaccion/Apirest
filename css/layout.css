@@ -1,73 +1,133 @@
-/* Región: body - Contenedor flex principal de la página */
+/* ==========================================================================
+   layout.css - Módulo de estructura espacial y distribución de elementos
+   Proyecto: Hola Mundo Multilenguaje
+   Dependencias: variables.css, reset.css
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Modelo de caja global - html y body
+   ========================================================================== */
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    gap: var(--spacing-base);
 }
 
-/* Región: header - Barra superior de ancho completo */
-header {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding-top: var(--spacing-medium);
-    padding-bottom: var(--spacing-medium);
-}
+/* ==========================================================================
+   2. Contenedor principal
+   ========================================================================== */
 
-/* Región: main - Área de contenido principal con crecimiento flexible */
-main {
-    flex-grow: 1;
-    padding-top: var(--spacing-base);
-    padding-bottom: var(--spacing-base);
-    padding-left: var(--spacing-base);
-    padding-right: var(--spacing-base);
-    margin-left: auto;
-    margin-right: auto;
-    max-width: var(--container-max-width);
-    width: 100%;
-}
-
-/* Región: footer - Pie de página anclado al fondo por el modelo flex del body */
-footer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding-top: var(--spacing-small);
-    padding-bottom: var(--spacing-small);
-}
-
-/* Clase utilitaria: .container - Contenedor central reutilizable */
 .container {
     width: 100%;
-    max-width: var(--container-max-width);
-    margin-left: auto;
+    max-width: 1200px;
     margin-right: auto;
-    padding-left: var(--spacing-lateral);
-    padding-right: var(--spacing-lateral);
+    margin-left: auto;
+    padding-right: var(--spacing-sm);
+    padding-left: var(--spacing-sm);
 }
 
-/* Componente: .cards-grid - Grilla responsiva de tarjetas de idiomas */
-.cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--spacing-medium);
-    row-gap: var(--spacing-medium);
-    padding-top: var(--spacing-large);
-    padding-bottom: var(--spacing-large);
-    align-items: stretch;
-}
+/* ==========================================================================
+   3. Layout del header
+   ========================================================================== */
 
-/* Componente: .hero - Bloque introductorio centrado de la página */
-.hero {
+.site-header {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding-top: var(--spacing-large);
-    padding-bottom: var(--spacing-large);
+    justify-content: center;
+    padding-top: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
     text-align: center;
+}
+
+.site-header .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==========================================================================
+   4. Layout del main
+   ========================================================================== */
+
+.site-main {
+    flex-grow: 1;
+}
+
+/* ==========================================================================
+   5. Grid de tarjetas de idiomas
+   ========================================================================== */
+
+.languages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+    padding-top: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+}
+
+/* ==========================================================================
+   6. Layout del footer
+   ========================================================================== */
+
+.site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+}
+
+/* ==========================================================================
+   7. Skip navigation link
+   ========================================================================== */
+
+.skip-nav {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    z-index: 9999;
+}
+
+.skip-nav:focus {
+    top: 0;
+    left: 0;
+}
+
+/* ==========================================================================
+   8. Media queries - Mobile First
+   ========================================================================== */
+
+/* --- Breakpoint Tablet: 768px --- */
+
+@media (min-width: 768px) {
+    .container {
+        padding-right: var(--spacing-md);
+        padding-left: var(--spacing-md);
+    }
+}
+
+/* --- Breakpoint Desktop: 1024px --- */
+
+@media (min-width: 1024px) {
+    .container {
+        padding-right: var(--spacing-lg);
+        padding-left: var(--spacing-lg);
+    }
+
+    .languages-grid {
+        gap: var(--spacing-lg);
+    }
 }
