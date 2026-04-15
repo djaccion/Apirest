@@ -1,0 +1,70 @@
+# Secrets and Environment Variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+virtualenv/
+
+# Python Bytecode and Cache
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Coverage and Test Reports
+.coverage
+htmlcov/
+coverage.xml
+report.xml
+*junit*.xml
+.tox/
+
+# SQLite Database Files
+*.db
+*.sqlite
+*.sqlite3
+*-journal
+*-wal
+*-shm
+
+# Docker Local Overrides
+docker-compose.override.yml
+data/
+postgres-data/
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+**/.DS_Store
+
+# Security Tool Reports
+bandit-report.json
+bandit-report.txt
+safety-report*
+pip-audit-report*
+trivy-report*
+
+# Logs
+*.log
+logs/
+log/

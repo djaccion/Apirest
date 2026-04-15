@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'"
+    />
+    <meta
+      name="description"
+      content="Sitio web que muestra el saludo Hola Mundo en múltiples idiomas y culturas del mundo."
+    />
+    <meta name="author" content="Equipo Hola Mundo Multilenguaje" />
+    <title>Hola Mundo Multilenguaje</title>
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <header class="header">
+      <h1 class="header__title">Hola Mundo Multilenguaje</h1>
+      <p class="header__subtitle">
+        Un saludo al mundo en múltiples idiomas y culturas
+      </p>
+    </header>
+
+    <main id="contenido-principal">
+      <section
+        class="greetings-grid"
+        aria-label="Saludos en diferentes idiomas"
+      >
+        <article
+          class="greeting-card"
+          lang="es"
+          aria-label="Saludo en español"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇪🇸</div>
+          <h2 class="greeting-card__language">Español</h2>
+          <p class="greeting-card__text">¡Hola, Mundo!</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+
+        <article
+          class="greeting-card"
+          lang="en"
+          aria-label="Saludo en inglés"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇬🇧</div>
+          <h2 class="greeting-card__language">Inglés</h2>
+          <p class="greeting-card__text">Hello, World!</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+
+        <article
+          class="greeting-card"
+          lang="fr"
+          aria-label="Saludo en francés"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇫🇷</div>
+          <h2 class="greeting-card__language">Francés</h2>
+          <p class="greeting-card__text">Bonjour le Monde!</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+
+        <article
+          class="greeting-card"
+          lang="de"
+          aria-label="Saludo en alemán"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇩🇪</div>
+          <h2 class="greeting-card__language">Alemán</h2>
+          <p class="greeting-card__text">Hallo Welt!</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+
+        <article
+          class="greeting-card"
+          lang="pt"
+          aria-label="Saludo en portugués"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇧🇷</div>
+          <h2 class="greeting-card__language">Portugués</h2>
+          <p class="greeting-card__text">Olá, Mundo!</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+
+        <article
+          class="greeting-card"
+          lang="it"
+          aria-label="Saludo en italiano"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇮🇹</div>
+          <h2 class="greeting-card__language">Italiano</h2>
+          <p class="greeting-card__text">Ciao Mondo!</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+
+        <article
+          class="greeting-card"
+          lang="ja"
+          aria-label="Saludo en japonés"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇯🇵</div>
+          <h2 class="greeting-card__language">Japonés</h2>
+          <p class="greeting-card__text">こんにちは世界</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+
+        <article
+          class="greeting-card"
+          lang="zh"
+          aria-label="Saludo en chino mandarín"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇨🇳</div>
+          <h2 class="greeting-card__language">Chino Mandarín</h2>
+          <p class="greeting-card__text">你好世界</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+
+        <article
+          class="greeting-card"
+          lang="ar"
+          dir="rtl"
+          aria-label="Saludo en árabe"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇸🇦</div>
+          <h2 class="greeting-card__language">Árabe</h2>
+          <p class="greeting-card__text">مرحبا بالعالم</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+
+        <article
+          class="greeting-card"
+          lang="ru"
+          aria-label="Saludo en ruso"
+        >
+          <div class="greeting-card__flag" aria-hidden="true">🇷🇺</div>
+          <h2 class="greeting-card__language">Ruso</h2>
+          <p class="greeting-card__text">Привет мир</p>
+          <p class="greeting-card__translation">(Hola, Mundo)</p>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p class="footer__copy">
+        &copy; 2024 Hola Mundo Multilenguaje. Construido con HTML5 y CSS3 puro.
+      </p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+[bandit]
+targets = app
+exclude = tests,.venv,venv,migrations,__pycache__
+level = medium
+confidence = medium
+skips = B101,B104,B311

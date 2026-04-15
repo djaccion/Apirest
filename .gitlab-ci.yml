@@ -1,0 +1,108 @@
+image: python:3.11-slim
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  IMAGE_TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+  DOCKER_TLS_CERTDIR: ""
+  COVERAGE_THRESHOLD: "80"
+
+stages:
+  - test
+  - security_scan
+  - build
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .cache/pip
+    - venv/
+  policy: pull-push
+
+run_tests:
+  stage: test
+  before_script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+  script:
+    - pytest tests/
+        --cov=app
+        --cov-report=xml:coverage.xml
+        --cov-report=term-missing
+        --junitxml=report.xml
+        --cov-fail-under=80
+  coverage: '/TOTAL.*\s+(\d+%)/'
+  artifacts:
+    reports:
+      junit: report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    paths:
+      - coverage.xml
+      - report.xml
+    expire_in: 7 days
+
+sast_bandit:
+  stage: security_scan
+  needs: ["run_tests"]
+  before_script:
+    - pip install bandit
+  script:
+    # Los hallazgos críticos deben revisarse manualmente en el artefacto bandit-report.json
+    - bandit -r app/ -f json -o bandit-report.json -ll || true
+  artifacts:
+    paths:
+      - bandit-report.json
+    expire_in: 7 days
+    when: always
+
+dependency_scan:
+  stage: security_scan
+  needs: ["run_tests"]
+  before_script:
+    - pip install pip-audit
+  script:
+    - pip-audit -r requirements.txt -f json -o pip-audit-report.json || true
+  artifacts:
+    paths:
+      - pip-audit-report.json
+    expire_in: 7 days
+    when: always
+
+container_scan:
+  stage: security_scan
+  needs: ["run_tests"]
+  image: aquasec/trivy:latest
+  script:
+    - trivy image --format json --output trivy-report.json --exit-code 0 python:3.11-alpine
+  artifacts:
+    paths:
+      - trivy-report.json
+    expire_in: 7 days
+    when: always
+
+build_image:
+  stage: build
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  needs:
+    - job: run_tests
+    - job: sast_bandit
+    - job: dependency_scan
+    - job: container_scan
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --target runtime -t "$IMAGE_TAG" .
+    - trivy image --format json --output trivy-final-report.json --exit-code 0 "$IMAGE_TAG" || true
+    - docker push "$IMAGE_TAG"
+  artifacts:
+    paths:
+      - trivy-final-report.json
+    expire_in: 7 days
+    when: always
+  only:
+    - main
+    - master

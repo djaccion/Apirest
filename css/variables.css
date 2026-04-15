@@ -1,0 +1,108 @@
+:root {
+
+  /* ============================================================
+     GRUPO 1 - PALETA DE COLORES PRIMARIOS
+     Tonos azul marino / índigo profundo para transmitir
+     internacionalidad y modernidad
+     ============================================================ */
+  --color-primary-dark:    #1a2744;
+  --color-primary-medium:  #2e4a8e;
+  --color-primary-light:   #dce8f8;
+
+  /* ============================================================
+     GRUPO 2 - PALETA DE COLORES NEUTROS
+     Escala de grises con contraste WCAG AA mínimo (4.5:1)
+     para combinaciones texto-fondo
+     ============================================================ */
+  --color-neutral-white:   #ffffff;
+  --color-neutral-100:     #f4f6f9;
+  --color-neutral-300:     #d1d8e4;
+  --color-neutral-500:     #6b7a99;
+  --color-neutral-900:     #1c2233;
+
+  /* ============================================================
+     GRUPO 3 - COLORES DE ACENTO Y ESTADO
+     Para elementos interactivos, sombras y bordes sutiles
+     ============================================================ */
+  --color-accent:          #3a6fd8;
+  --color-shadow:          rgba(30, 45, 90, 0.12);
+  --color-border-subtle:   #c8d4ea;
+
+  /* ============================================================
+     GRUPO 4 - TIPOGRAFÍA
+     Font stack segura con soporte latino y fallbacks universales.
+     Los idiomas con scripts propios (árabe, chino, japonés,
+     hebreo) usarán la fuente del sistema operativo por defecto.
+     ============================================================ */
+  --font-family-primary:   'Segoe UI', system-ui, -apple-system,
+                            BlinkMacSystemFont, 'Helvetica Neue',
+                            Arial, sans-serif;
+
+  --font-size-base:        1rem;
+
+  --font-size-xl:          2.5rem;
+  --font-size-lg:          1.75rem;
+  --font-size-md:          1.25rem;
+  --font-size-body:        1rem;
+  --font-size-sm:          0.875rem;
+
+  --font-weight-normal:    400;
+  --font-weight-medium:    600;
+  --font-weight-bold:      700;
+
+  --line-height-body:      1.6;
+  --line-height-heading:   1.2;
+
+  /* ============================================================
+     GRUPO 5 - ESPACIADO
+     Escala basada en múltiplos de 8px para consistencia
+     en padding, margin y gap de todos los componentes
+     ============================================================ */
+  --spacing-xs:            0.25rem;
+  --spacing-sm:            0.5rem;
+  --spacing-md:            1rem;
+  --spacing-lg:            1.5rem;
+  --spacing-xl:            2rem;
+  --spacing-2xl:           3rem;
+  --spacing-3xl:           4rem;
+
+  /* ============================================================
+     GRUPO 6 - BORDES Y RADIOS
+     Radios para badges, tarjetas, contenedores y botones pill
+     ============================================================ */
+  --border-radius-sm:      4px;
+  --border-radius-card:    12px;
+  --border-radius-lg:      24px;
+
+  --border-width-default:  1px;
+  --border-color-default:  var(--color-neutral-300);
+
+  /* ============================================================
+     GRUPO 7 - SOMBRAS
+     Dos niveles de elevación: estado normal y estado hover
+     ============================================================ */
+  --shadow-card:           0 2px 8px 0 var(--color-shadow);
+  --shadow-hover:          0 8px 24px 0 rgba(30, 45, 90, 0.22);
+
+  /* ============================================================
+     GRUPO 8 - TRANSICIONES
+     Duraciones y easing para micro-interacciones y animaciones
+     ============================================================ */
+  --transition-duration-fast:    150ms;
+  --transition-duration-normal:  300ms;
+  --transition-easing:           cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ============================================================
+     GRUPO 9 - LAYOUT Y BREAKPOINTS
+     Ancho máximo del contenedor, columnas del grid y gap.
+
+     NOTA - Breakpoints para responsive.css (no usables en
+     media queries como variables CSS):
+       - Mobile:  hasta 480px
+       - Tablet:  hasta 768px
+       - Desktop: desde 1024px
+     ============================================================ */
+  --layout-max-width:      1200px;
+  --grid-columns-desktop:  3;
+  --grid-gap:              var(--spacing-lg);
+}
