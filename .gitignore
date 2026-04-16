@@ -1,78 +1,69 @@
-# Dependencies
-node_modules/
-
-# Compiled CSS and source maps
-css/styles.css
-css/styles.css.map
-
-# SASS cache
-.sass-cache/
-
-# Build and distribution directories
-dist/
-build/
-
-# Test coverage
-coverage/
-
-# Environment variables - DevSecOps preventive exclusion
+# Variables de entorno y configuración sensible
 .env
 .env.local
-.env.development
 .env.production
-.env.staging
-.env.test
+.env.development
+!.env.example
 
-# Security - TLS/SSL certificates and private keys
-*.pem
-*.key
-*.cert
-*.crt
-*.p12
-*.pfx
-secrets.*
-credentials.*
-config.local.*
+# Archivos compilados de Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.pdb
 
-# Nginx production config (version nginx.conf.example instead)
-nginx.conf
+# Entornos virtuales de Python
+venv/
+env/
+.venv/
+virtualenv/
+.Python
+venv311/
+env_rut/
 
-# Operating System - macOS
-.DS_Store
-._*
-.AppleDouble
-.LSOverride
+# Archivos de logs y auditoría
+*.log
+*.log.1
+*.log.2
+*.log.3
+*.log.4
+*.log.5
+logs/*.log
+!logs/.gitkeep
 
-# Operating System - Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
+# Distribución y empaquetado Python
+dist/
+build/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+site-packages/
 
-# Operating System - Linux
-*~
-
-# Editors - Visual Studio Code
-.vscode/
-!.vscode/extensions.json
-!.vscode/settings.json
-
-# Editors - JetBrains (WebStorm, IntelliJ)
+# IDEs y editores de código
 .idea/
-
-# Editors - Sublime Text
+.vscode/
 *.sublime-project
 *.sublime-workspace
+.DS_Store
+Thumbs.db
 
-# Editors - Vim/Neovim
-*.swp
-*.swo
-Session.vim
+# Cobertura de tests y reportes
+.coverage
+htmlcov/
+coverage.xml
+*.xml
 
-# Logs and temporary files
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-tmp/
-temp/
+# Flask y archivos de instancia
+instance/
+*.db
+*.sqlite3
+.flask_session/
+
+# Archivos temporales del sistema
+*.tmp
+*.temp
+~*
+__MACOSX/
