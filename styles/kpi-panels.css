@@ -1,0 +1,525 @@
+:
+```css
+/* ============================================================
+   styles/kpi-panels.css
+   KPI Panels (left/right) + DORA bottom bar styles
+   ============================================================ */
+
+/* ============================================================
+   PANELES LATERALES — Contenedor Base Compartido
+   ============================================================ */
+.kpi-panel {
+  position: fixed;
+  top: var(--header-height, 60px);
+  bottom: var(--dora-bar-height, 60px);
+  width: 290px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: rgba(var(--color-bg-panel-rgb, 10, 14, 26), 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--color-border-rgb, 80, 120, 200), 0.18);
+  z-index: 10;
+}
+
+/* Panel Izquierdo */
+.kpi-panel--left {
+  left: 0;
+  align-items: center;
+  padding: 18px 16px;
+  border-left: none;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+/* Panel Derecho */
+.kpi-panel--right {
+  right: 0;
+  align-items: stretch;
+  padding: 0;
+  border-right: none;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+/* ============================================================
+   WIDGET VELOCÍMETRO
+   ============================================================ */
+.speedometer-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(var(--color-border-rgb, 80, 120, 200), 0.22);
+}
+
+.speedometer-widget__canvas {
+  display: block;
+  margin: 0 auto;
+  width: 200px;
+  height: 120px;
+}
+
+.speedometer-widget__value {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--color-accent-primary, #00d4ff);
+  line-height: 1.1;
+  margin-top: 6px;
+  transition: color 0.3s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.speedometer-widget__label {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #7a8aaa);
+  margin-top: 4px;
+  text-align: center;
+}
+
+/* ============================================================
+   WIDGET RADAR CHART
+   ============================================================ */
+.radar-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 8px;
+  position: relative;
+}
+
+.radar-widget__canvas {
+  display: block;
+  margin: 0 auto;
+  width: 200px;
+  height: 200px;
+}
+
+.radar-widget__label {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #7a8aaa);
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* Labels de ejes del radar renderizados en DOM */
+.radar-axis-label {
+  position: absolute;
+  font-size: 10px;
+  color: rgba(var(--color-text-secondary-rgb, 122, 138, 170), 0.7);
+  pointer-events: none;
+  white-space: nowrap;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+
+/* ============================================================
+   PANEL DERECHO — Lista de KPIs con Barras de Progreso
+   ============================================================ */
+.kpi-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--color-accent-primary-rgb, 0, 212, 255), 0.4) transparent;
+}
+
+.kpi-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.kpi-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kpi-list::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--color-accent-primary-rgb, 0, 212, 255), 0.4);
+  border-radius: 2px;
+}
+
+/* ============================================================
+   ITEM INDIVIDUAL DE KPI
+   ============================================================ */
+.kpi-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(var(--color-border-rgb, 80, 120, 200), 0.15);
+}
+
+.kpi-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Label + Valor en la misma línea */
+.kpi-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.kpi-item__label {
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-text-secondary, #7a8aaa);
+  line-height: 1.2;
+}
+
+.kpi-item__value,
+.kpi-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent-primary, #00d4ff);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.4s ease;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+/* ============================================================
+   BARRA DE PROGRESO
+   ============================================================ */
+.kpi-bar {
+  position: relative;
+  height: 6px;
+  background: rgba(var(--color-bg-dark-rgb, 5, 8, 18), 0.5);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.kpi-bar__fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-secondary, #0066ff) 0%,
+    var(--color-accent-primary, #00d4ff) 100%
+  );
+  box-shadow: 0 2px 8px rgba(var(--color-accent-primary-rgb, 0, 212, 255), 0.6);
+  transition: width 0.6s ease-out, background 0.4s ease, box-shadow 0.4s ease;
+  will-change: width;
+}
+
+/* Estado activo de la barra */
+.kpi-bar__fill--active {
+  background: linear-gradient(
+    90deg,
+    var(--color-module-accent, var(--color-accent-secondary, #0066ff)) 0%,
+    var(--color-accent-primary, #00d4ff) 60%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  box-shadow:
+    0 2px 12px rgba(var(--color-accent-primary-rgb, 0, 212, 255), 0.85),
+    0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================================
+   BARRA INFERIOR DORA
+   ============================================================ */
+.dora-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--dora-bar-height, 60px);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 0;
+  background: rgba(var(--color-bg-panel-rgb, 10, 14, 26), 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(var(--color-border-rgb, 80, 120, 200), 0.22);
+  z-index: 20;
+  overflow: hidden;
+}
+
+/* Separador decorativo izquierdo */
+.dora-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--color-accent-primary-rgb, 0, 212, 255), 0.5) 30%,
+    rgba(var(--color-accent-primary-rgb, 0, 212, 255), 0.5) 70%,
+    transparent 100%
+  );
+}
+
+/* ============================================================
+   MÉTRICAS DORA — Items
+   ============================================================ */
+.dora-metrics {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  height: 100%;
+}
+
+.dora-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  padding: 0 12px;
+  position: relative;
+  min-width: 0;
+}
+
+/* Separador vertical entre métricas */
+.dora-metric + .dora-metric::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(var(--color-border-rgb, 80, 120, 200), 0.25);
+}
+
+.dora-metric__label {
+  font-size: 9px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  color: var(--color-text-secondary, #7a8aaa);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.dora-metric__value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-accent-primary, #00d4ff);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.dora-metric__unit {
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--color-text-secondary, #7a8aaa);
+  letter-spacing: 0.5px;
+  margin-top: 1px;
+  line-height: 1;
+}
+
+/* Indicador de nivel DORA (elite / high / medium / low) */
+.dora-metric__badge {
+  display: inline-block;
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.dora-metric__badge--elite {
+  background: rgba(var(--color-accent-primary-rgb, 0, 212, 255), 0.15);
+  color: var(--color-accent-primary, #00d4ff);
+  border: 1px solid rgba(var(--color-accent-primary-rgb, 0, 212, 255), 0.4);
+}
+
+.dora-metric__badge--high {
+  background: rgba(80, 200, 120, 0.12);
+  color: #50c878;
+  border: 1px solid rgba(80, 200, 120, 0.35);
+}
+
+.dora-metric__badge--medium {
+  background: rgba(255, 180, 50, 0.12);
+  color: #ffb432;
+  border: 1px solid rgba(255, 180, 50, 0.35);
+}
+
+.dora-metric__badge--low {
+  background: rgba(255, 80, 80, 0.12);
+  color: #ff5050;
+  border: 1px solid rgba(255, 80, 80, 0.35);
+}
+
+/* ============================================================
+   SECCIÓN DE TRAZABILIDAD EN DORA BAR
+   ============================================================ */
+.dora-traceability {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(var(--color-border-rgb, 80, 120, 200), 0.25);
+  flex-shrink: 0;
+}
+
+.dora-traceability__label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-text-secondary, #7a8aaa);
+  white-space: nowrap;
+}
+
+.dora-traceability__value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-accent-primary, #00d4ff);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s ease;
+}
+
+.dora-traceability__bar {
+  width: 80px;
+  height: 4px;
+  background: rgba(var(--color-bg-dark-rgb, 5, 8, 18), 0.6);
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.dora-traceability__bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-secondary, #0066ff) 0%,
+    var(--color-accent-primary, #00d4ff) 100%
+  );
+  box-shadow: 0 0 6px rgba(var(--color-accent-primary-rgb, 0, 212, 255), 0.55);
+  transition: width 0.6s ease-out;
+  will-change: width;
+}
+
+/* ============================================================
+   ESTADOS OVERDRIVE — Modificadores aplicados via JS
+   ============================================================ */
+
+/* Paneles en modo Overdrive */
+.overdrive-active .kpi-panel {
+  border-color: rgba(var(--color-overdrive-rgb, 0, 255, 200), 0.35);
+  background: rgba(var(--color-bg-panel-rgb, 10, 14, 26), 0.82);
+}
+
+.overdrive-active .kpi-item__value,
+.overdrive-active .kpi-value {
+  color: var(--color-overdrive, #00ffc8);
+}
+
+.overdrive-active .kpi-bar__fill {
+  background: linear-gradient(
+    90deg,
+    var(--color-overdrive-secondary, #00aaff) 0%,
+    var(--color-overdrive, #00ffc8) 100%
+  );
+  box-shadow: 0 2px 12px rgba(var(--color-overdrive-rgb, 0, 255, 200), 0.75);
+}
+
+.overdrive-active .speedometer-widget__value {
+  color: var(--color-overdrive, #00ffc8);
+}
+
+.overdrive-active .dora-bar {
+  border-top-color: rgba(var(--color-overdrive-rgb, 0, 255, 200), 0.4);
+}
+
+.overdrive-active .dora-metric__value {
+  color: var(--color-overdrive, #00ffc8);
+}
+
+.overdrive-active .dora-traceability__value {
+  color: var(--color-overdrive, #00ffc8);
+}
+
+.overdrive-active .dora-traceability__bar-fill {
+  background: linear-gradient(
+    90deg,
+    var(--color-overdrive-secondary, #00aaff) 0%,
+    var(--color-overdrive, #00ffc8) 100%
+  );
+  box-shadow: 0 0 8px rgba(var(--color-overdrive-rgb, 0, 255, 200), 0.7);
+}
+
+/* ============================================================
+   RESPONSIVE — Ajustes para viewports reducidos
+   ============================================================ */
+@media (max-width: 1400px) {
+  .kpi-panel {
+    width: 260px;
+  }
+
+  .speedometer-widget__canvas {
+    width: 180px;
+    height: 108px;
+  }
+
+  .radar-widget__canvas {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .kpi-panel {
+    width: 240px;
+  }
+
+  .speedometer-widget__value {
+    font-size: 26px;
+  }
+
+  .dora-metric__value {
+    font-size: 14px;
+  }
+
+  .dora-metric__label {
+    font-size: 8px;
+    letter-spacing: 1.2px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .kpi-panel {
+    width: 220px;
+  }
+
+  .kpi-list {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .dora-traceability {
+    display: none;
+  }
+}

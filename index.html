@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Power Grid - Engineering Dashboard</title>
+  <meta name="description" content="The Power Grid Engineering Dashboard: real-time visualization of engineering KPIs, DORA metrics, and tool module status across Jira, Confluence, Bitbucket, SonarQube and Teams.">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/modules.css">
+  <link rel="stylesheet" href="styles/animations.css">
+  <link rel="stylesheet" href="styles/overdrive.css">
+  <link rel="stylesheet" href="styles/kpi-panels.css">
+</head>
+<body>
+
+  <div id="app" role="main">
+
+    <div id="canvas-layer">
+      <canvas id="particleCanvas" aria-hidden="true"></canvas>
+      <canvas id="connectionCanvas" aria-hidden="true"></canvas>
+    </div>
+
+    <div id="ui-layer">
+
+      <div id="kpi-panel-left" role="region" aria-label="KPI Metrics Left">
+        <div id="speedometer-widget">
+          <canvas id="speedometerCanvas"></canvas>
+          <p id="speedometer-label"></p>
+        </div>
+        <div id="radar-widget">
+          <canvas id="radarCanvas" aria-label="Radar chart of 7 engineering metrics"></canvas>
+        </div>
+      </div>
+
+      <div id="central-zone">
+        <div id="core-container">
+          <canvas id="coreCanvas" aria-label="Jira core node, central hub"></canvas>
+        </div>
+        <div id="nodes-container" aria-label="Tool modules ring"></div>
+      </div>
+
+      <div id="kpi-panel-right" role="region" aria-label="KPI Metrics Right">
+        <div id="progress-bars-container">
+          <div id="progress-jira">
+            <span class="progress-label"></span>
+            <div class="progress-track">
+              <div class="progress-fill"></div>
+            </div>
+          </div>
+          <div id="progress-confluence">
+            <span class="progress-label"></span>
+            <div class="progress-track">
+              <div class="progress-fill"></div>
+            </div>
+          </div>
+          <div id="progress-bitbucket">
+            <span class="progress-label"></span>
+            <div class="progress-track">
+              <div class="progress-fill"></div>
+            </div>
+          </div>
+          <div id="progress-sonar">
+            <span class="progress-label"></span>
+            <div class="progress-track">
+              <div class="progress-fill"></div>
+            </div>
+          </div>
+          <div id="progress-teams">
+            <span class="progress-label"></span>
+            <div class="progress-track">
+              <div class="progress-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="dora-bar" role="complementary" aria-label="DORA Metrics and Traceability">
+        <div id="dora-metrics">
+          <span class="dora-metric" id="dora-deployment-freq"></span>
+          <span class="dora-metric" id="dora-lead-time"></span>
+          <span class="dora-metric" id="dora-change-failure"></span>
+          <span class="dora-metric" id="dora-recovery-time"></span>
+        </div>
+        <div id="traceability-strip">
+          <span id="traceability-text"></span>
+        </div>
+      </div>
+
+      <div id="overdrive-overlay" role="alert" aria-live="assertive" hidden>
+        <div id="overdrive-content">
+          <h2 id="overdrive-title">OVERDRIVE MODE ACTIVE</h2>
+        </div>
+        <div id="overdrive-particles-canvas-container">
+          <canvas id="overdriveCanvas" aria-hidden="true"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script type="module" src="utils/mathHelpers.js"></script>
+  <script type="module" src="utils/animation.js"></script>
+  <script type="module" src="config/kpiConfig.js"></script>
+  <script type="module" src="config/moduleConfig.js"></script>
+  <script type="module" src="state/appState.js"></script>
+  <script type="module" src="canvas/particleSystem.js"></script>
+  <script type="module" src="canvas/connectionRenderer.js"></script>
+  <script type="module" src="canvas/coreRenderer.js"></script>
+  <script type="module" src="ui/speedometer.js"></script>
+  <script type="module" src="ui/radarChart.js"></script>
+  <script type="module" src="ui/nodeRing.js"></script>
+  <script type="module" src="ui/kpiPanel.js"></script>
+  <script type="module" src="ui/overdriveOverlay.js"></script>
+  <script type="module" src="ui/doraBar.js"></script>
+  <script type="module" src="main.js"></script>
+
+</body>
+</html>

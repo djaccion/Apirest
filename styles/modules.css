@@ -1,0 +1,417 @@
+:shadow: 0 1px 3px rgba(0,0,0,0.8)`
+- `pointer-events: none`
+- `white-space: nowrap`
+
+---
+
+## 8. Ícono del Nodo (.node-icon)
+
+Contenedor del SVG o imagen del ícono:
+
+- `width: 32px`, `height: 32px`
+- `display: flex`, `align-items: center`, `justify-content: center`
+- `pointer-events: none`
+- `transition: filter 0.3s ease, transform 0.3s ease`
+- En estado activo del padre: `transform: scale(1.05)`
+
+---
+
+## 9. Indicador de Estado (.node-status-dot)
+
+Pequeño punto indicador en la esquina superior derecha del nodo:
+
+- `position: absolute`
+- `top: 6px`, `right: 6px`
+- `width: 8px`, `height: 8px`
+- `border-radius: 50%`
+- `border: 1px solid rgba(0,0,0,0.3)`
+- Inactivo: `background: #444`, `box-shadow: none`
+- Activo: `background: #00ff88`, `box-shadow: 0 0 6px 2px rgba(0,255,136,0.7)`
+- En estado activo del padre: `animation: statusDotBlink 3s ease-in-out infinite`
+
+La keyframe `statusDotBlink` vive en animations.css.
+
+---
+
+## 10. Variantes Específicas por Herramienta en Estado Activo
+
+Para cada `.node--[herramienta].active`, personalizar el glow con el color exacto de marca. Esto sobreescribe el glow genérico con valores hardcoded para máxima fidelidad visual:
+
+- **Jira activo**: box-shadow con tono azul `#0052CC`
+- **Confluence activo**: box-shadow con tono cyan `#00B8D9`
+- **Bitbucket activo**: box-shadow con tono `#2684FF`
+- **Jenkins activo**: box-shadow con tono `#D33833`
+- **SonarQube activo**: box-shadow con tono `#4E9BCD`
+
+---
+
+## 11. Modo Overdrive en Nodos (.overdrive-active .node-card)
+
+Cuando el contenedor padre tiene clase `.overdrive-active`:
+
+- Todos los nodos deben tener `border-color: #00ffff`
+- `box-shadow` adicional con cyan: `0 0 30px 10px rgba(0,255,255,0.3)`
+- El `.node-ring` debe tener `border-color: #00ffff` y `opacity: 0.8`
+- `animation` en el nodo completo: `overdriveNodePulse 1.5s ease-in-out infinite` (keyframe en overdrive.css)
+
+---
+
+## 12. Responsive Scaling
+
+Para viewport menor a 768px:
+- `--node-size` reducido a 60px
+- `font-size` del label reducido a 7px
+- `.node-icon`: 24px × 24px
+
+Para viewport menor a 480px:
+- `--node-size` reducido a 48px
+- `.node-label`: `display: none` para evitar overflow
+
+---
+
+Genera el CSS completo siguiendo exactamente estas especificaciones. No incluyas comentarios de sección numerados, usa comentarios CSS descriptivos breves. Asegúrate de que las custom properties RGB estén declaradas correctamente para su uso en rgba().
+
+```css
+/* ============================================================
+   styles/modules.css
+   Estilos específicos de nodos de herramientas - The Power Grid
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   Paleta de colores por herramienta
+   ---------------------------------------------------------- */
+
+.node--jira {
+  --node-color: #0052CC;
+  --node-color-rgb: 0, 82, 204;
+  --node-glow: rgba(0, 82, 204, 0.6);
+}
+
+.node--confluence {
+  --node-color: #00B8D9;
+  --node-color-rgb: 0, 184, 217;
+  --node-glow: rgba(0, 184, 217, 0.6);
+  --node-color-base: #172B4D;
+}
+
+.node--bitbucket {
+  --node-color: #2684FF;
+  --node-color-rgb: 38, 132, 255;
+  --node-glow: rgba(38, 132, 255, 0.6);
+  --node-color-base: #205081;
+}
+
+.node--jenkins {
+  --node-color: #D33833;
+  --node-color-rgb: 211, 56, 51;
+  --node-glow: rgba(211, 56, 51, 0.6);
+  --node-color-accent: #F0D6B7;
+}
+
+.node--sonarqube {
+  --node-color: #4E9BCD;
+  --node-color-rgb: 78, 155, 205;
+  --node-glow: rgba(78, 155, 205, 0.6);
+  --node-color-accent: #CB3032;
+}
+
+/* ----------------------------------------------------------
+   Estructura base del nodo
+   ---------------------------------------------------------- */
+
+.node-card {
+  --node-size: 80px;
+  width: var(--node-size);
+  height: var(--node-size);
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  user-select: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+  will-change: transform, box-shadow;
+  z-index: 10;
+}
+
+/* ----------------------------------------------------------
+   Estado inactivo del nodo (sin clase .active)
+   ---------------------------------------------------------- */
+
+.node-card:not(.active) {
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--node-color-rgb), 0.15) 0%,
+    rgba(var(--node-color-rgb), 0.05) 100%
+  );
+  border: 2px solid rgba(var(--node-color-rgb), 0.3);
+  box-shadow: 0 0 1px 0 rgba(var(--node-color-rgb), 0.1);
+  opacity: 0.65;
+}
+
+.node-card:not(.active) .node-icon,
+.node-card:not(.active) .node-label {
+  filter: grayscale(40%);
+}
+
+/* ----------------------------------------------------------
+   Estado activo del nodo
+   ---------------------------------------------------------- */
+
+.node-card.active {
+  opacity: 1;
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--node-color-rgb), 0.4) 0%,
+    rgba(var(--node-color-rgb), 0.12) 100%
+  );
+  border: 2px solid var(--node-color);
+  box-shadow:
+    inset 0 0 15px 3px var(--node-glow),
+    0 0 25px 8px var(--node-glow),
+    0 0 50px 15px rgba(var(--node-color-rgb), 0.2);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.node-card.active .node-icon {
+  filter: none;
+}
+
+.node-card.active .node-label {
+  filter: none;
+}
+
+/* ----------------------------------------------------------
+   Estado hover del nodo
+   ---------------------------------------------------------- */
+
+.node-card:hover {
+  transform: translate(-50%, -50%) scale(1.12);
+  cursor: pointer;
+}
+
+.node-card:not(.active):hover {
+  box-shadow: 0 0 12px 4px rgba(var(--node-color-rgb), 0.25);
+}
+
+.node-card.active:hover {
+  box-shadow:
+    inset 0 0 18px 4px var(--node-glow),
+    0 0 30px 10px var(--node-glow),
+    0 0 60px 18px rgba(var(--node-color-rgb), 0.24);
+}
+
+/* ----------------------------------------------------------
+   Anillo orbital del nodo
+   ---------------------------------------------------------- */
+
+.node-ring {
+  position: absolute;
+  width: calc(var(--node-size) + 20px);
+  height: calc(var(--node-size) + 20px);
+  border-radius: 50%;
+  border: 1px solid var(--node-color);
+  opacity: 0.4;
+  pointer-events: none;
+  animation: none;
+}
+
+.node-card:not(.active) .node-ring {
+  opacity: 0.2;
+  animation: none;
+}
+
+.node-card.active .node-ring {
+  opacity: 0.4;
+  animation: nodeRingPulse 2s ease-in-out infinite;
+}
+
+/* ----------------------------------------------------------
+   Label del nodo
+   ---------------------------------------------------------- */
+
+.node-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: white;
+  margin-top: 4px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------
+   Ícono del nodo
+   ---------------------------------------------------------- */
+
+.node-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.node-card.active .node-icon {
+  transform: scale(1.05);
+}
+
+/* ----------------------------------------------------------
+   Indicador de estado (punto esquina superior derecha)
+   ---------------------------------------------------------- */
+
+.node-status-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  background: #444;
+  box-shadow: none;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.node-card.active .node-status-dot {
+  background: #00ff88;
+  box-shadow: 0 0 6px 2px rgba(0, 255, 136, 0.7);
+  animation: statusDotBlink 3s ease-in-out infinite;
+}
+
+/* ----------------------------------------------------------
+   Variantes de glow específicas por herramienta en estado activo
+   ---------------------------------------------------------- */
+
+.node--jira.active {
+  box-shadow:
+    inset 0 0 15px 3px rgba(0, 82, 204, 0.6),
+    0 0 25px 8px rgba(0, 82, 204, 0.6),
+    0 0 50px 15px rgba(0, 82, 204, 0.2);
+}
+
+.node--jira.active:hover {
+  box-shadow:
+    inset 0 0 18px 4px rgba(0, 82, 204, 0.72),
+    0 0 30px 10px rgba(0, 82, 204, 0.72),
+    0 0 60px 18px rgba(0, 82, 204, 0.24);
+}
+
+.node--confluence.active {
+  box-shadow:
+    inset 0 0 15px 3px rgba(0, 184, 217, 0.6),
+    0 0 25px 8px rgba(0, 184, 217, 0.6),
+    0 0 50px 15px rgba(0, 184, 217, 0.2);
+}
+
+.node--confluence.active:hover {
+  box-shadow:
+    inset 0 0 18px 4px rgba(0, 184, 217, 0.72),
+    0 0 30px 10px rgba(0, 184, 217, 0.72),
+    0 0 60px 18px rgba(0, 184, 217, 0.24);
+}
+
+.node--bitbucket.active {
+  box-shadow:
+    inset 0 0 15px 3px rgba(38, 132, 255, 0.6),
+    0 0 25px 8px rgba(38, 132, 255, 0.6),
+    0 0 50px 15px rgba(38, 132, 255, 0.2);
+}
+
+.node--bitbucket.active:hover {
+  box-shadow:
+    inset 0 0 18px 4px rgba(38, 132, 255, 0.72),
+    0 0 30px 10px rgba(38, 132, 255, 0.72),
+    0 0 60px 18px rgba(38, 132, 255, 0.24);
+}
+
+.node--jenkins.active {
+  box-shadow:
+    inset 0 0 15px 3px rgba(211, 56, 51, 0.6),
+    0 0 25px 8px rgba(211, 56, 51, 0.6),
+    0 0 50px 15px rgba(211, 56, 51, 0.2);
+}
+
+.node--jenkins.active:hover {
+  box-shadow:
+    inset 0 0 18px 4px rgba(211, 56, 51, 0.72),
+    0 0 30px 10px rgba(211, 56, 51, 0.72),
+    0 0 60px 18px rgba(211, 56, 51, 0.24);
+}
+
+.node--sonarqube.active {
+  box-shadow:
+    inset 0 0 15px 3px rgba(78, 155, 205, 0.6),
+    0 0 25px 8px rgba(78, 155, 205, 0.6),
+    0 0 50px 15px rgba(78, 155, 205, 0.2);
+}
+
+.node--sonarqube.active:hover {
+  box-shadow:
+    inset 0 0 18px 4px rgba(78, 155, 205, 0.72),
+    0 0 30px 10px rgba(78, 155, 205, 0.72),
+    0 0 60px 18px rgba(78, 155, 205, 0.24);
+}
+
+/* ----------------------------------------------------------
+   Modo Overdrive en nodos
+   ---------------------------------------------------------- */
+
+.overdrive-active .node-card {
+  border-color: #00ffff;
+  box-shadow:
+    inset 0 0 15px 3px var(--node-glow),
+    0 0 25px 8px var(--node-glow),
+    0 0 50px 15px rgba(var(--node-color-rgb), 0.2),
+    0 0 30px 10px rgba(0, 255, 255, 0.3);
+  animation: overdriveNodePulse 1.5s ease-in-out infinite;
+}
+
+.overdrive-active .node-card.active {
+  border-color: #00ffff;
+}
+
+.overdrive-active .node-ring {
+  border-color: #00ffff;
+  opacity: 0.8;
+}
+
+/* ----------------------------------------------------------
+   Responsive: viewport menor a 768px
+   ---------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .node-card {
+    --node-size: 60px;
+  }
+
+  .node-label {
+    font-size: 7px;
+  }
+
+  .node-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ----------------------------------------------------------
+   Responsive: viewport menor a 480px
+   ---------------------------------------------------------- */
+
+@media (max-width: 480px) {
+  .node-card {
+    --node-size: 48px;
+  }
+
+  .node-label {
+    display: none;
+  }
+}
