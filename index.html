@@ -1,119 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Power Grid - Engineering Dashboard</title>
-  <meta name="description" content="The Power Grid Engineering Dashboard: real-time visualization of engineering KPIs, DORA metrics, and tool module status across Jira, Confluence, Bitbucket, SonarQube and Teams.">
-  <link rel="stylesheet" href="styles/main.css">
-  <link rel="stylesheet" href="styles/modules.css">
-  <link rel="stylesheet" href="styles/animations.css">
-  <link rel="stylesheet" href="styles/overdrive.css">
-  <link rel="stylesheet" href="styles/kpi-panels.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validador de Prompts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 font-sans min-h-screen flex items-center justify-center">
+  <div class="bg-white shadow-md rounded-xl p-8 w-full max-w-xl mx-4">
 
-  <div id="app" role="main">
+    <h1 class="text-2xl font-bold text-gray-800 mb-1">Validador de Prompts y Tokens</h1>
+    <p class="text-sm text-gray-500 mb-6">Analiza tu prompt, estima los tokens consumidos y evalúa su estado de optimización.</p>
 
-    <div id="canvas-layer">
-      <canvas id="particleCanvas" aria-hidden="true"></canvas>
-      <canvas id="connectionCanvas" aria-hidden="true"></canvas>
+    <div class="mb-2">
+      <label for="promptInput" class="block text-sm font-medium text-gray-700 mb-1">Escribe tu prompt</label>
+      <textarea
+        id="promptInput"
+        rows="5"
+        placeholder="Escribe aquí tu prompt para analizarlo..."
+        class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-200 resize-y"
+      ></textarea>
     </div>
 
-    <div id="ui-layer">
+    <p id="errorMsg" class="text-red-500 text-sm mb-3 hidden">El prompt no puede estar vacío.</p>
 
-      <div id="kpi-panel-left" role="region" aria-label="KPI Metrics Left">
-        <div id="speedometer-widget">
-          <canvas id="speedometerCanvas"></canvas>
-          <p id="speedometer-label"></p>
+    <button
+      id="analyzeBtn"
+      class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors duration-200 mb-6"
+    >
+      Analizar Prompt
+    </button>
+
+    <div id="resultsPanel" class="hidden">
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Resultados del Análisis</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Tokens Estimados</p>
+          <p id="tokenCount" class="text-2xl font-bold text-blue-600">—</p>
         </div>
-        <div id="radar-widget">
-          <canvas id="radarCanvas" aria-label="Radar chart of 7 engineering metrics"></canvas>
+
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Latencia Simulada</p>
+          <p id="latencyValue" class="text-2xl font-bold text-green-600">—</p>
         </div>
+
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Estado del Prompt</p>
+          <p id="promptStatus" class="text-2xl font-bold text-green-600">—</p>
+        </div>
+
       </div>
-
-      <div id="central-zone">
-        <div id="core-container">
-          <canvas id="coreCanvas" aria-label="Jira core node, central hub"></canvas>
-        </div>
-        <div id="nodes-container" aria-label="Tool modules ring"></div>
-      </div>
-
-      <div id="kpi-panel-right" role="region" aria-label="KPI Metrics Right">
-        <div id="progress-bars-container">
-          <div id="progress-jira">
-            <span class="progress-label"></span>
-            <div class="progress-track">
-              <div class="progress-fill"></div>
-            </div>
-          </div>
-          <div id="progress-confluence">
-            <span class="progress-label"></span>
-            <div class="progress-track">
-              <div class="progress-fill"></div>
-            </div>
-          </div>
-          <div id="progress-bitbucket">
-            <span class="progress-label"></span>
-            <div class="progress-track">
-              <div class="progress-fill"></div>
-            </div>
-          </div>
-          <div id="progress-sonar">
-            <span class="progress-label"></span>
-            <div class="progress-track">
-              <div class="progress-fill"></div>
-            </div>
-          </div>
-          <div id="progress-teams">
-            <span class="progress-label"></span>
-            <div class="progress-track">
-              <div class="progress-fill"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="dora-bar" role="complementary" aria-label="DORA Metrics and Traceability">
-        <div id="dora-metrics">
-          <span class="dora-metric" id="dora-deployment-freq"></span>
-          <span class="dora-metric" id="dora-lead-time"></span>
-          <span class="dora-metric" id="dora-change-failure"></span>
-          <span class="dora-metric" id="dora-recovery-time"></span>
-        </div>
-        <div id="traceability-strip">
-          <span id="traceability-text"></span>
-        </div>
-      </div>
-
-      <div id="overdrive-overlay" role="alert" aria-live="assertive" hidden>
-        <div id="overdrive-content">
-          <h2 id="overdrive-title">OVERDRIVE MODE ACTIVE</h2>
-        </div>
-        <div id="overdrive-particles-canvas-container">
-          <canvas id="overdriveCanvas" aria-hidden="true"></canvas>
-        </div>
-      </div>
-
     </div>
 
   </div>
 
-  <script type="module" src="utils/mathHelpers.js"></script>
-  <script type="module" src="utils/animation.js"></script>
-  <script type="module" src="config/kpiConfig.js"></script>
-  <script type="module" src="config/moduleConfig.js"></script>
-  <script type="module" src="state/appState.js"></script>
-  <script type="module" src="canvas/particleSystem.js"></script>
-  <script type="module" src="canvas/connectionRenderer.js"></script>
-  <script type="module" src="canvas/coreRenderer.js"></script>
-  <script type="module" src="ui/speedometer.js"></script>
-  <script type="module" src="ui/radarChart.js"></script>
-  <script type="module" src="ui/nodeRing.js"></script>
-  <script type="module" src="ui/kpiPanel.js"></script>
-  <script type="module" src="ui/overdriveOverlay.js"></script>
-  <script type="module" src="ui/doraBar.js"></script>
-  <script type="module" src="main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const promptInput = document.getElementById('promptInput');
+      const analyzeBtn = document.getElementById('analyzeBtn');
+      const errorMsg = document.getElementById('errorMsg');
+      const resultsPanel = document.getElementById('resultsPanel');
+      const tokenCount = document.getElementById('tokenCount');
+      const latencyValue = document.getElementById('latencyValue');
+      const promptStatus = document.getElementById('promptStatus');
 
+      analyzeBtn.addEventListener('click', async function () {
+        // Paso 1 - Limpiar estado previo
+        promptInput.classList.remove('border-red-500', 'ring-2', 'ring-red-300');
+        promptInput.classList.add('border-gray-300');
+        errorMsg.classList.add('hidden');
+        resultsPanel.classList.add('hidden');
+
+        // Paso 2 - Validación cliente
+        const promptValue = promptInput.value.trim();
+
+        if (!promptValue) {
+          promptInput.classList.remove('border-gray-300');
+          promptInput.classList.add('border-red-500', 'ring-2', 'ring-red-300');
+          errorMsg.classList.remove('hidden');
+          return;
+        }
+
+        // Paso 3 - Estado loading
+        analyzeBtn.disabled = true;
+        analyzeBtn.textContent = 'Analizando...';
+
+        try {
+          const response = await fetch('http://localhost:8000/api/analyze', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt: promptValue })
+          });
+
+          if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor: ' + response.status);
+          }
+
+          const data = await response.json();
+
+          // Paso 4 - Renderizar resultados
+          tokenCount.textContent = data.tokens;
+          latencyValue.textContent = data.latency_ms + ' ms';
+
+          promptStatus.classList.remove('text-green-600', 'text-yellow-600');
+          if (data.status === 'Óptimo') {
+            promptStatus.textContent = 'Óptimo';
+            promptStatus.classList.add('text-green-600');
+          } else {
+            promptStatus.textContent = 'Alerta';
+            promptStatus.classList.add('text-yellow-600');
+          }
+
+          resultsPanel.classList.remove('hidden');
+
+        } catch (error) {
+          alert('No se pudo conectar con el servidor. Asegúrate de que el backend está corriendo en http://localhost:8000\n\nDetalle: ' + error.message);
+        } finally {
+          // Paso 5 - Restaurar botón
+          analyzeBtn.disabled = false;
+          analyzeBtn.textContent = 'Analizar Prompt';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
