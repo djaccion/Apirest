@@ -1,79 +1,51 @@
-.env
-.env.local
-.env.development
-.env.test
-.env.*
-
-# =============================================================================
-# Control de Versiones
-# =============================================================================
-.git/
+.git
 .gitignore
-.github/
-
-# =============================================================================
-# Python / Runtime - Entornos Virtuales
-# =============================================================================
-venv/
-.venv/
-env/
-.env_local/
-
-# =============================================================================
-# Python / Runtime - Caché y Bytecode
-# =============================================================================
-**/__pycache__/
-**/*.pyc
-**/*.pyo
-.pytest_cache/
-.mypy_cache/
-
-# =============================================================================
-# Testing - Cobertura y Reportes
-# =============================================================================
-tests/
-.coverage
-htmlcov/
-reports/
-*.xml
+.gitattributes
+node_modules
+**/node_modules
+.env
+.env.*
+coverage
+test-reports
 junit.xml
-report.xml
-
-# =============================================================================
-# Secretos y Configuración Local de Desarrollo
-# =============================================================================
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# =============================================================================
-# CI/CD
-# =============================================================================
-.gitlab-ci.yml
-.bandit
-.semgrep/
-
-# =============================================================================
-# Docker
-# =============================================================================
-Dockerfile
-.dockerignore
-docker-compose*.yml
-
-# =============================================================================
-# Documentación
-# =============================================================================
-docs/
+junit-*.xml
+docs
 README.md
+README.txt
+README.rst
+CHANGELOG
 CHANGELOG.md
+CONTRIBUTING
 CONTRIBUTING.md
-
-# =============================================================================
-# Sistema Operativo y Archivos Temporales
-# =============================================================================
+LICENSE
+.vscode
+.idea
+.editorconfig
 .DS_Store
 Thumbs.db
+.gitlab-ci.yml
+k8s/
+kubernetes/
+docker-compose.yml
+docker-compose.override.yml
+Dockerfile
+.dockerignore
+logs
 *.log
-tmp/
-temp/
+tmp
+temp
+.npm
+.cache
+.nyc_output
+semgrep-report*
+trivy-report*
+npm-audit*
+.snyk
+.eslintrc*
+.eslintignore
+.prettierrc*
+.prettierignore
+*.db
+*.sqlite
+*.sqlite3
+jest.config.js

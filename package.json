@@ -1,0 +1,80 @@
+{
+  "name": "user-deployment-api",
+  "version": "1.0.0",
+  "description": "API RESTful para gestión de usuarios, despliegues y métricas de rendimiento",
+  "main": "src/index.js",
+  "author": "Equipo de Desarrollo",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "debug": "node --inspect src/index.js",
+    "test": "jest --forceExit",
+    "test:coverage": "jest --coverage --forceExit",
+    "test:ci": "jest --coverage --forceExit --reporters=default --reporters=jest-junit",
+    "lint": "eslint src/ --ext .js",
+    "lint:fix": "eslint src/ --ext .js --fix",
+    "security:audit": "npm audit --audit-level=high",
+    "security:audit:ci": "npm audit --json"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "express-rate-limit": "^7.1.5",
+    "jsonwebtoken": "^9.0.2",
+    "bcrypt": "^5.1.1",
+    "better-sqlite3": "^9.4.3",
+    "ioredis": "^5.3.2",
+    "amqplib": "^0.10.3",
+    "joi": "^17.11.0",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0",
+    "swagger-ui-express": "^5.0.0",
+    "swagger-jsdoc": "^6.2.8"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4",
+    "jest-junit": "^16.0.0",
+    "ioredis-mock": "^8.9.0",
+    "jest-mock-extended": "^3.0.5",
+    "eslint": "^8.56.0",
+    "eslint-plugin-security": "^2.1.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "nodemon": "^3.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    },
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "clover"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js"
+    ]
+  },
+  "jest-junit": {
+    "outputDirectory": "reports",
+    "outputName": "junit.xml",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}",
+    "ancestorSeparator": " › "
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

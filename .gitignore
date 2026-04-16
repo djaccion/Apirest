@@ -1,69 +1,73 @@
-# Variables de entorno y configuración sensible
+# Dependencies
+node_modules/
+**/node_modules/
+.npm/
+
+# Environment variables and secrets
 .env
-.env.local
-.env.production
-.env.development
+.env.*
 !.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+secrets.json
+credentials.json
+*secret*
 
-# Archivos compilados de Python
-__pycache__/
-**/__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.pytest_cache/
-*.pdb
-
-# Entornos virtuales de Python
-venv/
-env/
-.venv/
-virtualenv/
-.Python
-venv311/
-env_rut/
-
-# Archivos de logs y auditoría
-*.log
-*.log.1
-*.log.2
-*.log.3
-*.log.4
-*.log.5
-logs/*.log
-!logs/.gitkeep
-
-# Distribución y empaquetado Python
+# Build artifacts
 dist/
 build/
-eggs/
-.eggs/
-*.egg-info/
-*.egg
-site-packages/
+**/.cache/
 
-# IDEs y editores de código
+# Test coverage and reports
+coverage/
+.nyc_output/
+*.lcov
+**/reports/*.xml
+**/test-results/*.xml
+test-results/
+reports/
+
+# Logs
+*.log
+*.log.gz
+*.log.zip
+logs/
+
+# IDE and editor directories
 .idea/
 .vscode/
-*.sublime-project
-*.sublime-workspace
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+.history/
 
-# Cobertura de tests y reportes
-.coverage
-htmlcov/
-coverage.xml
-*.xml
+# Docker
+docker-compose.override.yml
+data/
+volumes/
 
-# Flask y archivos de instancia
-instance/
-*.db
+# SQLite database files
+*.sqlite
 *.sqlite3
-.flask_session/
+*.db
+*.db-shm
+*.db-wal
 
-# Archivos temporales del sistema
+# Temporary and runtime files
 *.tmp
 *.temp
-~*
-__MACOSX/
+.tmp/
+*.pid
+.node_repl_history
+
+# Security and analysis tools
+semgrep-output/
+*.sarif
+snyk-report.json
+audit-report.json
+.trivy/
