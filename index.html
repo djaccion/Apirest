@@ -3,199 +3,185 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Validador de Prompts y Tokens</title>
+  <title>Analizador de Prompts</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 min-h-screen flex items-center justify-center px-4 py-10">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center py-10">
 
-  <div class="w-full max-w-2xl mx-auto flex flex-col gap-8">
+  <div class="max-w-2xl w-full bg-white rounded-xl shadow-lg p-8">
 
-    <!-- Encabezado -->
-    <header class="text-center">
-      <h1 class="text-4xl font-bold text-white tracking-tight">Validador de Prompts y Tokens</h1>
-      <p class="mt-2 text-sm text-gray-400">Analiza tu prompt, estima tokens y evalúa su estado de forma instantánea.</p>
-    </header>
+    <!-- COMPONENTE 1 - ENCABEZADO -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">Analizador de Prompts</h1>
+      <p class="text-sm text-gray-500">Evalúa la eficiencia de tus prompts antes de enviarlos al modelo</p>
+    </div>
 
-    <!-- Formulario -->
-    <section class="bg-gray-800 rounded-xl p-8 shadow-lg">
-      <form id="promptForm" novalidate>
-        <label for="promptInput" class="block text-sm font-medium text-gray-300 mb-2">Escribe tu prompt</label>
-        <textarea
-          id="promptInput"
-          rows="6"
-          placeholder="Escribe aquí el prompt que deseas analizar..."
-          class="w-full bg-gray-700 text-white placeholder-gray-400 border border-gray-600 rounded-lg p-3 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-        ></textarea>
+    <!-- COMPONENTE 2 - ÁREA DE ENTRADA -->
+    <div class="mb-6">
+      <label for="prompt-input" class="text-sm font-medium text-gray-700 block mb-1">Escribe tu prompt</label>
+      <textarea
+        id="prompt-input"
+        name="prompt"
+        rows="6"
+        class="w-full border rounded-lg p-3 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none transition"
+        placeholder="Pega o escribe aquí tu prompt..."
+      ></textarea>
+      <p id="error-msg" class="hidden text-xs text-red-500 mt-1">El prompt no puede estar vacío.</p>
+    </div>
 
-        <!-- Error validación cliente -->
-        <p id="clientError" class="hidden mt-2 text-sm text-red-400">El prompt no puede estar vacío. Por favor escribe algo antes de analizar.</p>
+    <!-- COMPONENTE 3 - BOTÓN DE ACCIÓN -->
+    <div class="mb-8">
+      <button
+        id="analyze-btn"
+        type="button"
+        class="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition cursor-pointer"
+      >
+        Analizar Prompt
+      </button>
+    </div>
 
-        <!-- Error de red -->
-        <p id="networkError" class="hidden mt-2 text-sm text-red-400">No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.</p>
+    <!-- COMPONENTE 4 - PANEL DE RESULTADOS -->
+    <div id="results-panel" class="hidden border-t pt-6 mt-2">
+      <h2 class="text-lg font-bold text-gray-700 mb-4">Resultados del Análisis</h2>
+      <div class="grid grid-cols-3 gap-4">
 
-        <!-- Botón de envío -->
-        <button
-          id="submitBtn"
-          type="submit"
-          class="mt-4 w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold py-3 rounded-lg transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-        >
-          <span id="btnText">Analizar Prompt</span>
-          <!-- Spinner -->
-          <span id="spinner" class="hidden items-center gap-2">
-            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-            </svg>
-            <span class="text-white text-sm font-medium">Analizando...</span>
-          </span>
-        </button>
-      </form>
-    </section>
-
-    <!-- Panel de resultados -->
-    <section id="resultsPanel" class="hidden">
-      <h2 class="text-xl font-semibold text-white text-center mb-4">Resultados del Análisis</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-        <!-- Tarjeta Tokens -->
-        <div class="bg-gray-800 rounded-xl p-6 flex flex-col items-center gap-2 shadow-md">
-          <span class="text-xs font-semibold text-indigo-400 uppercase tracking-widest">Tokens Estimados</span>
-          <span id="resultTokens" class="text-3xl font-bold text-white">—</span>
-          <span class="text-xs text-gray-400">tokens calculados</span>
+        <!-- Tarjeta Tokens Estimados -->
+        <div class="bg-gray-50 border rounded-lg p-4">
+          <p class="text-xs uppercase text-gray-400 font-medium">Tokens Estimados</p>
+          <p id="result-tokens" class="text-2xl font-bold text-gray-800">-</p>
         </div>
 
         <!-- Tarjeta Latencia -->
-        <div class="bg-gray-800 rounded-xl p-6 flex flex-col items-center gap-2 shadow-md">
-          <span class="text-xs font-semibold text-violet-400 uppercase tracking-widest">Latencia</span>
-          <span id="resultLatency" class="text-3xl font-bold text-white">—</span>
-          <span class="text-xs text-gray-400">tiempo de respuesta</span>
+        <div class="bg-gray-50 border rounded-lg p-4">
+          <p class="text-xs uppercase text-gray-400 font-medium">Latencia</p>
+          <p id="result-latency" class="text-2xl font-bold text-gray-800">-</p>
         </div>
 
         <!-- Tarjeta Estado -->
-        <div class="bg-gray-800 rounded-xl p-6 flex flex-col items-center gap-2 shadow-md">
-          <span class="text-xs font-semibold text-sky-400 uppercase tracking-widest">Estado</span>
-          <span id="resultStatus" class="text-3xl font-bold text-white">—</span>
-          <span class="text-xs text-gray-400">evaluación del prompt</span>
+        <div class="bg-gray-50 border rounded-lg p-4">
+          <p class="text-xs uppercase text-gray-400 font-medium">Estado</p>
+          <p id="result-estado" class="text-2xl font-bold text-gray-800">-</p>
         </div>
 
       </div>
-    </section>
+    </div>
+
+    <!-- COMPONENTE 5 - MENSAJE DE ERROR DE RED -->
+    <div id="network-error" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+      <p class="text-sm text-red-600">No se pudo conectar con el servidor. Asegúrate de que el backend esté en ejecución en <strong>http://127.0.0.1:8000</strong>.</p>
+    </div>
 
   </div>
 
-  <script>
-    const API_URL = 'http://localhost:8000/api/analyze';
+  <style>
+    textarea:focus {
+      outline: none;
+    }
+  </style>
 
-    const form = document.getElementById('promptForm');
-    const promptInput = document.getElementById('promptInput');
-    const submitBtn = document.getElementById('submitBtn');
-    const btnText = document.getElementById('btnText');
-    const spinner = document.getElementById('spinner');
-    const clientError = document.getElementById('clientError');
-    const networkError = document.getElementById('networkError');
-    const resultsPanel = document.getElementById('resultsPanel');
-    const resultTokens = document.getElementById('resultTokens');
-    const resultLatency = document.getElementById('resultLatency');
-    const resultStatus = document.getElementById('resultStatus');
+  <script>
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const promptInput = document.getElementById('prompt-input');
+    const errorMsg = document.getElementById('error-msg');
+    const resultsPanel = document.getElementById('results-panel');
+    const resultTokens = document.getElementById('result-tokens');
+    const resultLatency = document.getElementById('result-latency');
+    const resultEstado = document.getElementById('result-estado');
+    const networkError = document.getElementById('network-error');
 
     function setLoadingState(isLoading) {
-      submitBtn.disabled = isLoading;
       if (isLoading) {
-        btnText.classList.add('hidden');
-        spinner.classList.remove('hidden');
-        spinner.classList.add('flex');
+        analyzeBtn.textContent = 'Analizando...';
+        analyzeBtn.disabled = true;
+        analyzeBtn.classList.add('opacity-70', 'cursor-not-allowed');
+        analyzeBtn.classList.remove('cursor-pointer', 'hover:bg-blue-700');
       } else {
-        btnText.classList.remove('hidden');
-        spinner.classList.add('hidden');
-        spinner.classList.remove('flex');
+        analyzeBtn.textContent = 'Analizar Prompt';
+        analyzeBtn.disabled = false;
+        analyzeBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+        analyzeBtn.classList.add('cursor-pointer', 'hover:bg-blue-700');
       }
     }
 
-    function showClientError(message) {
-      clientError.textContent = message;
-      clientError.classList.remove('hidden');
-    }
-
-    function hideClientError() {
-      clientError.classList.add('hidden');
-    }
-
-    function showNetworkError(message) {
-      networkError.textContent = message;
-      networkError.classList.remove('hidden');
-    }
-
-    function hideNetworkError() {
-      networkError.classList.add('hidden');
-    }
-
-    function applyStatusColor(status) {
-      resultStatus.classList.remove(
-        'text-white', 'text-green-400', 'text-emerald-400',
-        'text-yellow-400', 'text-orange-400'
-      );
-      const normalized = status.toLowerCase();
-      if (normalized === 'óptimo' || normalized === 'optimo') {
-        resultStatus.classList.add('text-emerald-400');
-      } else if (normalized === 'alerta') {
-        resultStatus.classList.add('text-yellow-400');
+    function showError(show) {
+      if (show) {
+        errorMsg.classList.remove('hidden');
+        promptInput.classList.add('border-red-500');
+        promptInput.classList.remove('border');
       } else {
-        resultStatus.classList.add('text-white');
+        errorMsg.classList.add('hidden');
+        promptInput.classList.remove('border-red-500');
+        promptInput.classList.add('border');
       }
     }
 
-    function populateResults(data) {
-      resultTokens.textContent = data.tokens;
-      resultLatency.textContent = parseFloat(data.latency_ms).toFixed(0) + ' ms';
-      resultStatus.textContent = data.status;
-      applyStatusColor(data.status);
+    function showNetworkError(show) {
+      if (show) {
+        networkError.classList.remove('hidden');
+      } else {
+        networkError.classList.add('hidden');
+      }
     }
 
-    async function analyzePrompt(event) {
-      event.preventDefault();
+    function renderResults(data) {
+      resultTokens.textContent = data.tokens_estimados;
+      resultLatency.textContent = data.latencia_ms + ' ms';
+      resultEstado.textContent = data.estado;
 
-      const promptValue = promptInput.value.trim();
+      resultEstado.classList.remove('text-green-600', 'text-red-500', 'text-gray-800');
+      if (data.estado === 'Óptimo') {
+        resultEstado.classList.add('text-green-600');
+      } else if (data.estado === 'Alerta') {
+        resultEstado.classList.add('text-red-500');
+      } else {
+        resultEstado.classList.add('text-gray-800');
+      }
 
-      hideClientError();
-      hideNetworkError();
+      resultsPanel.classList.remove('hidden');
+      resultsPanel.style.display = 'block';
+    }
 
-      if (!promptValue) {
-        showClientError('El prompt no puede estar vacío. Por favor escribe algo antes de analizar.');
+    analyzeBtn.addEventListener('click', async () => {
+      const prompt = promptInput.value.trim();
+
+      if (!prompt) {
+        showError(true);
         return;
       }
 
+      showError(false);
+      showNetworkError(false);
       resultsPanel.classList.add('hidden');
       setLoadingState(true);
 
       try {
-        const response = await fetch(API_URL, {
+        const response = await fetch('http://127.0.0.1:8000/api/analyze', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ prompt: promptValue })
+          body: JSON.stringify({ prompt: prompt })
         });
 
         if (!response.ok) {
-          throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+          throw new Error('Error en la respuesta del servidor: ' + response.status);
         }
 
         const data = await response.json();
-
-        populateResults(data);
-        resultsPanel.classList.remove('hidden');
+        renderResults(data);
 
       } catch (error) {
-        showNetworkError(
-          'No se pudo conectar con el servidor. Verifica que el backend esté en ejecución en http://localhost:8000.'
-        );
-        console.error('Error al analizar el prompt:', error);
+        showNetworkError(true);
       } finally {
         setLoadingState(false);
       }
-    }
+    });
 
-    form.addEventListener('submit', analyzePrompt);
+    promptInput.addEventListener('input', () => {
+      if (promptInput.value.trim()) {
+        showError(false);
+      }
+    });
   </script>
 
 </body>

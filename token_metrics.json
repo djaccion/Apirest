@@ -1,30 +1,37 @@
 {
-  "tokens_input": 15991,
-  "tokens_output": 7616,
-  "tokens_total": 23607,
-  "estimated_hours": 2.6,
+  "tokens_input": 14542,
+  "tokens_output": 6957,
+  "tokens_total": 21499,
+  "estimated_hours": 2.4,
   "modelo": "claude-sonnet-4-6",
-  "timestamp": "2026-04-17T18:34:50.793Z",
+  "skills_loaded": false,
+  "skills_count": 0,
+  "skills_roles": [],
+  "timestamp": "2026-04-17T21:21:17.162Z",
   "by_agent": {
     "arquitecto": {
       "input": 1080,
-      "output": 1049,
-      "calls": 1
+      "output": 894,
+      "calls": 1,
+      "skill_name": "Arquitecto (default)"
     },
     "tech_lead": {
-      "input": 1952,
-      "output": 3000,
-      "calls": 2
+      "input": 1668,
+      "output": 2999,
+      "calls": 2,
+      "skill_name": "Tech Lead (default)"
     },
     "desarrollador": {
-      "input": 4904,
-      "output": 3031,
-      "calls": 2
+      "input": 4619,
+      "output": 2438,
+      "calls": 2,
+      "skill_name": "Desarrollador (default)"
     },
     "qa": {
-      "input": 8055,
-      "output": 536,
-      "calls": 2
+      "input": 7175,
+      "output": 626,
+      "calls": 2,
+      "skill_name": "QA (default)"
     }
   }
 }
