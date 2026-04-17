@@ -5,36 +5,32 @@ module.exports = {
     jest: true,
   },
 
-  parserOptions: {
-    ecmaVersion: 2021,
-    sourceType: 'commonjs',
-  },
-
   extends: [
     'eslint:recommended',
     'prettier',
   ],
 
-  rules: {
-    'no-unused-vars': [2, { args: 'after-used' }],
-    'no-undef': 2,
-    'no-console': 2,
-    'eqeqeq': 2,
-
-    'no-var': 1,
-    'prefer-const': 1,
-    'no-duplicate-imports': 1,
+  parserOptions: {
+    ecmaVersion: 2021,
+    sourceType: 'commonjs',
   },
 
-  overrides: [
-    {
-      files: ['**/*.test.js', '**/*.spec.js'],
-      rules: {
-        'no-unused-vars': 1,
-        'no-console': 0,
+  rules: {
+    'no-unused-vars': [
+      'error',
+      {
+        args: 'after-used',
       },
-    },
-  ],
+    ],
+    'no-console': 'error',
+    'no-undef': 'error',
+    'no-duplicate-imports': 'error',
+
+    'no-var': 'warn',
+    'prefer-const': 'warn',
+    'eqeqeq': ['warn', 'always'],
+    'curly': ['warn', 'all'],
+  },
 
   ignorePatterns: [
     'node_modules/',

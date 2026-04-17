@@ -1,0 +1,364 @@
+openapi: "3.0.3"
+
+info:
+  title: "API Hola Mundo - XP-9"
+  version: "1.0.0"
+  description: |
+    API RESTful con autenticación JWT desarrollada sobre Node.js con Express.js,
+    correspondiente al ticket Jira XP-9.
+
+    Esta API ha sido construida adoptando una metodología híbrida que combina
+    prácticas ágiles (entrega incremental, historias de usuario) con documentación
+    formal (Swagger/OpenAPI), permitiendo trazabilidad completa hacia el ticket Jira XP-9.
+
+    La arquitectura sigue el patrón MVC simplificado con separación de responsabilidades
+    por capas: rutas, controladores, middlewares y configuración, sobre un runtime
+    Node.js 20 LTS con Express.js 4.x.
+  contact:
+    name: "Equipo de Desarrollo XP-9"
+    email: "dev-team@xp9.example.com"
+    url: "https://github.com/org/api-hola-mundo-xp9"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+
+servers:
+  - url: "http://localhost:{port}"
+    description: "Servidor de Desarrollo Local"
+    variables:
+      port:
+        default: "3000"
+        description: "Puerto del servidor de desarrollo local"
+  - url: "{protocol}://{host}"
+    description: "Servidor de Producción"
+    variables:
+      protocol:
+        default: "https"
+        enum:
+          - "https"
+          - "http"
+        description: "Protocolo del servidor de producción"
+      host:
+        default: "api.xp9.example.com"
+        description: "Host del servidor de producción, reemplazable en el pipeline CI/CD"
+
+tags:
+  - name: "Authentication"
+    description: |
+      Endpoints para la generación de tokens JWT destinados a desarrollo y pruebas.
+      Permite obtener un Bearer token válido para autenticar requests a los endpoints protegidos.
+  - name: "Recursos Protegidos"
+    description: |
+      Endpoints que requieren un Bearer token JWT válido en el header Authorization.
+      El token debe obtenerse previamente desde POST /api/v1/auth/token y enviarse
+      en el formato: Authorization: Bearer {token}
+  - name: "Health"
+    description: |
+      Endpoints públicos orientados al monitoreo y verificación del estado del servicio.
+      No requieren autenticación y son utilizados por herramientas de observabilidad,
+      load balancers y pipelines de CI/CD para verificar la disponibilidad del servicio.
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Autenticación mediante JWT (JSON Web Token).
+        El token se obtiene desde el endpoint POST /api/v1/auth/token y debe enviarse
+        en el header Authorization con el formato: "Bearer {token}"
+        Ejemplo: Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+  schemas:
+    HolaMundoResponse:
+      type: object
+      required:
+        - message
+        - timestamp
+        - requestId
+      properties:
+        message:
+          type: string
+          description: "Mensaje de saludo retornado por el endpoint protegido"
+        timestamp:
+          type: string
+          format: date-time
+          description: "Fecha y hora del momento en que se procesó la solicitud en formato ISO 8601"
+        requestId:
+          type: string
+          description: "Identificador único del request para trazabilidad y correlación de logs"
+      example:
+        message: "Hola Mundo"
+        timestamp: "2024-01-15T10:30:00.000Z"
+        requestId: "req-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+    TokenRequest:
+      type: object
+      description: |
+        Credenciales para la generación de un token JWT.
+        ADVERTENCIA: Este schema es exclusivo para entornos de desarrollo y pruebas.
+        No debe utilizarse con credenciales reales en entornos productivos.
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: "Nombre de usuario para autenticación de prueba"
+          minLength: 1
+        password:
+          type: string
+          description: "Contraseña del usuario para autenticación de prueba"
+          minLength: 1
+      example:
+        username: "dev_user"
+        password: "dev_password_123"
+
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: "JWT generado y firmado, válido para autenticar requests a endpoints protegidos"
+        expiresIn:
+          type: string
+          description: "Tiempo de expiración del token JWT desde el momento de su generación"
+      example:
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRldl91c2VyIiwiaWF0IjoxNzA1MzE0MjAwLCJleHAiOjE3MDUzMTc4MDB9.abc123xyz"
+        expiresIn: "1h"
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: "Estado actual del servicio"
+          enum:
+            - "ok"
+            - "degraded"
+            - "down"
+        uptime:
+          type: number
+          description: "Tiempo en segundos que el servicio lleva en ejecución desde su último inicio"
+        timestamp:
+          type: string
+          format: date-time
+          description: "Fecha y hora del momento en que se consultó el estado del servicio en formato ISO 8601"
+        version:
+          type: string
+          description: "Versión semántica actual del servicio desplegado"
+      example:
+        status: "ok"
+        uptime: 3600.45
+        timestamp: "2024-01-15T10:30:00.000Z"
+        version: "1.0.0"
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: "Indicador de éxito de la operación, siempre false en respuestas de error"
+          enum:
+            - false
+        message:
+          type: string
+          description: "Descripción legible del error ocurrido"
+        code:
+          type: integer
+          description: "Código HTTP del error"
+        requestId:
+          type: string
+          description: "Identificador único del request para trazabilidad y correlación de logs"
+      example:
+        success: false
+        message: "Ha ocurrido un error en el servidor"
+        code: 500
+        requestId: "req-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+  responses:
+    UnauthorizedError:
+      description: "Token JWT ausente, inválido o expirado"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            success: false
+            message: "Token JWT ausente, inválido o expirado. Por favor, obtenga un token válido desde POST /api/v1/auth/token"
+            code: 401
+            requestId: "req-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+    ForbiddenError:
+      description: "Acceso prohibido. El token JWT no tiene los permisos necesarios para acceder al recurso solicitado"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            success: false
+            message: "No tiene permisos suficientes para acceder a este recurso"
+            code: 403
+            requestId: "req-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+    TooManyRequestsError:
+      description: "Demasiadas solicitudes. El rate limiting activo ha bloqueado temporalmente las solicitudes desde esta IP. Intente nuevamente después del período de espera indicado"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            success: false
+            message: "Demasiadas solicitudes desde esta IP. El rate limiting activo ha bloqueado temporalmente el acceso. Intente nuevamente más tarde"
+            code: 429
+            requestId: "req-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+    InternalServerError:
+      description: "Error interno del servidor. Se ha producido un error inesperado al procesar la solicitud"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            success: false
+            message: "Error interno del servidor. Por favor, intente nuevamente más tarde"
+            code: 500
+            requestId: "req-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+paths:
+  /api/v1/auth/token:
+    post:
+      tags:
+        - "Authentication"
+      operationId: "generateToken"
+      summary: "Generar token JWT para desarrollo y pruebas"
+      description: |
+        Genera un token JWT firmado a partir de credenciales de usuario, destinado
+        exclusivamente a entornos de desarrollo y pruebas.
+
+        El token generado puede utilizarse para autenticar requests a los endpoints
+        protegidos enviándolo en el header Authorization con el formato:
+        `Authorization: Bearer {token}`
+
+        ⚠️ **ADVERTENCIA DE SEGURIDAD**: Este endpoint NO debe estar expuesto en
+        producción sin controles adicionales de seguridad, tales como:
+        - Restricción por IP o red interna
+        - Autenticación adicional de dos factores
+        - Auditoría y logging exhaustivo de cada generación de token
+        - Deshabilitación completa en entornos productivos críticos
+
+        Trazabilidad: Ticket Jira XP-9
+      requestBody:
+        required: true
+        description: "Credenciales de usuario para la generación del token JWT"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRequest"
+            examples:
+              credencialesDePrueba:
+                summary: "Credenciales de prueba genéricas"
+                value:
+                  username: "dev_user"
+                  password: "dev_password_123"
+      security: []
+      responses:
+        "200":
+          description: "Token JWT generado exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRldl91c2VyIiwiaWF0IjoxNzA1MzE0MjAwLCJleHAiOjE3MDUzMTc4MDB9.abc123xyz"
+                expiresIn: "1h"
+        "400":
+          description: "Error de validación. Los datos de entrada no cumplen con el formato o restricciones requeridas"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                success: false
+                message: "Datos de entrada inválidos. El campo 'username' es requerido y el campo 'password' debe tener al menos 1 carácter"
+                code: 400
+                requestId: "req-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        "429":
+          $ref: "#/components/responses/TooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/hola:
+    get:
+      tags:
+        - "Recursos Protegidos"
+      operationId: "getHolaMundo"
+      summary: "Obtener mensaje Hola Mundo con trazabilidad"
+      description: |
+        Retorna un mensaje de saludo "Hola Mundo" junto con el timestamp del momento
+        de la solicitud y un requestId único para trazabilidad y correlación de logs.
+
+        Este endpoint requiere autenticación mediante Bearer token JWT válido en el
+        header Authorization. El token debe obtenerse previamente desde el endpoint
+        POST /api/v1/auth/token.
+
+        El campo `requestId` incluido en la respuesta permite correlacionar este
+        request con los logs de aplicación generados por winston y morgan, facilitando
+        el diagnóstico y auditoría en entornos DevSecOps.
+
+        Trazabilidad: Ticket Jira XP-9
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: "Mensaje Hola Mundo retornado exitosamente con timestamp y requestId de trazabilidad"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HolaMundoResponse"
+              example:
+                message: "Hola Mundo"
+                timestamp: "2024-01-15T10:30:00.000Z"
+                requestId: "req-a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "429":
+          $ref: "#/components/responses/TooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/health:
+    get:
+      tags:
+        - "Health"
+      operationId: "getHealth"
+      summary: "Verificar estado del servicio"
+      description: |
+        Endpoint público para monitoreo y verificación del estado del servicio.
+        No requiere autenticación y está diseñado para ser consumido por:
+
+        - Herramientas de observabilidad y monitoreo (Prometheus, Grafana, Datadog)
+        - Load balancers para health checks automáticos
+        - Pipelines de CI/CD para verificar disponibilidad post-despliegue
+        - Sistemas de alertas y on-call
+
+        Retorna el estado actual del servicio, el tiempo de actividad (uptime),
+        el timestamp de la consulta y la versión desplegada del servicio.
+
+        Trazabilidad: Ticket Jira XP-9
+      security: []
+      responses:
+        "200":
+          description: "Estado del servicio retornado exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: "ok"
+                uptime: 3600.45
+                timestamp: "2024-01-15T10:30:00.000Z"
+                version: "1.0.0"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
