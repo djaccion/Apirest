@@ -1,140 +1,234 @@
 <!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Validador de Prompts — PROYEC-20</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="bg-gray-950">
-    <div class="max-w-2xl mx-auto py-12 px-6">
-
-      <h1 class="text-3xl font-bold text-white">Validador de Prompts</h1>
-      <p class="text-sm text-gray-400 mt-1">Estimación de tokens y latencia · PROYEC-20</p>
-
-      <div class="mt-8">
-        <textarea
-          id="prompt-input"
-          rows="8"
-          placeholder="Pega tu prompt aquí..."
-          class="bg-gray-800 border border-gray-700 text-white w-full p-4 rounded-lg resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        ></textarea>
-
-        <button
-          id="analyze-btn"
-          type="button"
-          class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold w-full py-3 rounded-lg mt-4 transition-colors cursor-pointer"
-        >
-          Analizar Prompt
-        </button>
-      </div>
-
-      <div id="results-panel" class="hidden mt-6 bg-gray-800 border border-gray-700 rounded-lg p-6 space-y-4">
-        <div class="flex justify-between items-center">
-          <span class="text-gray-400 text-sm">Tokens estimados</span>
-          <span id="result-tokens" class="text-white font-bold text-lg">—</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-gray-400 text-sm">Latencia simulada</span>
-          <span id="result-latency" class="text-white font-bold text-lg">—</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-gray-400 text-sm">Estado</span>
-          <span id="result-status" class="font-bold text-lg">—</span>
-        </div>
-      </div>
-
-      <div id="error-panel" class="hidden mt-6 bg-red-900 border border-red-700 rounded-lg p-4">
-        <p id="error-message" class="text-red-300 text-sm"></p>
-      </div>
-
+<html lang="es" data-theme="cyberpunk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Power Grid — Simulador de Valor">
+  <title>The Power Grid | Simulador de Valor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap">
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+  <div id="app">
+    <!-- CAPA 1: Canvas Background -->
+    <div id="canvas-container">
+      <canvas id="particleCanvas"></canvas>
+      <canvas id="connectionCanvas"></canvas>
     </div>
 
-    <script>
-      const analyzeBtn = document.getElementById('analyze-btn');
-      const promptInput = document.getElementById('prompt-input');
-      const resultsPanel = document.getElementById('results-panel');
-      const errorPanel = document.getElementById('error-panel');
-      const resultTokens = document.getElementById('result-tokens');
-      const resultLatency = document.getElementById('result-latency');
-      const resultStatus = document.getElementById('result-status');
-      const errorMessage = document.getElementById('error-message');
+    <!-- CAPA 2: UI Principal -->
+    <main id="main-ui">
 
-      const hideResults = () => {
-        resultsPanel.classList.add('hidden');
-        errorPanel.classList.add('hidden');
-      };
+      <header id="dashboard-header">
+        <div id="header-brand">
+          <span id="brand-logo">⬡</span>
+          <h1 id="brand-title">THE POWER GRID</h1>
+        </div>
+        <div id="header-status">
+          <span id="status-indicator" data-status="nominal"></span>
+          <span id="status-label">SISTEMA NOMINAL</span>
+        </div>
+      </header>
 
-      const showError = (msg) => {
-        errorMessage.textContent = msg;
-        errorPanel.classList.remove('hidden');
-        resultsPanel.classList.add('hidden');
-      };
+      <section id="controls-panel" aria-label="Panel de Control de Variables">
+        <div id="toggles-grid">
+          <div class="toggle-item" id="toggle-ia">
+            <button class="module-toggle" data-module="ia" aria-pressed="false" aria-label="Activar módulo IA Predictiva">
+              <span class="toggle-icon">◈</span>
+              <span class="toggle-label">IA PREDICTIVA</span>
+            </button>
+          </div>
+          <div class="toggle-item" id="toggle-automation">
+            <button class="module-toggle" data-module="automation" aria-pressed="false" aria-label="Activar módulo Automatización">
+              <span class="toggle-icon">◈</span>
+              <span class="toggle-label">AUTOMATIZACIÓN</span>
+            </button>
+          </div>
+          <div class="toggle-item" id="toggle-analytics">
+            <button class="module-toggle" data-module="analytics" aria-pressed="false" aria-label="Activar módulo Analytics">
+              <span class="toggle-icon">◈</span>
+              <span class="toggle-label">ANALYTICS</span>
+            </button>
+          </div>
+          <div class="toggle-item" id="toggle-security">
+            <button class="module-toggle" data-module="security" aria-pressed="false" aria-label="Activar módulo Seguridad">
+              <span class="toggle-icon">◈</span>
+              <span class="toggle-label">SEGURIDAD</span>
+            </button>
+          </div>
+          <div class="toggle-item" id="toggle-cloud">
+            <button class="module-toggle" data-module="cloud" aria-pressed="false" aria-label="Activar módulo Cloud">
+              <span class="toggle-icon">◈</span>
+              <span class="toggle-label">CLOUD</span>
+            </button>
+          </div>
+          <div class="toggle-item" id="toggle-integration">
+            <button class="module-toggle" data-module="integration" aria-pressed="false" aria-label="Activar módulo Integración">
+              <span class="toggle-icon">◈</span>
+              <span class="toggle-label">INTEGRACIÓN</span>
+            </button>
+          </div>
+        </div>
 
-      const showResults = (data) => {
-        resultTokens.textContent = data.tokens_estimados;
-        resultLatency.textContent = data.latencia_ms + ' ms';
+        <div id="scale-control">
+          <label for="scale-slider" id="scale-label">ESCALA DE OPERACIÓN</label>
+          <div id="scale-slider-wrapper">
+            <input type="range" id="scale-slider" min="1" max="100" value="50" aria-label="Escala de operación">
+            <div id="scale-value-display">
+              <span id="scale-value">50</span>
+              <span id="scale-unit">UNIDADES</span>
+            </div>
+          </div>
+        </div>
 
-        resultStatus.textContent = data.estado;
-        if (data.estado === 'Alerta') {
-          resultStatus.className = 'font-bold text-lg text-yellow-400';
-        } else {
-          resultStatus.className = 'font-bold text-lg text-green-400';
-        }
+        <div id="overdrive-control">
+          <button id="overdrive-btn" aria-pressed="false" aria-label="Activar modo Overdrive">
+            <span id="overdrive-icon">⚡</span>
+            <span id="overdrive-label">OVERDRIVE</span>
+          </button>
+        </div>
+      </section>
 
-        resultsPanel.classList.remove('hidden');
-        errorPanel.classList.add('hidden');
-      };
+      <section id="kpi-grid" aria-label="Indicadores Clave de Rendimiento">
+        <article class="kpi-card" id="kpi-revenue">
+          <div class="kpi-card-header">
+            <span class="kpi-icon">◎</span>
+            <span class="kpi-title">INGRESOS PROYECTADOS</span>
+          </div>
+          <div class="kpi-card-body">
+            <span class="kpi-value" id="kpi-revenue-value">0</span>
+            <span class="kpi-unit">USD / AÑO</span>
+          </div>
+          <div class="kpi-card-footer">
+            <span class="kpi-delta" id="kpi-revenue-delta">+0%</span>
+            <span class="kpi-baseline">vs. baseline</span>
+          </div>
+        </article>
 
-      const setLoadingState = (isLoading) => {
-        analyzeBtn.disabled = isLoading;
-        analyzeBtn.textContent = isLoading ? 'Analizando...' : 'Analizar Prompt';
-        if (isLoading) {
-          analyzeBtn.classList.add('opacity-60', 'cursor-not-allowed');
-          analyzeBtn.classList.remove('cursor-pointer');
-        } else {
-          analyzeBtn.classList.remove('opacity-60', 'cursor-not-allowed');
-          analyzeBtn.classList.add('cursor-pointer');
-        }
-      };
+        <article class="kpi-card" id="kpi-cost">
+          <div class="kpi-card-header">
+            <span class="kpi-icon">◎</span>
+            <span class="kpi-title">REDUCCIÓN DE COSTOS</span>
+          </div>
+          <div class="kpi-card-body">
+            <span class="kpi-value" id="kpi-cost-value">0</span>
+            <span class="kpi-unit">USD / AÑO</span>
+          </div>
+          <div class="kpi-card-footer">
+            <span class="kpi-delta" id="kpi-cost-delta">+0%</span>
+            <span class="kpi-baseline">vs. baseline</span>
+          </div>
+        </article>
 
-      const handleAnalyze = () => {
-        const prompt = promptInput.value.trim();
+        <article class="kpi-card" id="kpi-efficiency">
+          <div class="kpi-card-header">
+            <span class="kpi-icon">◎</span>
+            <span class="kpi-title">EFICIENCIA OPERATIVA</span>
+          </div>
+          <div class="kpi-card-body">
+            <span class="kpi-value" id="kpi-efficiency-value">0</span>
+            <span class="kpi-unit">%</span>
+          </div>
+          <div class="kpi-card-footer">
+            <span class="kpi-delta" id="kpi-efficiency-delta">+0%</span>
+            <span class="kpi-baseline">vs. baseline</span>
+          </div>
+        </article>
 
-        if (prompt === '') {
-          hideResults();
-          showError('El campo de prompt no puede estar vacío.');
-          return;
-        }
+        <article class="kpi-card" id="kpi-roi">
+          <div class="kpi-card-header">
+            <span class="kpi-icon">◎</span>
+            <span class="kpi-title">ROI ESTIMADO</span>
+          </div>
+          <div class="kpi-card-body">
+            <span class="kpi-value" id="kpi-roi-value">0</span>
+            <span class="kpi-unit">%</span>
+          </div>
+          <div class="kpi-card-footer">
+            <span class="kpi-delta" id="kpi-roi-delta">+0%</span>
+            <span class="kpi-baseline">vs. baseline</span>
+          </div>
+        </article>
 
-        setLoadingState(true);
-        hideResults();
+        <article class="kpi-card" id="kpi-time">
+          <div class="kpi-card-header">
+            <span class="kpi-icon">◎</span>
+            <span class="kpi-title">TIME TO VALUE</span>
+          </div>
+          <div class="kpi-card-body">
+            <span class="kpi-value" id="kpi-time-value">0</span>
+            <span class="kpi-unit">MESES</span>
+          </div>
+          <div class="kpi-card-footer">
+            <span class="kpi-delta" id="kpi-time-delta">0%</span>
+            <span class="kpi-baseline">vs. baseline</span>
+          </div>
+        </article>
 
-        fetch('http://localhost:8000/api/analyze', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ prompt: prompt })
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error('El servidor respondió con estado ' + response.status);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            showResults(data);
-          })
-          .catch((err) => {
-            showError('No se pudo conectar con el backend. Asegúrate de que el servidor esté corriendo en http://localhost:8000. Detalle: ' + err.message);
-          })
-          .finally(() => {
-            setLoadingState(false);
-          });
-      };
+        <article class="kpi-card" id="kpi-risk">
+          <div class="kpi-card-header">
+            <span class="kpi-icon">◎</span>
+            <span class="kpi-title">REDUCCIÓN DE RIESGO</span>
+          </div>
+          <div class="kpi-card-body">
+            <span class="kpi-value" id="kpi-risk-value">0</span>
+            <span class="kpi-unit">%</span>
+          </div>
+          <div class="kpi-card-footer">
+            <span class="kpi-delta" id="kpi-risk-delta">+0%</span>
+            <span class="kpi-baseline">vs. baseline</span>
+          </div>
+        </article>
+      </section>
 
-      analyzeBtn.addEventListener('click', handleAnalyze);
-    </script>
-  </body>
+      <section id="chart-panel" aria-label="Panel de Visualización">
+        <div id="chart-header">
+          <h2 id="chart-title">PROYECCIÓN DE VALOR ACUMULADO</h2>
+          <div id="chart-legend">
+            <span class="legend-item" id="legend-baseline">
+              <span class="legend-dot"></span>
+              <span class="legend-text">BASELINE</span>
+            </span>
+            <span class="legend-item" id="legend-projected">
+              <span class="legend-dot"></span>
+              <span class="legend-text">PROYECTADO</span>
+            </span>
+          </div>
+        </div>
+        <div id="chart-wrapper">
+          <canvas id="chartCanvas" aria-label="Gráfico de proyección de valor acumulado"></canvas>
+        </div>
+      </section>
+
+      <section id="terminal-panel" aria-label="Terminal de Sistema">
+        <div id="terminal-header">
+          <span id="terminal-title">SYSTEM LOG</span>
+          <div id="terminal-controls">
+            <span class="terminal-dot" id="terminal-dot-red"></span>
+            <span class="terminal-dot" id="terminal-dot-yellow"></span>
+            <span class="terminal-dot" id="terminal-dot-green"></span>
+          </div>
+        </div>
+        <div id="terminal-body" aria-live="polite" aria-atomic="false">
+          <ul id="terminal-log" role="log"></ul>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- CAPA 3: Overlay de Estado -->
+    <div id="state-overlay" aria-hidden="true">
+      <div id="overlay-content">
+        <span id="overlay-icon">⬡</span>
+        <p id="overlay-message">INICIALIZANDO SISTEMA...</p>
+        <div id="overlay-progress-bar">
+          <div id="overlay-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script type="module" src="./js/main.js"></script>
+</body>
 </html>

@@ -1,0 +1,123 @@
+/* ==========================================================================
+   animations.css
+   Propósito: Define exclusivamente @keyframes y clases utilitarias de animación
+   para el proyecto "The Power Grid" Dashboard.
+
+   Consumido por: main.css, panels.css, components.css
+   
+   ADVERTENCIA: No agregar selectores de layout, variables de color ni
+   propiedades de transición en este archivo. Solo @keyframes y sus
+   clases de aplicación directa.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   PASO 2 — Parpadeo eléctrico (Flicker)
+   ========================================================================== */
+
+@keyframes glx-flicker {
+  0%   { opacity: 1; }
+  8%   { opacity: 0.85; }
+  15%  { opacity: 1; }
+  22%  { opacity: 0.4; }
+  24%  { opacity: 0.1; }
+  26%  { opacity: 0.95; }
+  40%  { opacity: 1; }
+  55%  { opacity: 0.85; }
+  57%  { opacity: 0.4; }
+  59%  { opacity: 1; }
+  75%  { opacity: 0.95; }
+  88%  { opacity: 0.4; }
+  90%  { opacity: 0.1; }
+  92%  { opacity: 1; }
+  100% { opacity: 0.95; }
+}
+
+.anim-flicker {
+  animation-name: glx-flicker;
+  animation-duration: var(--duration-flicker);
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+
+/* ==========================================================================
+   PASO 3 — Pulso de borde energético (Pulse Border)
+   ========================================================================== */
+
+@keyframes glx-pulse-border {
+  0% {
+    box-shadow:
+      0 0 0px 0px var(--color-accent-primary),
+      0 0 0px 0px var(--color-accent-secondary);
+  }
+  50% {
+    box-shadow:
+      0 0 6px 4px var(--color-accent-primary),
+      0 0 10px 8px var(--color-accent-secondary);
+  }
+  100% {
+    box-shadow:
+      0 0 0px 0px var(--color-accent-primary),
+      0 0 0px 0px var(--color-accent-secondary);
+  }
+}
+
+.anim-pulse-border {
+  animation-name: glx-pulse-border;
+  animation-duration: var(--duration-pulse);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+
+/* ==========================================================================
+   PASO 4 — Línea de escaneo horizontal (Scan Line)
+   ========================================================================== */
+
+@keyframes glx-scan-line {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.anim-scan-line {
+  animation-name: glx-scan-line;
+  animation-duration: var(--duration-scan);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: none;
+}
+
+
+/* ==========================================================================
+   PASO 5 — Arranque de panel tipo terminal (Panel Boot)
+   ========================================================================== */
+
+@keyframes glx-panel-boot {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  30% {
+    opacity: 1;
+    clip-path: inset(0 40% 0 0);
+  }
+  70% {
+    opacity: 1;
+    clip-path: inset(0 10% 0 0);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+.anim-panel-boot {
+  animation-name: glx-panel-boot;
+  animation-duration: var(--duration-panel-boot);
+  animation-timing-function: ease-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
+}
