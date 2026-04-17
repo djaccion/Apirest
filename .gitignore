@@ -1,73 +1,79 @@
-# Dependencies
+# Seguridad - Variables de entorno y secretos (CRITICO)
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+.env.test
+.env.backup
+.env.example.local
+.env.*
+
+# Dependencias de Node.js
 node_modules/
 **/node_modules/
-.npm/
 
-# Environment variables and secrets
-.env
-.env.*
-!.env.example
+# Archivos de Build y Compilacion del Frontend React
+build/
+dist/
+.cache/
+.temp/
+.parcel-cache/
+
+# Archivos de Logs
+logs/
+*.log
+npm-debug.log*
+yarn-error.log
+lerna-debug.log
+morgan.log
+
+# Sistema Operativo - macOS
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+._*
+
+# Sistema Operativo - Windows
+Thumbs.db
+Desktop.ini
+*:Zone.Identifier
+
+# IDEs y Editores de Codigo
+.idea/
+.vscode/
+!.vscode/extensions.json
+*.suo
+.ntvs_
+*.njsproj
+*.sln
+*.swp
+*.swo
+
+# Testing y Cobertura
+coverage/
+.nyc_output/
+test-results/
+*.xml
+junit.xml
+
+# Heroku - configuracion local
+.heroku
+
+# Certificados y Claves TLS
 *.pem
 *.key
 *.cert
 *.crt
 *.p12
-*.pfx
-secrets.json
-credentials.json
-*secret*
+certs/
+certificates/
+ssl/
 
-# Build artifacts
-dist/
-build/
-**/.cache/
-
-# Test coverage and reports
-coverage/
-.nyc_output/
-*.lcov
-**/reports/*.xml
-**/test-results/*.xml
-test-results/
-reports/
-
-# Logs
-*.log
-*.log.gz
-*.log.zip
-logs/
-
-# IDE and editor directories
-.idea/
-.vscode/
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-.history/
-
-# Docker
-docker-compose.override.yml
-data/
-volumes/
-
-# SQLite database files
-*.sqlite
-*.sqlite3
-*.db
-*.db-shm
-*.db-wal
-
-# Temporary and runtime files
+# Archivos Temporales y Miscelaneos
+.tmp/
+tmp/
 *.tmp
 *.temp
-.tmp/
-*.pid
-.node_repl_history
-
-# Security and analysis tools
-semgrep-output/
-*.sarif
-snyk-report.json
-audit-report.json
-.trivy/
+.sass-cache/

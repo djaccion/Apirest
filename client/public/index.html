@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- ============================================================
+         CONTENT SECURITY POLICY
+         NOTA: style-src incluye 'unsafe-inline' requerido por React
+         en desarrollo. REVISAR y restringir en producción si el
+         bundler genera estilos externos sin inline.
+         connect-src: reemplazar PLACEHOLDER_HEROKU_API_URL con la
+         URL real del backend en Heroku para producción.
+         img-src: reemplazar PLACEHOLDER_CDN_FLAGS_URL con la URL
+         real del CDN o MongoDB Atlas donde se alojen las banderas.
+         ============================================================ -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self';
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: https://PLACEHOLDER_CDN_FLAGS_URL;
+        connect-src 'self' https://PLACEHOLDER_HEROKU_API_URL;
+        font-src 'self';
+        object-src 'none';
+        frame-ancestors 'none';
+        base-uri 'self';
+        form-action 'self';
+      "
+    />
+
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- ============================================================
+         SEO Y METADATOS
+         ============================================================ -->
+    <title>Tsoft Greetings - World Greetings Explorer</title>
+    <meta
+      name="description"
+      content="Explore greetings from around the world. Discover how people say hello in different countries and languages with Tsoft Greetings."
+    />
+    <meta name="author" content="Tsoft" />
+
+    <!-- Open Graph -->
+    <!-- og:url: reemplazar PLACEHOLDER_PRODUCTION_URL con la URL real de Heroku en producción -->
+    <meta property="og:title" content="Tsoft Greetings - World Greetings Explorer" />
+    <meta
+      property="og:description"
+      content="Explore greetings from around the world. Discover how people say hello in different countries and languages with Tsoft Greetings."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://PLACEHOLDER_PRODUCTION_URL" />
+    <!-- NOTA: El archivo og-image.png debe existir en client/public/ con dimensiones 1200x630px -->
+    <meta property="og:image" content="/og-image.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- ============================================================
+         FAVICON E ÍCONOS
+         NOTA: Los siguientes archivos deben existir en client/public/:
+           - favicon.ico
+           - logo192.png
+           - manifest.json (configuración PWA básica)
+         ============================================================ -->
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- ============================================================
+         PRECONNECT Y RENDIMIENTO
+         NOTA: reemplazar PLACEHOLDER_HEROKU_API_URL con la URL real
+         del backend en Heroku para producción.
+         NO se incluyen stylesheets externos de CDN para mantener
+         la CSP restrictiva. Todos los estilos provienen del bundle
+         generado por el bundler (CRA/Vite).
+         NO se incluyen scripts externos. Todos son inyectados por
+         el bundler en tiempo de build.
+         ============================================================ -->
+    <link rel="preconnect" href="https://PLACEHOLDER_HEROKU_API_URL" />
+
+    <!-- NOTA: El valor de theme-color debe coordinarse con el equipo
+         de diseño. Se usa #1a73e8 como azul corporativo sugerido. -->
+    <meta name="theme-color" content="#1a73e8" />
+  </head>
+  <body>
+    <noscript>
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          font-family: sans-serif;
+          font-size: 1.2rem;
+          text-align: center;
+          padding: 2rem;
+          color: #333;
+        "
+      >
+        You need to enable JavaScript to run this application.
+      </div>
+    </noscript>
+
+    <div
+      id="root"
+      aria-label="Tsoft Greetings Application"
+    ></div>
+  </body>
+</html>
