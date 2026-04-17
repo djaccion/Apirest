@@ -1,10 +1,9 @@
-import asyncio
+import math
 import random
-from math import floor
+import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import uvicorn
 
 app = FastAPI()
 
@@ -16,42 +15,24 @@ app.add_middleware(
     allow_credentials=False,
 )
 
-
 class PromptRequest(BaseModel):
     prompt: str
 
-
 class AnalysisResponse(BaseModel):
-    estimated_tokens: int
-    simulated_latency_ms: int
-    status: str
+    tokens_estimados: int
+    latencia_ms: int
+    estado: str
 
+def _calcular_tokens(prompt: str) -> int:
+    return math.floor(len(prompt.split()) * 1.3)
 
-def _calculate_tokens(text: str) -> int:
-    text = text.strip()
-    if not text:
-        return 0
-    word_count = len(text.split())
-    estimated = floor(word_count * 1.3)
-    return max(1, estimated)
-
-
-def _evaluate_status(token_count: int) -> str:
-    return "Alerta" if token_count > 1000 else "Óptimo"
-
+def _evaluar_estado(tokens: int) -> str:
+    return "Alerta" if tokens > 1000 else "Óptimo"
 
 @app.post("/api/analyze", response_model=AnalysisResponse)
-async def analyze_prompt(request: PromptRequest):
-    estimated_tokens = _calculate_tokens(request.prompt)
-    latency_ms = random.randint(500, 2000)
-    await asyncio.sleep(latency_ms / 1000)
-    status = _evaluate_status(estimated_tokens)
-    return AnalysisResponse(
-        estimated_tokens=estimated_tokens,
-        simulated_latency_ms=latency_ms,
-        status=status,
-    )
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+async def analyze_prompt(body: PromptRequest):
+    tokens = _calcular_tokens(body.prompt)
+    latencia_ms = random.randint(500, 2000)
+    await asyncio.sleep(latencia_ms / 1000)
+    estado = _evaluar_estado(tokens)
+    return AnalysisResponse(tokens_estimados=tokens, latencia_ms=latencia_ms, estado=estado)
