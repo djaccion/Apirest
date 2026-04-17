@@ -1,8 +1,8 @@
 {
-  "tokens_input": 152359,
-  "tokens_output": 71327,
-  "tokens_total": 223686,
-  "estimated_hours": 24.7,
+  "tokens_input": 14074,
+  "tokens_output": 7169,
+  "tokens_total": 21243,
+  "estimated_hours": 2.5,
   "modelo": "claude-sonnet-4-6",
-  "timestamp": "2026-04-17T15:33:43.284Z"
+  "timestamp": "2026-04-17T16:06:22.803Z"
 }
