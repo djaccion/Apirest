@@ -1,0 +1,432 @@
+openapi: 3.0.3
+
+info:
+  title: API RESTful Segura con Node.js
+  version: 1.0.0
+  description: >
+    API RESTful con autenticación JWT, rate limiting, validación de entrada y
+    cabeceras de seguridad con Helmet. Diseñada siguiendo el patrón MVC
+    simplificado sobre Node.js con Express.js, con separación de
+    responsabilidades por capas: rutas, controladores, middlewares y
+    configuración.
+  contact:
+    name: Equipo de Desarrollo
+    email: dev-team@example.com
+    url: https://github.com/org/api-restful-segura
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:{port}
+    description: Servidor de Desarrollo Local
+    variables:
+      port:
+        default: '3000'
+        description: Puerto del servidor de desarrollo
+  - url: https://staging.api.example.com
+    description: Servidor de Staging
+  - url: https://api.example.com
+    description: Servidor de Producción
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Auth
+    description: Operaciones de autenticación y gestión de tokens
+  - name: Health
+    description: Endpoints de estado y disponibilidad del servicio
+  - name: Users
+    description: >
+      Operaciones de gestión de usuarios (planned: estas rutas están planificadas
+      para una iteración futura y aún no se encuentran implementadas)
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Verificación de estado del servicio
+      description: >
+        Endpoint público sin autenticación que retorna el estado operativo
+        de la API, incluyendo timestamp actual y tiempo de actividad del proceso.
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: El servicio está operativo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: '2024-01-15T10:30:00.000Z'
+                  uptime:
+                    type: number
+                    description: Tiempo de actividad del proceso en segundos
+                    example: 3600.5
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Autenticación de usuario y obtención de token JWT
+      description: >
+        Recibe credenciales de usuario, las valida contra el sistema y retorna
+        un token JWT firmado con tiempo de expiración. El token obtenido debe
+        enviarse en el header Authorization con el prefijo Bearer en las
+        peticiones subsiguientes a endpoints protegidos.
+      operationId: loginUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: usuario@example.com
+                password:
+                  type: string
+                  minLength: 8
+                  example: contraseña123
+            example:
+              email: usuario@example.com
+              password: contraseña123
+      responses:
+        '200':
+          description: Autenticación exitosa, token JWT generado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token JWT firmado
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  expiresIn:
+                    type: integer
+                    description: Segundos hasta la expiración del token
+                    example: 3600
+                  tokenType:
+                    type: string
+                    enum:
+                      - Bearer
+                    example: Bearer
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /api/v1/auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Renovación del token JWT antes de su expiración
+      description: >
+        Permite renovar el token JWT actual antes de que expire. Se debe enviar
+        el token vigente tanto en el header Authorization como en el body de la
+        petición. Retorna un nuevo token con tiempo de expiración renovado.
+      operationId: refreshToken
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  description: Token JWT actual vigente a renovar
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      responses:
+        '200':
+          description: Token renovado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Nuevo token JWT firmado
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  expiresIn:
+                    type: integer
+                    description: Segundos hasta la expiración del nuevo token
+                    example: 3600
+                  tokenType:
+                    type: string
+                    enum:
+                      - Bearer
+                    example: Bearer
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /api/v1/users:
+    get:
+      tags:
+        - Users
+      summary: Listado paginado de usuarios (endpoint futuro)
+      description: >
+        Retorna un listado paginado de usuarios registrados en el sistema.
+        Soporta paginación mediante parámetros page y limit, y ordenamiento
+        mediante el parámetro sort.
+      operationId: listUsers
+      x-planned: true
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Número de página a recuperar
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+            example: 1
+        - name: limit
+          in: query
+          description: Cantidad de registros por página
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+            example: 10
+        - name: sort
+          in: query
+          description: Dirección de ordenamiento de los resultados
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+            example: asc
+      responses:
+        '200':
+          description: Listado de usuarios obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >
+        Token JWT obtenido del endpoint POST /api/v1/auth/login. Debe enviarse
+        en el header Authorization con el formato: Bearer <token>. El token
+        tiene un tiempo de expiración configurable mediante la variable de
+        entorno JWT_EXPIRES_IN.
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Código HTTP del error
+          example: 500
+        message:
+          type: string
+          description: Mensaje descriptivo del error
+          example: Ha ocurrido un error interno en el servidor
+        details:
+          type: array
+          items:
+            type: string
+          description: Detalles adicionales sobre el error
+          example:
+            - Error al conectar con la base de datos
+
+    ValidationError:
+      allOf:
+        - $ref: '#/components/schemas/Error'
+        - type: object
+          properties:
+            errors:
+              type: array
+              description: Lista de errores de validación generados por express-validator
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    description: Campo que falló la validación
+                    example: email
+                  message:
+                    type: string
+                    description: Mensaje descriptivo del error de validación
+                    example: El campo email debe ser una dirección de correo válida
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único del usuario
+          example: 550e8400-e29b-41d4-a716-446655440000
+        email:
+          type: string
+          format: email
+          description: Dirección de correo electrónico del usuario
+          example: usuario@example.com
+        password:
+          type: string
+          writeOnly: true
+          description: Contraseña del usuario (solo escritura, nunca se retorna en respuestas)
+          example: contraseña123
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación del registro
+          example: '2024-01-15T10:30:00.000Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de la última actualización del registro
+          example: '2024-01-15T12:00:00.000Z'
+
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total de registros disponibles
+          example: 150
+        page:
+          type: integer
+          description: Página actual
+          example: 1
+        limit:
+          type: integer
+          description: Cantidad de registros por página
+          example: 10
+        totalPages:
+          type: integer
+          description: Total de páginas disponibles
+          example: 15
+
+  responses:
+    UnauthorizedError:
+      description: >
+        No autorizado. El token JWT está ausente, es inválido o ha expirado.
+        Verificar que el header Authorization contenga un token válido con el
+        formato Bearer <token>.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 401
+            message: Token de autenticación inválido o expirado
+            details:
+              - El token proporcionado no es válido o ha expirado
+
+    ForbiddenError:
+      description: >
+        Prohibido. El usuario autenticado no tiene los permisos necesarios
+        para acceder al recurso solicitado.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 403
+            message: Permisos insuficientes para acceder a este recurso
+            details:
+              - El rol del usuario no permite realizar esta operación
+
+    ValidationError:
+      description: >
+        Error de validación. Los datos enviados en la petición no cumplen
+        con las restricciones definidas por express-validator.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            code: 400
+            message: Error de validación en los datos enviados
+            details:
+              - Revisar los campos indicados en el array errors
+            errors:
+              - field: email
+                message: El campo email debe ser una dirección de correo válida
+              - field: password
+                message: La contraseña debe tener al menos 8 caracteres
+
+    RateLimitError:
+      description: >
+        Demasiadas peticiones. Se ha excedido el límite de peticiones permitidas
+        por IP en la ventana de tiempo configurada. Esperar antes de reintentar.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 429
+            message: Demasiadas peticiones, por favor intente más tarde
+            details:
+              - Ha excedido el límite de peticiones permitidas por minuto
+
+    InternalServerError:
+      description: >
+        Error interno del servidor. Ha ocurrido un error inesperado en el
+        procesamiento de la petición. Revisar los logs del servidor para
+        más detalles.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 500
+            message: Error interno del servidor
+            details:
+              - Ha ocurrido un error inesperado, por favor contacte al administrador

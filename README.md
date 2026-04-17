@@ -1,596 +1,292 @@
-# README.md
+# API RESTful Node.js — Proyecto Base
 
-```markdown
-# Tsoft Greetings Web App (XP-10)
-
-**CI/CD Pipeline:** [GitHub Actions - Passing] | **Node.js:** [>=18.0.0] | **License:** [MIT] | **Test Coverage:** [>80%]
-
-Aplicación web que permite seleccionar un país mediante su bandera y obtener el saludo correspondiente en el idioma local.
-
----
-
-## Tabla de Contenidos
-
-1. [Descripción General](#descripción-general)
-2. [Stack Tecnológico](#stack-tecnológico)
-3. [Prerrequisitos](#prerrequisitos)
-4. [Instalación y Configuración Local](#instalación-y-configuración-local)
-5. [Variables de Entorno](#variables-de-entorno)
-6. [Estructura del Proyecto](#estructura-del-proyecto)
-7. [Arquitectura y Capas del Backend](#arquitectura-y-capas-del-backend)
-8. [Endpoints de la API](#endpoints-de-la-api)
-9. [Seguridad](#seguridad)
-10. [Testing](#testing)
-11. [Despliegue en Heroku](#despliegue-en-heroku)
-12. [CI/CD Pipeline](#cicd-pipeline)
-13. [Contribución](#contribución)
-14. [Licencia](#licencia)
+[![Node.js](https://img.shields.io/badge/node-20%20LTS-brightgreen?logo=node.js)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Build](https://img.shields.io/badge/build-CI%2FCD%20ready-success)](https://shields.io/)
+[![Coverage](https://img.shields.io/badge/coverage-pending-yellow)](https://shields.io/)
 
 ---
 
 ## Descripción General
 
-Tsoft Greetings Web App (XP-10) adopta una arquitectura **SPA (Single Page Application)** con separación clara entre un Frontend construido en React y un Backend construido en Express siguiendo el patrón **MVC en el servidor**. Toda la comunicación entre capas se realiza mediante **API REST con JSON**.
+Este proyecto es una API RESTful construida sobre Node.js 20 LTS con Express.js 4.x siguiendo el patrón MVC simplificado con separación de responsabilidades por capas. Resuelve la necesidad de contar con una base de backend segura, documentada y lista para escalar, incorporando desde el inicio prácticas de DevSecOps como autenticación JWT, rate limiting, validación de entradas y logging estructurado. El stack tecnológico incluye herramientas estándar de la industria para seguridad, documentación, testing y contenedorización.
 
-El patrón Repository abstrae el acceso a datos, y un Middleware Chain en Express gestiona la seguridad de cada petición entrante.
+---
+
+## Tabla de Contenidos
+
+- [Arquitectura](#arquitectura)
+- [Requisitos Previos](#requisitos-previos)
+- [Variables de Entorno](#variables-de-entorno)
+- [Instalación y Ejecución Local](#instalación-y-ejecución-local)
+- [Documentación de la API](#documentación-de-la-api)
+- [Seguridad](#seguridad)
+- [Testing](#testing)
+- [Linting y Formato](#linting-y-formato)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Contribución](#contribución)
+- [Roadmap](#roadmap)
+
+---
+
+## Arquitectura
+
+El patrón adoptado es RESTful MVC simplificado con separación clara por capas. Cada capa tiene una responsabilidad única y acotada: los middlewares de seguridad actúan antes de que la petición llegue a las rutas, los controladores orquestan la lógica de negocio, y la capa de servicios está prevista para iteraciones futuras. No existe capa de modelo en esta iteración, pero está planificada mediante Mongoose para la integración con MongoDB.
 
 ```
-Flujo de datos:
-
-+----------+       +-------------+       +--------------+       +----------------+
-| Browser  | ----> | React SPA   | ----> | Express API  | ----> | MongoDB Atlas  |
-| (Client) | <---- | (Frontend)  | <---- | (Backend)    | <---- | (Base de Datos)|
-+----------+       +-------------+       +--------------+       +----------------+
-
-HTTP/HTTPS         API REST / JSON        Mongoose ODM
+┌─────────────────────────────────────────┐
+│            REQUEST ENTRANTE             │
+└────────────────────┬────────────────────┘
+                     │
+┌────────────────────▼────────────────────┐
+│      MIDDLEWARES DE SEGURIDAD           │
+│   helmet · cors · rate-limit · morgan   │
+└────────────────────┬────────────────────┘
+                     │
+┌────────────────────▼────────────────────┐
+│            CAPA DE RUTAS                │
+│         /src/routes/*.js                │
+└────────────────────┬────────────────────┘
+                     │
+┌────────────────────▼────────────────────┐
+│         CAPA DE CONTROLADORES           │
+│       /src/controllers/*.js             │
+└────────────────────┬────────────────────┘
+                     │
+┌────────────────────▼────────────────────┐
+│      CAPA DE SERVICIOS (FUTURA)         │
+│        /src/services/*.js               │
+└────────────────────┬────────────────────┘
+                     │
+┌────────────────────▼────────────────────┐
+│           RESPUESTA SALIENTE            │
+└─────────────────────────────────────────┘
 ```
 
 ---
 
-## Stack Tecnológico
+## Requisitos Previos
 
-### Frontend
-- React 18+
-- React Router DOM
-- Context API (manejo de estado global de idioma/país)
-- DOMPurify (sanitización contra XSS en cliente)
+Asegúrate de tener instaladas las siguientes herramientas antes de continuar:
 
-### Backend
-- Node.js
-- Express
-- Helmet.js (headers de seguridad HTTP: CSP, HSTS, X-Frame-Options)
-- express-rate-limit (protección contra fuerza bruta)
-- express-validator (validación y sanitización de inputs)
-- express-mongo-sanitize (sanitización contra NoSQL Injection)
-- xss-clean (sanitización contra XSS en servidor)
-- Morgan (logging de requests)
-- jsonwebtoken / JWT (autenticación del panel de administración)
-- bcryptjs (hash de contraseñas)
-
-### Base de Datos
-- MongoDB Atlas (servicio gestionado en la nube)
-- Mongoose ODM (esquemas estrictos, strict mode habilitado)
-
-### DevOps
-- GitHub Actions (pipeline CI/CD: lint, test, audit)
-- Heroku (plataforma de despliegue)
-- npm audit (auditoría de dependencias)
-
-### Testing
-- Jest (tests unitarios)
-- Supertest (tests de integración)
-
----
-
-## Prerrequisitos
-
-Antes de comenzar, asegúrate de contar con lo siguiente instalado y configurado:
-
-- **Node.js** versión mínima requerida: **18.0.0**
-- **npm** versión mínima requerida: **9.0.0**
-- Cuenta activa en **MongoDB Atlas** con un cluster disponible
-- Cuenta en **Heroku** para el despliegue de la aplicación
-- **Git** instalado en el sistema local
-- Acceso al repositorio en **GitHub** con los permisos correspondientes
-
----
-
-## Instalación y Configuración Local
-
-Sigue los pasos en el orden indicado para levantar el entorno de desarrollo local correctamente.
-
-### Paso 1: Clonar el repositorio
-
-```bash
-git clone https://github.com/tsoft-org/xp-10-greetings-app.git
-cd xp-10-greetings-app
-```
-
-### Paso 2: Instalar dependencias del backend
-
-Ejecutar desde la **carpeta raíz** del proyecto:
-
-```bash
-npm install
-```
-
-### Paso 3: Instalar dependencias del frontend
-
-Ejecutar desde la **carpeta client**:
-
-```bash
-cd client
-npm install
-cd ..
-```
-
-### Paso 4: Configurar variables de entorno
-
-Copiar el archivo de ejemplo `.env.example` a `.env` tanto en la raíz como en la carpeta `client`:
-
-```bash
-# En la carpeta raíz (backend)
-cp .env.example .env
-
-# En la carpeta client (frontend)
-cp client/.env.example client/.env
-```
-
-> **ADVERTENCIA: EL ARCHIVO `.env` NUNCA DEBE SUBIRSE AL REPOSITORIO. ESTE ARCHIVO YA ESTÁ INCLUIDO EN `.gitignore`. VERIFICA QUE `.gitignore` CONTENGA LA ENTRADA `.env` ANTES DE REALIZAR CUALQUIER COMMIT.**
-
-### Paso 5: Configurar la conexión a MongoDB Atlas
-
-Editar el archivo `.env` en la carpeta raíz y asignar la cadena de conexión de tu cluster de MongoDB Atlas a la variable `MONGODB_URI`:
-
-```
-MONGODB_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/<dbname>?retryWrites=true&w=majority
-```
-
-Reemplaza `<usuario>`, `<password>`, `<cluster>` y `<dbname>` con los valores reales de tu cuenta de MongoDB Atlas.
-
-### Paso 6: Ejecutar en modo desarrollo
-
-Levantar backend y frontend de forma concurrente desde la carpeta raíz:
-
-```bash
-npm run dev
-```
-
-Este comando utiliza `concurrently` para iniciar el servidor Express y el servidor de desarrollo de React simultáneamente.
-
-- Backend disponible en: `http://localhost:5000`
-- Frontend disponible en: `http://localhost:3000`
+| Herramienta    | Versión mínima     | Comando de verificación         |
+|----------------|--------------------|---------------------------------|
+| Node.js        | 20 LTS             | `node --version`                |
+| npm            | 10.x o superior    | `npm --version`                 |
+| Docker         | 24.x o superior    | `docker --version`              |
+| Docker Compose | 2.x o superior     | `docker compose version`        |
+| Git            | 2.x o superior     | `git --version`                 |
 
 ---
 
 ## Variables de Entorno
 
-### Backend (archivo `.env` en la raíz)
+Antes de ejecutar el proyecto, copia el archivo de ejemplo y completa los valores correspondientes:
 
-| Variable | Descripción |
-|---|---|
-| `PORT` | Puerto donde corre el servidor Express |
-| `MONGODB_URI` | Cadena de conexión a MongoDB Atlas |
-| `JWT_SECRET` | Clave secreta para la firma de tokens JWT de acceso |
-| `JWT_REFRESH_SECRET` | Clave secreta para la firma de refresh tokens |
-| `JWT_EXPIRATION` | Tiempo de expiración del token de acceso (recomendado: `1h`) |
-| `NODE_ENV` | Entorno de ejecución: `development`, `staging` o `production` |
-| `CORS_ORIGIN` | URL del frontend permitida en la política CORS |
-| `BCRYPT_ROUNDS` | Número de rondas para el hash de contraseñas con bcryptjs |
-
-Ejemplo de estructura del archivo `.env` del backend (sin valores reales):
-
-```
-PORT=
-MONGODB_URI=
-JWT_SECRET=
-JWT_REFRESH_SECRET=
-JWT_EXPIRATION=
-NODE_ENV=
-CORS_ORIGIN=
-BCRYPT_ROUNDS=
+```bash
+cp .env.example .env
 ```
 
-### Frontend (archivo `client/.env`)
+> **⚠️ ADVERTENCIA: `JWT_SECRET` nunca debe hardcodearse en el código fuente ni commitearse al repositorio. Gestiona este valor exclusivamente mediante el archivo `.env` local o un sistema de gestión de secrets (vault). El archivo `.env` está incluido en `.gitignore`.**
 
-| Variable | Descripción |
-|---|---|
-| `REACT_APP_API_URL` | URL base de la API del backend |
+| Variable                | Descripción funcional                                                        | Obligatoria |
+|-------------------------|------------------------------------------------------------------------------|-------------|
+| `PORT`                  | Puerto en el que escucha el servidor HTTP                                    | Opcional    |
+| `NODE_ENV`              | Entorno de ejecución: `development`, `staging` o `production`                | Obligatoria |
+| `JWT_SECRET`            | Clave secreta para firmar y verificar tokens JWT                             | Obligatoria |
+| `CORS_ORIGINS`          | Lista de orígenes permitidos separados por coma para la política CORS        | Obligatoria |
+| `RATE_LIMIT_WINDOW_MS`  | Ventana de tiempo en milisegundos para el rate limiting por IP               | Opcional    |
+| `RATE_LIMIT_MAX`        | Número máximo de peticiones permitidas por IP dentro de la ventana de tiempo | Opcional    |
+| `LOG_LEVEL`             | Nivel de logging para winston: `error`, `warn`, `info`, `debug`              | Opcional    |
 
-Ejemplo de estructura del archivo `client/.env` (sin valores reales):
+---
+
+## Instalación y Ejecución Local
+
+### Método A — Sin Docker
+
+Sigue estos pasos en orden para levantar el servidor localmente sin contenedores:
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/tu-org/tu-repositorio.git
+cd tu-repositorio
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Copiar el archivo de variables de entorno y completar los valores
+cp .env.example .env
+
+# 4a. Ejecutar en modo desarrollo (con recarga automática)
+npm run dev
+
+# 4b. Ejecutar en modo producción
+npm start
+```
+
+### Método B — Con Docker
+
+Asegúrate de haber copiado y configurado el archivo `.env` antes de construir la imagen.
+
+```bash
+# 1. Copiar el archivo de variables de entorno
+cp .env.example .env
+
+# 2. Construir la imagen y levantar los servicios definidos en docker-compose.yml
+docker compose up --build
+
+# Para ejecutar en segundo plano
+docker compose up --build -d
+
+# Para detener los servicios
+docker compose down
+```
+
+El contenedor expone el puerto definido en la variable de entorno `PORT` (por defecto `3000`). Asegúrate de que dicho puerto esté disponible en tu máquina local.
+
+---
+
+## Documentación de la API
+
+La documentación interactiva de la API está disponible mediante Swagger UI en la ruta `/api-docs` una vez que el servidor está corriendo.
+
+Accede desde tu navegador en:
 
 ```
-REACT_APP_API_URL=
+http://localhost:3000/api-docs
 ```
 
-> **Nota de Seguridad:** Los valores de producción se gestionan exclusivamente como **Config Vars en Heroku** y nunca deben estar presentes en el código fuente ni en archivos versionados en el repositorio.
+La especificación OpenAPI es generada automáticamente con `swagger-jsdoc` a partir de las anotaciones JSDoc presentes en los archivos de rutas y controladores ubicados en `src/routes/` y `src/controllers/`. No es necesario mantener un archivo de especificación separado; la documentación se mantiene sincronizada con el código fuente.
+
+---
+
+## Seguridad
+
+Las siguientes medidas de seguridad están implementadas y activas en todas las peticiones:
+
+- **JWT**: autenticación mediante tokens firmados, validados en el header `Authorization` con esquema `Bearer` a través de un middleware dedicado en `src/middlewares/auth.js`.
+- **CORS**: política de orígenes cruzados configurada con la librería `cors`, permitiendo únicamente los orígenes definidos en la variable de entorno `CORS_ORIGINS`.
+- **Rate Limiting**: protección contra DoS/DDoS mediante `express-rate-limit`, limitando el número de peticiones por IP dentro de una ventana de tiempo configurable vía variables de entorno.
+- **Validación de entradas**: sanitización y validación de parámetros de query, body y params con `express-validator`, rechazando peticiones malformadas antes de llegar a los controladores.
+- **Cabeceras HTTP de seguridad**: configuradas automáticamente con `helmet`, incluyendo protecciones contra XSS, clickjacking, HSTS, CSP y otras vulnerabilidades comunes a nivel de cabeceras.
+- **Logging de acceso**: registro de todas las peticiones HTTP con `morgan` en formato combinado, integrado con `winston` para logs estructurados en JSON, facilitando la integración con herramientas SIEM o plataformas de monitoreo.
+
+---
+
+## Testing
+
+El framework de testing es **Jest** junto con **supertest** para pruebas de integración sobre los endpoints HTTP. Los archivos de test se ubican en la carpeta `tests/` en la raíz del proyecto, siguiendo la convención de nomenclatura `*.test.js`.
+
+Comandos disponibles:
+
+```bash
+# Ejecutar la suite completa de tests
+npm test
+
+# Generar reporte de cobertura de código
+npm run test:coverage
+
+# Ejecutar tests en modo observador durante el desarrollo
+npm run test:watch
+```
+
+El reporte de cobertura se genera en la carpeta `coverage/` y puede consultarse abriendo `coverage/lcov-report/index.html` en el navegador.
+
+---
+
+## Linting y Formato
+
+Las herramientas configuradas para mantener la calidad y consistencia del código son **ESLint** para análisis estático y **Prettier** para formato de código. Las reglas están definidas en los archivos `.eslintrc.js` y `.prettierrc` en la raíz del proyecto.
+
+Comandos disponibles:
+
+```bash
+# Verificar el código con ESLint
+npm run lint
+
+# Corregir automáticamente los problemas detectados por ESLint
+npm run lint:fix
+
+# Aplicar formato con Prettier a todos los archivos del proyecto
+npm run format
+```
+
+Se recomienda integrar estas herramientas con el editor de código (extensiones para VS Code disponibles) y ejecutarlas como parte del pipeline CI/CD antes de cada merge.
 
 ---
 
 ## Estructura del Proyecto
 
 ```
-xp-10-greetings-app/
-│
-├── .github/
-│   └── workflows/
-│       ├── ci.yml                  # Pipeline de CI: lint, test, npm audit
-│       └── deploy.yml              # Pipeline de CD: despliegue a Heroku
-│
-├── server/
-│   ├── routes/
-│   │   ├── greetings.routes.js     # Rutas públicas de saludos
-│   │   └── admin.routes.js         # Rutas protegidas del panel de administración
-│   │
-│   ├── controllers/
-│   │   ├── greetings.controller.js # Controladores de saludos
-│   │   └── admin.controller.js     # Controladores de administración
-│   │
-│   ├── services/
-│   │   ├── greetings.service.js    # Lógica de negocio de saludos
-│   │   └── auth.service.js         # Lógica de autenticación JWT
-│   │
-│   ├── repositories/
-│   │   ├── greetings.repository.js # Acceso a datos de saludos (MongoDB)
-│   │   └── users.repository.js     # Acceso a datos de usuarios (MongoDB)
-│   │
-│   ├── models/
-│   │   ├── Greeting.model.js       # Esquema Mongoose para colección greetings
-│   │   └── User.model.js           # Esquema Mongoose para colección users
-│   │
-│   └── middlewares/
-│       ├── auth.middleware.js       # Verificación de JWT
-│       ├── validate.middleware.js   # Validación con express-validator
-│       └── errorHandler.middleware.js # Manejo centralizado de errores
-│
-├── client/
-│   ├── public/
-│   │   └── index.html
-│   │
-│   └── src/
-│       ├── components/
-│       │   ├── FlagSelector/       # Componente interactivo de selección de banderas
-│       │   ├── GreetingCard/       # Componente de visualización del saludo
-│       │   └── ErrorBoundary/      # Error Boundary de React
-│       │
-│       ├── context/
-│       │   └── AppContext.js       # Context API para estado global de idioma/país
-│       │
-│       ├── hooks/
-│       │   └── useGreeting.js      # Hook personalizado para fetch de saludos
-│       │
-│       ├── pages/
-│       │   ├── Home.jsx            # Página principal de selección de país
-│       │   └── Admin.jsx           # Panel de administración (protegido)
-│       │
-│       ├── utils/
-│       │   └── sanitize.js         # Utilidades de sanitización con DOMPurify
-│       │
-│       ├── App.jsx                 # Componente raíz con React Router DOM
-│       └── index.js                # Punto de entrada de React
-│
-├── tests/
-│   ├── unit/
-│   │   ├── greetings.service.test.js
-│   │   └── auth.service.test.js
-│   │
-│   └── integration/
-│       ├── greetings.api.test.js
-│       └── admin.api.test.js
-│
-├── .env.example                    # Plantilla de variables de entorno del backend
-├── .gitignore                      # Archivos excluidos del repositorio (incluye .env)
-├── package.json                    # Dependencias y scripts del backend
-├── Procfile                        # Configuración de proceso para Heroku
-├── server.js                       # Punto de entrada del servidor Express
-└── README.md                       # Este archivo
+.
+├── src/                          # Código fuente principal de la aplicación
+│   ├── config/                   # Configuración centralizada (env, swagger, logger)
+│   │   ├── env.js                # Carga y validación de variables de entorno
+│   │   ├── logger.js             # Configuración de winston
+│   │   └── swagger.js            # Configuración de swagger-jsdoc
+│   ├── controllers/              # Controladores: lógica de negocio por recurso
+│   │   └── health.controller.js  # Controlador de ejemplo para health check
+│   ├── middlewares/              # Middlewares personalizados y de seguridad
+│   │   ├── auth.js               # Validación de token JWT
+│   │   ├── errorHandler.js       # Manejador global de errores
+│   │   ├── rateLimiter.js        # Configuración de express-rate-limit
+│   │   └── validate.js           # Middleware de validación con express-validator
+│   └── routes/                   # Definición de rutas por recurso
+│       ├── index.js              # Router principal que agrupa todas las rutas
+│       └── health.routes.js      # Rutas de health check con anotaciones Swagger
+├── tests/                        # Suite de tests unitarios y de integración
+│   ├── health.test.js            # Tests de integración para el endpoint de health
+│   └── setup.js                  # Configuración global de Jest
+├── app.js                        # Configuración de Express y registro de middlewares
+├── server.js                     # Punto de entrada: inicialización del servidor HTTP
+├── .env.example                  # Plantilla de variables de entorno (sin valores sensibles)
+├── .eslintrc.js                  # Reglas de ESLint
+├── .prettierrc                   # Reglas de formato de Prettier
+├── .gitignore                    # Archivos y carpetas excluidos del repositorio
+├── Dockerfile                    # Imagen Docker de la aplicación
+├── docker-compose.yml            # Orquestación de servicios con Docker Compose
+├── jest.config.js                # Configuración de Jest
+├── package.json                  # Dependencias y scripts npm
+└── README.md                     # Documentación principal del proyecto
 ```
-
----
-
-## Arquitectura y Capas del Backend
-
-El flujo de una request entrante sigue el siguiente recorrido por capas:
-
-1. **Routes:** La petición HTTP llega al router de Express correspondiente (`greetings.routes.js` o `admin.routes.js`), que define el método y la ruta.
-
-2. **Middleware Chain de Seguridad:** Antes de llegar al controlador, la petición atraviesa la cadena de middlewares de seguridad en el siguiente orden:
-   - **Helmet.js** aplica headers de seguridad HTTP (Content-Security-Policy, HSTS, X-Frame-Options).
-   - **express-rate-limit** verifica que el cliente no haya superado el límite de peticiones permitidas.
-   - **CORS** valida que el origen de la petición coincida con el dominio del frontend configurado en `CORS_ORIGIN`.
-   - **express-mongo-sanitize** y **xss-clean** sanitizan el body, query y params de la petición.
-   - **express-validator** valida y sanitiza los inputs según las reglas definidas para cada endpoint.
-   - **auth.middleware** verifica el token JWT en los endpoints protegidos.
-
-3. **Controller:** Una vez superada la cadena de middlewares, el controlador recibe la petición validada, extrae los datos necesarios y delega la lógica de negocio al Service correspondiente.
-
-4. **Service:** Contiene la lógica de negocio de la aplicación. Procesa los datos, aplica reglas de negocio y llama al Repository para las operaciones de persistencia.
-
-5. **Repository:** Abstrae el acceso a la base de datos. Utiliza los modelos de Mongoose para ejecutar las operaciones CRUD sobre MongoDB Atlas.
-
-6. **Mongoose / MongoDB Atlas:** El ODM Mongoose ejecuta las consultas con **strict mode habilitado**, lo que previene la inyección de campos no definidos en el esquema y protege contra ataques de NoSQL Injection.
-
-La respuesta recorre el camino inverso: Repository -> Service -> Controller -> Response al cliente.
-
----
-
-## Endpoints de la API
-
-### Endpoints Públicos
-
-#### GET /api/health
-- **Descripción:** Verificación del estado del servidor. Utilizado por Heroku y sistemas de monitoreo para health checks.
-- **Autenticación JWT:** No requerida.
-- **Parámetros:** Ninguno.
-- **Respuesta exitosa (200):**
-  ```json
-  {
-    "status": "OK",
-    "timestamp": "2024-01-01T00:00:00.000Z",
-    "environment": "production"
-  }
-  ```
-
-#### GET /api/greetings
-- **Descripción:** Obtener la lista completa de saludos activos con sus países e idiomas correspondientes.
-- **Autenticación JWT:** No requerida.
-- **Parámetros query opcionales:**
-  - `language` (string): Filtrar por idioma.
-  - `isActive` (boolean): Filtrar por estado activo (por defecto `true`).
-- **Respuesta exitosa (200):**
-  ```json
-  {
-    "success": true,
-    "data": [
-      {
-        "countryCode": "ES",
-        "countryName": "España",
-        "language": "Español",
-        "greeting": "Hola",
-        "formalGreeting": "Buenos días",
-        "flagUrl": "/flags/es.svg",
-        "isActive": true
-      }
-    ]
-  }
-  ```
-
-#### GET /api/greetings/:countryCode
-- **Descripción:** Obtener el saludo correspondiente a un país específico mediante su código de país ISO 3166-1 alpha-2.
-- **Autenticación JWT:** No requerida.
-- **Parámetros de ruta:**
-  - `countryCode` (string, requerido): Código de país en formato ISO 3166-1 alpha-2 (ej: `ES`, `FR`, `JP`).
-- **Respuesta exitosa (200):**
-  ```json
-  {
-    "success": true,
-    "data": {
-      "countryCode": "JP",
-      "countryName": "Japón",
-      "language": "Japonés",
-      "greeting": "こんにちは",
-      "formalGreeting": "はじめまして",
-      "flagUrl": "/flags/jp.svg",
-      "isActive": true
-    }
-  }
-  ```
-- **Respuesta de error (404):**
-  ```json
-  {
-    "success": false,
-    "message": "País no encontrado"
-  }
-  ```
-
-### Endpoints Protegidos (requieren JWT)
-
-#### POST /api/auth/login
-- **Descripción:** Autenticación de administrador. Devuelve un token JWT de acceso y un refresh token.
-- **Autenticación JWT:** No requerida (es el endpoint de obtención del token).
-- **Body (JSON):**
-  ```json
-  {
-    "username": "string (requerido)",
-    "password": "string (requerido)"
-  }
-  ```
-- **Respuesta exitosa (200):**
-  ```json
-  {
-    "success": true,
-    "accessToken": "<jwt_token>",
-    "refreshToken": "<refresh_token>",
-    "expiresIn": "1h"
-  }
-  ```
-
-#### POST /api/auth/refresh
-- **Descripción:** Obtener un nuevo token de acceso utilizando un refresh token válido.
-- **Autenticación JWT:** Refresh token en el body.
-- **Body (JSON):**
-  ```json
-  {
-    "refreshToken": "string (requerido)"
-  }
-  ```
-
-#### POST /api/admin/greetings
-- **Descripción:** Crear un nuevo saludo en la base de datos.
-- **Autenticación JWT:** Requerida. Incluir el token en el header `Authorization: Bearer <token>`.
-- **Body (JSON):**
-  ```json
-  {
-    "countryCode": "string (requerido, 2 caracteres ISO)",
-    "countryName": "string (requerido)",
-    "language": "string (requerido)",
-    "greeting": "string (requerido)",
-    "formalGreeting": "string (opcional)",
-    "flagUrl": "string (requerido)",
-    "isActive": "boolean (opcional, default: true)"
-  }
-  ```
-- **Respuesta exitosa (201):**
-  ```json
-  {
-    "success": true,
-    "data": { "<greeting_object_creado>" }
-  }
-  ```
-
-#### PUT /api/admin/greetings/:countryCode
-- **Descripción:** Actualizar un saludo existente identificado por su código de país.
-- **Autenticación JWT:** Requerida. Incluir el token en el header `Authorization: Bearer <token>`.
-- **Parámetros de ruta:**
-  - `countryCode` (string, requerido): Código de país del saludo a actualizar.
-- **Body (JSON):** Campos a actualizar (todos opcionales en la actualización).
-
-#### DELETE /api/admin/greetings/:countryCode
-- **Descripción:** Desactivar (soft delete) un saludo existente estableciendo `isActive: false`.
-- **Autenticación JWT:** Requerida. Incluir el token en el header `Authorization: Bearer <token>`.
-- **Parámetros de ruta:**
-  - `countryCode` (string, requerido): Código de país del saludo a desactivar.
-
----
-
-## Seguridad
-
-La aplicación implementa múltiples capas de seguridad siguiendo principios DevSecOps:
-
-- **HTTPS obligatorio en producción:** TLS 1.2+ con redirección automática de HTTP a HTTPS.
-- **Headers de seguridad HTTP:** Gestionados por Helmet.js (CSP, HSTS, X-Frame-Options, X-Content-Type-Options).
-- **Protección contra fuerza bruta:** express-rate-limit limita el número de peticiones por IP.
-- **CORS restrictivo:** Solo se permite el origen configurado en `CORS_ORIGIN`.
-- **Validación de entrada en doble capa:** express-validator en el backend y DOMPurify en el frontend.
-- **Sanitización contra NoSQL Injection:** express-mongo-sanitize y Mongoose strict mode.
-- **Sanitización contra XSS:** xss-clean en el servidor y DOMPurify en el cliente.
-- **Autenticación JWT:** Tokens de acceso con expiración corta (1h) y refresh tokens.
-- **Hash de contraseñas:** bcryptjs con número de rondas configurable.
-- **Protección CSRF:** Implementada en los formularios del panel de administración.
-- **Gestión de secretos:** Variables de entorno en Heroku Config Vars, nunca en código fuente.
-- **Auditoría de dependencias:** `npm audit` ejecutado automáticamente en el pipeline CI/CD.
-
----
-
-## Testing
-
-### Ejecutar todos los tests
-
-```bash
-npm test
-```
-
-### Ejecutar tests unitarios
-
-```bash
-npm run test:unit
-```
-
-### Ejecutar tests de integración
-
-```bash
-npm run test:integration
-```
-
-### Ejecutar tests con cobertura
-
-```bash
-npm run test:coverage
-```
-
-### Estructura de tests
-
-- **Tests unitarios** (`tests/unit/`): Prueban servicios y lógica de negocio de forma aislada con Jest y mocks de los repositorios.
-- **Tests de integración** (`tests/integration/`): Prueban los endpoints de la API de extremo a extremo con Supertest y una base de datos de test.
-
----
-
-## Despliegue en Heroku
-
-### Configuración inicial (primera vez)
-
-1. Instalar el CLI de Heroku y autenticarse:
-   ```bash
-   heroku login
-   ```
-
-2. Crear la aplicación en Heroku:
-   ```bash
-   heroku create tsoft-greetings-xp10
-   ```
-
-3. Configurar las variables de entorno en Heroku (Config Vars):
-   ```bash
-   heroku config:set NODE_ENV=production
-   heroku config:set MONGODB_URI=<tu_cadena_de_conexion>
-   heroku config:set JWT_SECRET=<tu_jwt_secret>
-   heroku config:set JWT_REFRESH_SECRET=<tu_refresh_secret>
-   heroku config:set JWT_EXPIRATION=1h
-   heroku config:set CORS_ORIGIN=<url_del_frontend>
-   heroku config:set BCRYPT_ROUNDS=12
-   ```
-
-4. El despliegue se realiza automáticamente mediante el pipeline de GitHub Actions al hacer push a la rama `main`.
-
-### Procfile
-
-El archivo `Procfile` en la raíz del proyecto define el proceso web para Heroku:
-
-```
-web: node server.js
-```
-
-### Health Check
-
-Heroku utiliza el endpoint `GET /api/health` para verificar que la aplicación está funcionando correctamente después de cada despliegue.
-
----
-
-## CI/CD Pipeline
-
-El pipeline de integración y entrega continua está configurado en `.github/workflows/`:
-
-### Pipeline de CI (`ci.yml`)
-
-Se ejecuta en cada **Pull Request** y **push** a las ramas `main` y `develop`:
-
-1. **Lint:** Verificación de estilo de código con ESLint.
-2. **Test:** Ejecución de tests unitarios y de integración con Jest y Supertest.
-3. **Audit:** Auditoría de seguridad de dependencias con `npm audit`.
-4. **Build:** Construcción del frontend de React para verificar que compila correctamente.
-
-### Pipeline de CD (`deploy.yml`)
-
-Se ejecuta únicamente en **push a la rama `main`** después de que el pipeline de CI pase exitosamente:
-
-1. Ejecuta el pipeline de CI completo.
-2. Despliega automáticamente a Heroku.
-
-### Entornos
-
-| Rama | Entorno | URL |
-|---|---|---|
-| `develop` | Development | Local / Staging |
-| `staging` | Staging | `https://tsoft-greetings-staging.herokuapp.com` |
-| `main` | Production | `https://tsoft-greetings-xp10.herokuapp.com` |
 
 ---
 
 ## Contribución
 
-1. Crear una rama desde `develop` con el formato `feature/nombre-de-la-feature` o `fix/nombre-del-fix`.
-2. Realizar los cambios siguiendo las convenciones de código del proyecto.
-3. Asegurarse de que todos los tests pasen localmente con `npm test`.
-4. Verificar que no hay vulnerabilidades nuevas con `npm audit`.
-5. Abrir un Pull Request hacia la rama `develop` con una descripción clara de los cambios.
-6. El pipeline de CI debe pasar antes de que el PR pueda ser mergeado.
+Para contribuir al proyecto sigue el flujo de trabajo establecido:
+
+1. **Crear una rama** desde `main` usando la nomenclatura correspondiente:
+   - Para nuevas funcionalidades: `feature/nombre-descriptivo-de-la-tarea`
+   - Para correcciones: `fix/nombre-descriptivo-del-bug`
+
+2. **Realizar commits** con mensajes descriptivos en inglés, siguiendo el formato:
+   ```
+   type(scope): short description
+   ```
+   Ejemplo: `feat(auth): add JWT validation middleware`
+
+3. **Asegurarse de que los tests pasen** antes de abrir el Pull Request:
+   ```bash
+   npm test
+   npm run lint
+   ```
+
+4. **Abrir un Pull Request** hacia `main` con una descripción clara del cambio realizado, el problema que resuelve y cualquier consideración relevante para el revisor.
+
+5. **Esperar revisión**: al menos un aprobador es requerido antes de hacer merge. El pipeline CI/CD validará automáticamente los tests y el linting sobre la rama del PR, en línea con la estructura compatible definida en Jira XP-9.
 
 ---
 
-## Licencia
+## Roadmap
 
-Este proyecto está licenciado bajo la **Licencia MIT**. Ver el archivo `LICENSE` para más detalles.
+Características planificadas para iteraciones futuras:
 
----
-
-*Tsoft Greetings Web App (XP-10) - Desarrollado con metodología Hybrid, sprints cortos y entregas incrementales.*
+- [ ] **Integración con MongoDB mediante Mongoose**: incorporación de la capa de modelo para persistencia de datos, incluyendo logs de acceso y gestión de usuarios.
+- [ ] **Separación de ambientes**: configuración diferenciada para `development`, `staging` y `production` mediante `NODE_ENV`, con archivos de entorno específicos por ambiente.
+- [ ] **Gestión de secrets mediante vault**: migración de variables sensibles como `JWT_SECRET` hacia un sistema de gestión de secrets (HashiCorp Vault o equivalente en cloud).
+- [ ] **Expansión de la cobertura de tests**: incremento de la cobertura hacia el 80% mínimo, incorporando tests unitarios por capa y tests de contrato para la API.
+- [ ] **Integración con MongoDB Atlas**: soporte para conexión a instancias gestionadas en la nube con configuración de connection pooling y manejo de reconexión.
+- [ ] **Gestión de usuarios**: endpoints de registro, login y refresh token con almacenamiento seguro de contraseñas mediante `bcryptjs`.
+- [ ] **Pipeline CI/CD completo**: configuración de workflows para GitHub Actions o equivalente, incluyendo stages de lint, test, build y deploy automatizado.
