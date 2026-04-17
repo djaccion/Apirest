@@ -1,37 +1,69 @@
 {
-  "tokens_input": 14542,
-  "tokens_output": 6957,
-  "tokens_total": 21499,
-  "estimated_hours": 2.4,
+  "tokens_input": 30972,
+  "tokens_output": 8387,
+  "tokens_total": 39359,
+  "estimated_hours": 2.9,
   "modelo": "claude-sonnet-4-6",
-  "skills_loaded": false,
-  "skills_count": 0,
-  "skills_roles": [],
-  "timestamp": "2026-04-17T21:21:17.162Z",
+  "skills_loaded": true,
+  "skills_count": 5,
+  "skills_roles": [
+    {
+      "role": "arquitecto",
+      "skill_id": "GLX-DISEÑO-ARQUITECTURA-V1",
+      "skill_name": "DISEÑO-ARQUITECTURA"
+    },
+    {
+      "role": "tech_lead",
+      "skill_id": "GLX-MICROPLANIFICACION-DISEÑO-V1",
+      "skill_name": "MICROPLANIFICACION-DISEÑO"
+    },
+    {
+      "role": "desarrollador",
+      "skill_id": "GLX-FRONTEND-DESARROLLO-V1",
+      "skill_name": "FRONTEND-DESARROLLO"
+    },
+    {
+      "role": "qa",
+      "skill_id": "GLX-QA-VALIDACION-V1",
+      "skill_name": "QA-VALIDACION"
+    },
+    {
+      "role": "desarrollador_backend",
+      "skill_id": "GLX-DESARROLLO_BACKEND-API-V1",
+      "skill_name": "DESARROLLO_BACKEND-API"
+    }
+  ],
+  "timestamp": "2026-04-17T21:25:16.851Z",
   "by_agent": {
     "arquitecto": {
-      "input": 1080,
-      "output": 894,
+      "input": 2147,
+      "output": 1457,
       "calls": 1,
-      "skill_name": "Arquitecto (default)"
+      "skill_name": "DISEÑO-ARQUITECTURA"
     },
     "tech_lead": {
-      "input": 1668,
-      "output": 2999,
-      "calls": 2,
-      "skill_name": "Tech Lead (default)"
+      "input": 7335,
+      "output": 3719,
+      "calls": 3,
+      "skill_name": "MICROPLANIFICACION-DISEÑO"
     },
     "desarrollador": {
-      "input": 4619,
-      "output": 2438,
-      "calls": 2,
-      "skill_name": "Desarrollador (default)"
+      "input": 9695,
+      "output": 2043,
+      "calls": 3,
+      "skill_name": "FRONTEND-DESARROLLO"
     },
     "qa": {
-      "input": 7175,
-      "output": 626,
-      "calls": 2,
-      "skill_name": "QA (default)"
+      "input": 11795,
+      "output": 1168,
+      "calls": 3,
+      "skill_name": "QA-VALIDACION"
+    },
+    "desarrollador_backend": {
+      "input": 0,
+      "output": 0,
+      "calls": 0,
+      "skill_name": "DESARROLLO_BACKEND-API"
     }
   }
 }
