@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validador de Prompts y Tokens</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 min-h-screen flex items-center justify-center p-4">
+
+  <div class="w-full max-w-3xl bg-gray-800 rounded-2xl shadow-2xl p-8">
+
+    <!-- Encabezado -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-white mb-2">Analizador de Prompts y Tokens</h1>
+      <p class="text-gray-400 text-sm">Valida y estima el consumo de tokens de tu prompt antes de enviarlo al modelo</p>
+    </div>
+
+    <!-- Área de Entrada -->
+    <div class="mb-4">
+      <label for="prompt-input" class="block text-gray-300 text-sm font-medium mb-2">
+        Escribe tu prompt
+      </label>
+      <textarea
+        id="prompt-input"
+        rows="6"
+        class="w-full bg-gray-700 text-gray-100 border border-gray-600 rounded-lg p-4 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors duration-200 resize-vertical"
+        placeholder="Escribe aquí tu prompt para analizar su longitud y estimar el número de tokens que consumirá..."
+      ></textarea>
+      <p id="validation-error" class="hidden text-red-400 text-xs mt-1">
+        El prompt no puede estar vacío. Por favor, escribe algo antes de analizar.
+      </p>
+    </div>
+
+    <!-- Botón de Análisis -->
+    <button
+      id="analyze-btn"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg uppercase tracking-wide transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+    >
+      Analizar Prompt
+    </button>
+
+    <!-- Sección de Loading -->
+    <div id="loading-section" class="hidden flex flex-col items-center justify-center py-8">
+      <div class="w-10 h-10 border-4 border-gray-600 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+      <p class="text-gray-400 text-sm">Analizando prompt...</p>
+    </div>
+
+    <!-- Sección de Resultados -->
+    <div id="results-section" class="hidden">
+      <h2 class="text-white font-semibold text-lg mb-4 text-center">Resultados del Análisis</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <!-- Tarjeta 1 - Tokens Estimados -->
+        <div class="bg-gray-700 rounded-xl p-6 text-center">
+          <div class="text-4xl font-bold text-white mb-2" id="result-tokens">—</div>
+          <div class="text-gray-400 text-sm">Tokens Estimados</div>
+        </div>
+
+        <!-- Tarjeta 2 - Latencia -->
+        <div class="bg-gray-700 rounded-xl p-6 text-center">
+          <div class="text-4xl font-bold text-white mb-2" id="result-latency">—</div>
+          <div class="text-gray-400 text-sm">Latencia (ms)</div>
+        </div>
+
+        <!-- Tarjeta 3 - Estado del Prompt -->
+        <div class="bg-gray-700 rounded-xl p-6 text-center">
+          <div class="text-4xl font-bold mb-2" id="result-status">—</div>
+          <div class="text-gray-400 text-sm">Estado del Prompt</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const promptInput = document.getElementById('prompt-input');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const validationError = document.getElementById('validation-error');
+    const resultsSection = document.getElementById('results-section');
+    const loadingSection = document.getElementById('loading-section');
+    const resultTokens = document.getElementById('result-tokens');
+    const resultLatency = document.getElementById('result-latency');
+    const resultStatus = document.getElementById('result-status');
+
+    const API_URL = 'http://localhost:8000/api/analyze';
+
+    async function analyzePrompt() {
+      // Paso 1 - Validación defensiva
+      const promptValue = promptInput.value.trim();
+
+      if (promptValue === '') {
+        promptInput.style.borderColor = '#ef4444';
+        validationError.classList.remove('hidden');
+        return;
+      }
+
+      promptInput.style.borderColor = '';
+      validationError.classList.add('hidden');
+
+      // Paso 2 - Estado loading
+      analyzeBtn.disabled = true;
+      resultsSection.classList.add('hidden');
+      loadingSection.classList.remove('hidden');
+
+      // Paso 3 - Fetch POST
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt: promptValue })
+        });
+
+        // Paso 4 - Manejo de respuesta
+        if (!response.ok) {
+          throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Paso 5 - Renderizado de resultados
+        resultTokens.textContent = data.tokens;
+        resultLatency.textContent = `${data.latency_ms} ms`;
+
+        resultStatus.className = 'text-4xl font-bold mb-2';
+
+        if (data.status === 'Óptimo') {
+          resultStatus.classList.add('text-green-400');
+        } else {
+          resultStatus.classList.add('text-yellow-400');
+        }
+
+        resultStatus.textContent = data.status;
+
+        loadingSection.classList.add('hidden');
+        resultsSection.classList.remove('hidden');
+
+      } catch (error) {
+        loadingSection.classList.add('hidden');
+        validationError.textContent = `Error al conectar con el servidor: ${error.message}`;
+        validationError.classList.remove('hidden');
+      } finally {
+        analyzeBtn.disabled = false;
+      }
+    }
+
+    analyzeBtn.addEventListener('click', analyzePrompt);
+  </script>
+
+</body>
+</html>

@@ -1,8 +1,30 @@
 {
-  "tokens_input": 227081,
-  "tokens_output": 90276,
-  "tokens_total": 317357,
-  "estimated_hours": 31.3,
+  "tokens_input": 18432,
+  "tokens_output": 8067,
+  "tokens_total": 26499,
+  "estimated_hours": 2.8,
   "modelo": "claude-sonnet-4-6",
-  "timestamp": "2026-04-17T18:20:12.175Z"
+  "timestamp": "2026-04-17T18:29:11.912Z",
+  "by_agent": {
+    "arquitecto": {
+      "input": 1080,
+      "output": 946,
+      "calls": 1
+    },
+    "tech_lead": {
+      "input": 2574,
+      "output": 3524,
+      "calls": 3
+    },
+    "desarrollador": {
+      "input": 6020,
+      "output": 2558,
+      "calls": 3
+    },
+    "qa": {
+      "input": 8758,
+      "output": 1039,
+      "calls": 3
+    }
+  }
 }
