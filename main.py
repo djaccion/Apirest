@@ -1,80 +1,81 @@
-import random
 import asyncio
+import random
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 import uvicorn
 
-app = FastAPI(title="Prompt Analyzer API", version="1.0.0")
+app = FastAPI(title="Validador de Prompts API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:5500",
-        "http://localhost:8080",
-        "http://127.0.0.1:5500",
-        "null"
-    ],
+    allow_origins=["http://localhost:5500", "http://127.0.0.1:5500"],
+    allow_methods=["POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
     allow_credentials=False,
-    allow_methods=["POST"],
-    allow_headers=["Content-Type"]
 )
 
 
 class PromptRequest(BaseModel):
     prompt: str
 
-    @field_validator("prompt", mode="before")
+    @field_validator("prompt")
     @classmethod
-    def validate_prompt(cls, value):
-        if len(value.strip()) == 0:
+    def prompt_no_vacio(cls, v):
+        if not v or not v.strip():
             raise ValueError("El prompt no puede estar vacío")
-        if len(value) > 10000:
-            raise ValueError("El prompt excede el límite de caracteres permitido")
-        return value
+        return v
 
 
-class AnalysisResponse(BaseModel):
-    word_count: int
-    token_estimate: int
-    status: str
-    latency_ms: float
+def _analizar_prompt(prompt: str) -> dict:
+    palabras = len(prompt.split())
+    tokens_estimados = round(palabras * 1.3)
+    caracteres = len(prompt)
+
+    if tokens_estimados <= 100:
+        estado = "Óptimo"
+        color_estado = "green"
+    elif 101 <= tokens_estimados <= 300:
+        estado = "Alerta"
+        color_estado = "yellow"
+    else:
+        estado = "Crítico"
+        color_estado = "red"
+
+    return {
+        "tokens_estimados": tokens_estimados,
+        "caracteres": caracteres,
+        "estado": estado,
+        "color_estado": color_estado,
+    }
 
 
-def calculate_tokens(text: str) -> int:
-    words = text.split()
-    word_count = len(words)
-    token_estimate = word_count * 1.3
-    return int(token_estimate)
+@app.post("/api/analyze", response_model=dict, summary="Analiza un prompt y estima sus tokens")
+async def analyze_prompt(body: PromptRequest) -> dict:
+    latencia = random.uniform(0.5, 2.0)
+    await asyncio.sleep(latencia)
+
+    try:
+        resultado = _analizar_prompt(body.prompt)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
+
+    return {
+        "tokens_estimados": resultado["tokens_estimados"],
+        "caracteres": resultado["caracteres"],
+        "estado": resultado["estado"],
+        "color_estado": resultado["color_estado"],
+        "latencia_ms": round(latencia, 2),
+        "palabras": len(body.prompt.split()),
+    }
 
 
-def determine_status(token_estimate: int) -> str:
-    if token_estimate <= 1000:
-        return "Óptimo"
-    return "Alerta"
-
-
-@app.post("/api/analyze", response_model=AnalysisResponse)
-async def analyze_prompt(request: PromptRequest):
-    start_time = asyncio.get_event_loop().time()
-    await asyncio.sleep(random.uniform(0.5, 2.0))
-    token_estimate = calculate_tokens(request.prompt)
-    word_count = len(request.prompt.split())
-    status = determine_status(token_estimate)
-    latency_ms = round((asyncio.get_event_loop().time() - start_time) * 1000, 2)
-    return AnalysisResponse(
-        word_count=word_count,
-        token_estimate=token_estimate,
-        status=status,
-        latency_ms=latency_ms
-    )
-
-
-@app.post("/api/health")
-async def health_check():
-    return {"status": "ok"}
+@app.get("/health")
+def health_check() -> dict:
+    return {"status": "ok", "service": "validador-prompts"}
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
