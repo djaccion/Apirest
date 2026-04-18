@@ -1,83 +1,136 @@
-const formulario      = document.getElementById('contact-form');
-const campoNombre     = document.getElementById('contact-nombre');
-const campoEmail      = document.getElementById('contact-email');
-const campoMensaje    = document.getElementById('contact-mensaje');
-const mensajeFeedback = document.getElementById('contact-feedback');
+// ============================================================
+// productora-web/js/contact.js
+// Módulo de lógica del formulario de contacto.
+// Dependencia externa: emailjs (cargado vía CDN en index.html)
+// ============================================================
 
-function sanitizarCampo(valor) {
-  return valor.trim().replace(/[<>]/g, '');
+// --- Paso 1: Constantes de configuración EmailJS ---
+const EMAILJS_SERVICE_ID  = 'TU_SERVICE_ID';   // TODO: reemplazar con valor real del dashboard EmailJS
+const EMAILJS_TEMPLATE_ID = 'TU_TEMPLATE_ID';  // TODO: reemplazar con valor real del dashboard EmailJS
+const EMAILJS_PUBLIC_KEY  = 'TU_PUBLIC_KEY';   // TODO: reemplazar con valor real del dashboard EmailJS
+
+// --- Paso 2: Sanitización de input ---
+function sanitizeInput(value) {
+  return value
+    .trim()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
 }
 
-function validarFormulario(nombre, email, mensaje) {
-  const errores = [];
-
-  if (nombre.length < 2) {
-    errores.push('El nombre debe tener al menos 2 caracteres.');
+// --- Paso 3: Validación de campos ---
+function validateFields(name, email, message) {
+  if (!name) {
+    return { isValid: false, errorMessage: 'El nombre es obligatorio.' };
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errores.push('Ingresa un correo electrónico válido.');
+  if (!email) {
+    return { isValid: false, errorMessage: 'El correo es obligatorio.' };
   }
-  if (mensaje.length < 10) {
-    errores.push('El mensaje debe tener al menos 10 caracteres.');
+  if (!(/\S+@\S+\.\S+/).test(email)) {
+    return { isValid: false, errorMessage: 'Ingresa un correo válido.' };
   }
-
-  return { esValido: errores.length === 0, errores };
+  if (!message) {
+    return { isValid: false, errorMessage: 'El mensaje es obligatorio.' };
+  }
+  if (message.length < 10) {
+    return { isValid: false, errorMessage: 'El mensaje debe tener al menos 10 caracteres.' };
+  }
+  return { isValid: true, errorMessage: '' };
 }
 
-function mostrarFeedback(tipo, texto) {
-  mensajeFeedback.textContent = texto;
-  mensajeFeedback.classList.remove('feedback--exito', 'feedback--error');
-  mensajeFeedback.classList.add('feedback--' + tipo);
-}
+// --- Paso 4: Feedback visual ---
+function setFormStatus(statusElement, message, type) {
+  // Limpiar clases de estado anteriores
+  statusElement.classList.remove(
+    'form-status--success',
+    'form-status--error',
+    'form-status--loading'
+  );
 
-function setBloqueoBtnEnvio(bloqueado) {
-  const btnEnvio = formulario.querySelector('button[type="submit"]');
-  if (bloqueado) {
-    btnEnvio.disabled = true;
-    btnEnvio.textContent = 'Enviando...';
-  } else {
-    btnEnvio.disabled = false;
-    btnEnvio.textContent = 'Enviar mensaje';
-  }
-}
-
-function manejarEnvio(evento) {
-  evento.preventDefault();
-
-  const nombre  = sanitizarCampo(campoNombre.value);
-  const email   = sanitizarCampo(campoEmail.value);
-  const mensaje = sanitizarCampo(campoMensaje.value);
-
-  const { esValido, errores } = validarFormulario(nombre, email, mensaje);
-
-  if (!esValido) {
-    mostrarFeedback('error', errores.join(' '));
+  if (type === 'idle') {
+    statusElement.textContent = '';
     return;
   }
 
-  setBloqueoBtnEnvio(true);
-  mensajeFeedback.textContent = '';
-  mensajeFeedback.classList.remove('feedback--exito', 'feedback--error');
+  statusElement.textContent = message;
 
-  emailjs.send(
-    'SERVICE_ID',
-    'TEMPLATE_ID',
-    {
-      nombre:  nombre,
-      email:   email,
-      mensaje: mensaje
-    }
-  )
-  .then(function () {
-    mostrarFeedback('exito', 'Tu mensaje fue enviado correctamente. ¡Nos pondremos en contacto pronto!');
-    formulario.reset();
-  })
-  .catch(function () {
-    mostrarFeedback('error', 'Ocurrió un error al enviar el mensaje. Por favor, inténtalo de nuevo.');
-  })
-  .then(function () {
-    setBloqueoBtnEnvio(false);
-  });
+  if (type === 'success') {
+    statusElement.classList.add('form-status--success');
+  } else if (type === 'error') {
+    statusElement.classList.add('form-status--error');
+  } else if (type === 'loading') {
+    statusElement.classList.add('form-status--loading');
+  }
 }
 
-formulario.addEventListener('submit', manejarEnvio);
+// --- Paso 5: Envío con EmailJS ---
+function sendEmail(templateParams, submitButton, statusElement, form) {
+  submitButton.disabled = true;
+  setFormStatus(statusElement, 'Enviando...', 'loading');
+
+  emailjs
+    .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY)
+    .then(function () {
+      setFormStatus(
+        statusElement,
+        '¡Mensaje enviado! Nos pondremos en contacto pronto.',
+        'success'
+      );
+      form.reset();
+      submitButton.disabled = false;
+    })
+    .catch(function () {
+      setFormStatus(
+        statusElement,
+        'Error al enviar. Por favor intenta de nuevo o escríbenos directamente.',
+        'error'
+      );
+      submitButton.disabled = false;
+    });
+}
+
+// --- Función pública de inicialización ---
+function initContactForm() {
+  var form = document.querySelector('.contact-form');
+  if (!form) return;
+
+  var submitButton  = form.querySelector('.contact-form__submit');
+  var statusElement = form.querySelector('.contact-form__feedback-msg');
+
+  if (!submitButton || !statusElement) return;
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    // Leer valores crudos desde los atributos name estándar
+    var rawName    = form.elements['name']    ? form.elements['name'].value    : '';
+    var rawEmail   = form.elements['email']   ? form.elements['email'].value   : '';
+    var rawMessage = form.elements['message'] ? form.elements['message'].value : '';
+
+    // Sanitizar
+    var cleanName    = sanitizeInput(rawName);
+    var cleanEmail   = sanitizeInput(rawEmail);
+    var cleanMessage = sanitizeInput(rawMessage);
+
+    // Validar
+    var validation = validateFields(cleanName, cleanEmail, cleanMessage);
+
+    if (!validation.isValid) {
+      setFormStatus(statusElement, validation.errorMessage, 'error');
+      return;
+    }
+
+    // Limpiar estado previo y enviar
+    setFormStatus(statusElement, '', 'idle');
+
+    var templateParams = {
+      from_name   : cleanName,
+      from_email  : cleanEmail,
+      message     : cleanMessage
+    };
+
+    sendEmail(templateParams, submitButton, statusElement, form);
+  });
+}
