@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Conoce al equipo detrás de [Nombre Productora]. Historia, valores y las personas que hacen posible cada proyecto." />
+  <title>Quiénes Somos — [Nombre Productora]</title>
+
+  <!-- Google Fonts: Inter + Playfair Display (MISMO link que index.html) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+
+  <!-- CSS Global único del proyecto -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- COMPONENTE INYECTADO: main.js monta el navbar aquí. NO editar. -->
+  <div id="navbar-placeholder"></div>
+
+  <main id="main-content">
+
+    <!-- ============================================
+         SECCIÓN 1: PAGE HEADER
+         EDITABLE: Actualizar título y subtítulo aquí
+    ============================================ -->
+    <section class="page-header" aria-labelledby="page-title">
+      <div class="container">
+        <h1 id="page-title" data-i18n="about.pageTitle">Quiénes Somos</h1>
+        <p class="page-header__subtitle" data-i18n="about.pageSubtitle">
+          La historia, los valores y las personas detrás de cada proyecto.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN 2: NUESTRA HISTORIA
+         EDITABLE: Actualizar párrafos de historia aquí
+    ============================================ -->
+    <section class="about-history" aria-labelledby="history-title">
+      <div class="container">
+        <div class="about-history__grid">
+          <div class="about-history__text">
+            <h2 id="history-title" data-i18n="about.historyTitle">Nuestra Historia</h2>
+            <p data-i18n="about.historyP1">
+              Nacimos de la convicción de que cada historia merece ser contada con honestidad y precisión. Desde nuestros primeros proyectos, apostamos por un enfoque documental que pone a las personas en el centro de cada producción.
+            </p>
+            <p data-i18n="about.historyP2">
+              A lo largo de los años hemos colaborado con marcas, instituciones y comunidades que comparten nuestra visión: el audiovisual como herramienta de comunicación real, no de decoración.
+            </p>
+          </div>
+          <div class="about-history__image">
+            <img
+              src="https://placehold.co/640x480?text=Nuestra+Historia"
+              alt="Equipo de la productora trabajando en rodaje"
+              loading="lazy"
+              width="640"
+              height="480"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN 3: VALORES
+         EDITABLE: Añadir, quitar o editar valores aquí
+    ============================================ -->
+    <section class="about-values" aria-labelledby="values-title">
+      <div class="container">
+        <h2 id="values-title" data-i18n="about.valuesTitle">Nuestros Valores</h2>
+        <ul class="values-grid" role="list">
+
+          <li class="values-grid__item">
+            <div class="values-grid__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h3 data-i18n="about.value1Title">Honestidad</h3>
+            <p data-i18n="about.value1Desc">Contamos las historias tal como son, sin artificios que distorsionen la realidad de nuestros clientes y sus audiencias.</p>
+          </li>
+
+          <li class="values-grid__item">
+            <div class="values-grid__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 8v4l3 3"/>
+              </svg>
+            </div>
+            <h3 data-i18n="about.value2Title">Compromiso</h3>
+            <p data-i18n="about.value2Desc">Cada proyecto recibe la misma dedicación, independientemente de su escala. El plazo y la calidad no son negociables.</p>
+          </li>
+
+          <li class="values-grid__item">
+            <div class="values-grid__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <h3 data-i18n="about.value3Title">Colaboración</h3>
+            <p data-i18n="about.value3Desc">Trabajamos junto al cliente, no para el cliente. La mejor producción surge del diálogo constante y la confianza mutua.</p>
+          </li>
+
+          <li class="values-grid__item">
+            <div class="values-grid__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <h3 data-i18n="about.value4Title">Excelencia</h3>
+            <p data-i18n="about.value4Desc">Buscamos la mejor versión de cada pieza. La atención al detalle en posproducción es tan importante como el primer día de rodaje.</p>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN 4: EQUIPO
+         EDITABLE: Añadir o quitar tarjetas de miembro aquí
+    ============================================ -->
+    <section class="about-team" aria-labelledby="team-title">
+      <div class="container">
+        <h2 id="team-title" data-i18n="about.teamTitle">El Equipo</h2>
+        <p class="about-team__intro" data-i18n="about.teamIntro">
+          Profesionales con trayectorias distintas y un objetivo común: producir contenido que importe.
+        </p>
+
+        <ul class="team-grid" role="list">
+
+          <li class="team-card">
+            <div class="team-card__image">
+              <img
+                src="https://placehold.co/400x400?text=Foto+Miembro"
+                alt="Fotografía de [Nombre], Directora General"
+                loading="lazy"
+                width="400"
+                height="400"
+              />
+            </div>
+            <div class="team-card__info">
+              <h3 class="team-card__name" data-i18n="about.member1Name">[Nombre]</h3>
+              <p class="team-card__role" data-i18n="about.member1Role">Directora General</p>
+              <p class="team-card__bio" data-i18n="about.member1Bio">
+                Más de quince años dirigiendo producciones documentales y corporativas en tres continentes.
+              </p>
+            </div>
+          </li>
+
+          <li class="team-card">
+            <div class="team-card__image">
+              <img
+                src="https://placehold.co/400x400?text=Foto+Miembro"
+                alt="Fotografía de [Nombre], Director de Fotografía"
+                loading="lazy"
+                width="400"
+                height="400"
+              />
+            </div>
+            <div class="team-card__info">
+              <h3 class="team-card__name" data-i18n="about.member2Name">[Nombre]</h3>
+              <p class="team-card__role" data-i18n="about.member2Role">Director de Fotografía</p>
+              <p class="team-card__bio" data-i18n="about.member2Bio">
+                Especialista en iluminación natural y narrativa visual. Formado en la ESCAC y con proyectos en festivales internacionales.
+              </p>
+            </div>
+          </li>
+
+          <li class="team-card">
+            <div class="team-card__image">
+              <img
+                src="https://placehold.co/400x400?text=Foto+Miembro"
+                alt="Fotografía de [Nombre], Editora y Colorista"
+                loading="lazy"
+                width="400"
+                height="400"
+              />
+            </div>
+            <div class="team-card__info">
+              <h3 class="team-card__name" data-i18n="about.member3Name">[Nombre]</h3>
+              <p class="team-card__role" data-i18n="about.member3Role">Editora y Colorista</p>
+              <p class="team-card__bio" data-i18n="about.member3Bio">
+                Responsable de la identidad visual en posproducción. Su trabajo define el tono final de cada pieza.
+              </p>
+            </div>
+          </li>
+
+          <li class="team-card">
+            <div class="team-card__image">
+              <img
+                src="https://placehold.co/400x400?text=Foto+Miembro"
+                alt="Fotografía de [Nombre], Productor Ejecutivo"
+                loading="lazy"
+                width="400"
+                height="400"
+              />
+            </div>
+            <div class="team-card__info">
+              <h3 class="team-card__name" data-i18n="about.member4Name">[Nombre]</h3>
+              <p class="team-card__role" data-i18n="about.member4Role">Productor Ejecutivo</p>
+              <p class="team-card__bio" data-i18n="about.member4Bio">
+                Gestiona presupuestos, logística y relaciones con clientes. El proyecto llega a tiempo porque él lo garantiza.
+              </p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SECCIÓN 5: CALL TO ACTION
+         EDITABLE: Actualizar texto y destino del enlace
+    ============================================ -->
+    <section class="about-cta" aria-labelledby="cta-title">
+      <div class="container">
+        <h2 id="cta-title" data-i18n="about.ctaTitle">¿Tienes un proyecto en mente?</h2>
+        <p data-i18n="about.ctaDesc">
+          Cuéntanos qué quieres contar. Estamos listos para escucharte.
+        </p>
+        <a href="contacto.html" class="btn btn--primary" data-i18n="about.ctaButton">
+          Hablemos
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- COMPONENTE INYECTADO: main.js monta el footer aquí. NO editar. -->
+  <div id="footer-placeholder"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

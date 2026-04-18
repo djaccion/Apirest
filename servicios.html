@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Descubre todos los servicios de producción audiovisual que ofrecemos: video corporativo, publicidad, cobertura de eventos y más." />
+  <title>Servicios — Productora Galaxia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/main.js" defer></script>
+  <script src="js/i18n.js" defer></script>
+</head>
+<body>
+
+  <!-- Navbar inyectado por main.js — NO editar este div -->
+  <div id="navbar-container"></div>
+
+  <main id="servicios-page">
+
+    <!-- SECCIÓN 1: Hero -->
+    <section class="page-hero" id="servicios-hero" aria-labelledby="servicios-hero-title">
+      <div class="container">
+        <h1 class="page-hero__title" id="servicios-hero-title" data-i18n="servicios.hero.titulo">
+          Nuestros Servicios
+        </h1>
+        <p class="page-hero__subtitle" data-i18n="servicios.hero.subtitulo">
+          Producción audiovisual con visión creativa y ejecución técnica de alto nivel.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: Grilla de Servicios -->
+    <section class="services-grid-section" id="servicios-catalogo" aria-labelledby="servicios-catalogo-title">
+      <div class="container">
+
+        <h2 class="section-title" id="servicios-catalogo-title" data-i18n="servicios.catalogo.titulo">
+          ¿Qué hacemos?
+        </h2>
+
+        <div class="services-grid" role="list">
+
+          <!-- TARJETA 1 -->
+          <article class="service-card" role="listitem">
+            <div class="service-card__image-wrapper">
+              <img
+                src="https://placehold.co/600x400"
+                alt="Video Corporativo"
+                class="service-card__image"
+                loading="lazy"
+              />
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title" data-i18n="servicios.catalogo.items.0.titulo">
+                Video Corporativo
+              </h3>
+              <p class="service-card__description" data-i18n="servicios.catalogo.items.0.descripcion">
+                Comunicamos la identidad y los valores de tu empresa a través de piezas audiovisuales profesionales y memorables.
+              </p>
+            </div>
+          </article>
+
+          <!-- TARJETA 2 -->
+          <article class="service-card" role="listitem">
+            <div class="service-card__image-wrapper">
+              <img
+                src="https://placehold.co/600x400"
+                alt="Publicidad y Comerciales"
+                class="service-card__image"
+                loading="lazy"
+              />
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title" data-i18n="servicios.catalogo.items.1.titulo">
+                Publicidad y Comerciales
+              </h3>
+              <p class="service-card__description" data-i18n="servicios.catalogo.items.1.descripcion">
+                Creamos spots publicitarios de alto impacto que conectan con tu audiencia y potencian tu marca.
+              </p>
+            </div>
+          </article>
+
+          <!-- TARJETA 3 -->
+          <article class="service-card" role="listitem">
+            <div class="service-card__image-wrapper">
+              <img
+                src="https://placehold.co/600x400"
+                alt="Cobertura de Eventos"
+                class="service-card__image"
+                loading="lazy"
+              />
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title" data-i18n="servicios.catalogo.items.2.titulo">
+                Cobertura de Eventos
+              </h3>
+              <p class="service-card__description" data-i18n="servicios.catalogo.items.2.descripcion">
+                Documentamos cada momento importante de tu evento con equipos profesionales y un equipo creativo dedicado.
+              </p>
+            </div>
+          </article>
+
+          <!-- TARJETA 4 -->
+          <article class="service-card" role="listitem">
+            <div class="service-card__image-wrapper">
+              <img
+                src="https://placehold.co/600x400"
+                alt="Contenido para Redes Sociales"
+                class="service-card__image"
+                loading="lazy"
+              />
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title" data-i18n="servicios.catalogo.items.3.titulo">
+                Contenido para Redes Sociales
+              </h3>
+              <p class="service-card__description" data-i18n="servicios.catalogo.items.3.descripcion">
+                Producimos piezas optimizadas para cada plataforma digital, diseñadas para generar engagement y alcance orgánico.
+              </p>
+            </div>
+          </article>
+
+          <!-- TARJETA 5 -->
+          <article class="service-card" role="listitem">
+            <div class="service-card__image-wrapper">
+              <img
+                src="https://placehold.co/600x400"
+                alt="Documentales"
+                class="service-card__image"
+                loading="lazy"
+              />
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title" data-i18n="servicios.catalogo.items.4.titulo">
+                Documentales
+              </h3>
+              <p class="service-card__description" data-i18n="servicios.catalogo.items.4.descripcion">
+                Contamos historias reales con profundidad narrativa, desde la investigación hasta la postproducción final.
+              </p>
+            </div>
+          </article>
+
+          <!-- TARJETA 6 -->
+          <article class="service-card" role="listitem">
+            <div class="service-card__image-wrapper">
+              <img
+                src="https://placehold.co/600x400"
+                alt="Postproducción y Edición"
+                class="service-card__image"
+                loading="lazy"
+              />
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title" data-i18n="servicios.catalogo.items.5.titulo">
+                Postproducción y Edición
+              </h3>
+              <p class="service-card__description" data-i18n="servicios.catalogo.items.5.descripcion">
+                Transformamos el material grabado en una pieza pulida y profesional mediante edición, colorización y mezcla de audio.
+              </p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: CTA Final -->
+    <section class="cta-section" id="servicios-cta" aria-labelledby="servicios-cta-title">
+      <div class="container">
+        <h2 class="cta-section__title" id="servicios-cta-title" data-i18n="servicios.cta.titulo">
+          ¿Listo para empezar tu proyecto?
+        </h2>
+        <p class="cta-section__description" data-i18n="servicios.cta.descripcion">
+          Cuéntanos tu idea y construyamos juntos algo extraordinario.
+        </p>
+        <a href="contacto.html" class="btn btn--primary" data-i18n="servicios.cta.boton">
+          Contáctanos
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer inyectado por main.js — NO editar este div -->
+  <div id="footer-container"></div>
+
+</body>
+</html>

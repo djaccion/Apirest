@@ -1,562 +1,263 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Productora audiovisual y creativa. Servicios de producción, dirección y postproducción." />
-  <meta name="theme-color" content="#0a0a0a" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productora | Inicio</title>
+  <meta name="description" content="Productora audiovisual especializada en contenido de alto impacto.">
 
-  <!-- Open Graph básico — rellena con datos reales del cliente cuando estén disponibles -->
-  <meta property="og:title" content="Productora — Nombre Pendiente" />
-  <meta property="og:description" content="Productora audiovisual y creativa." />
-  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
-  <title>Productora — Nombre Pendiente</title>
-
-  <!-- ÚNICO stylesheet del proyecto -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-  <header id="site-header">
-    <nav id="main-nav" aria-label="Navegación principal">
-      <a href="#home" class="nav-logo" aria-label="Ir al inicio">
-        PRODUCTORA
-      </a>
-
-      <button
-        id="nav-toggle"
-        class="nav-toggle"
-        aria-expanded="false"
-        aria-controls="nav-menu"
-        aria-label="Abrir menú"
-      >
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
-      </button>
-
-      <ul id="nav-menu" class="nav-menu" role="list">
-        <li><a href="#home"     class="nav-link" data-lang-es="Inicio"       data-lang-en="Home">Inicio</a></li>
-        <li><a href="#services" class="nav-link" data-lang-es="Servicios"    data-lang-en="Services">Servicios</a></li>
-        <li><a href="#about"    class="nav-link" data-lang-es="Quiénes Somos" data-lang-en="About Us">Quiénes Somos</a></li>
-        <li><a href="#contact"  class="nav-link" data-lang-es="Contacto"     data-lang-en="Contact">Contacto</a></li>
-      </ul>
-
-      <button
-        id="lang-toggle"
-        class="lang-toggle"
-        aria-label="Cambiar idioma"
-        data-current-lang="es"
-      >
-        EN
-      </button>
-    </nav>
-  </header>
+  <div id="navbar-placeholder"></div>
 
   <main id="main-content">
 
-    <!-- ═══════════════════════════════════════════
-         SECCIÓN 1 — HOME
-    ═══════════════════════════════════════════ -->
-    <section id="home" class="section section--home" aria-labelledby="home-heading">
-      <div class="home__backdrop">
-        <img
-          src="https://picsum.photos/seed/productora-hero/1600/900"
-          alt="Imagen de fondo hero — producción audiovisual"
-          class="home__bg-image"
-          loading="eager"
-          fetchpriority="high"
-        />
-        <div class="home__overlay"></div>
-      </div>
+    <section id="hero" class="hero-section">
 
-      <div class="home__content container">
-        <p class="home__eyebrow" data-lang-es="Productora Audiovisual" data-lang-en="Audiovisual Production Company">Productora Audiovisual</p>
-        <h1 id="home-heading" class="home__title" data-lang-es="Creamos historias que impactan" data-lang-en="We create stories that impact">
+      <div class="hero-content">
+        <h1 class="hero-title" data-i18n="hero.title">
           Creamos historias que impactan
         </h1>
-        <p class="home__subtitle" data-lang-es="Producción, dirección y postproducción al servicio de tu visión." data-lang-en="Production, direction and post-production at the service of your vision.">
-          Producción, dirección y postproducción al servicio de tu visión.
+        <p class="hero-subtitle" data-i18n="hero.subtitle">
+          Producción audiovisual de alto nivel para marcas que quieren ser recordadas.
         </p>
-        <div class="home__cta-group">
-          <a href="#services" class="btn btn--primary" data-lang-es="Ver Servicios" data-lang-en="Our Services">Ver Servicios</a>
-          <a href="#contact"  class="btn btn--secondary" data-lang-es="Hablemos" data-lang-en="Let's Talk">Hablemos</a>
-        </div>
+        <a href="servicios.html" class="btn btn-primary" data-i18n="hero.cta">
+          Ver nuestros servicios
+        </a>
       </div>
 
-      <a href="#services" class="home__scroll-indicator" aria-label="Ir a la sección de servicios">
-        <span class="home__scroll-indicator-icon" aria-hidden="true"></span>
-      </a>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         SECCIÓN 2 — SERVICIOS
-    ═══════════════════════════════════════════ -->
-    <section id="services" class="section section--services" aria-labelledby="services-heading">
-      <div class="container">
-        <header class="section__header">
-          <p class="section__eyebrow" data-lang-es="Lo que hacemos" data-lang-en="What we do">Lo que hacemos</p>
-          <h2 id="services-heading" class="section__title" data-lang-es="Nuestros Servicios" data-lang-en="Our Services">Nuestros Servicios</h2>
-          <p class="section__subtitle" data-lang-es="Soluciones audiovisuales integrales para marcas, artistas y empresas." data-lang-en="Comprehensive audiovisual solutions for brands, artists and companies.">
-            Soluciones audiovisuales integrales para marcas, artistas y empresas.
-          </p>
-        </header>
-
-        <ul class="services__grid" role="list">
-
-          <li class="service-card">
-            <figure class="service-card__media">
-              <img
-                src="https://picsum.photos/seed/produccion/600/400"
-                alt="Producción audiovisual — equipo en rodaje"
-                class="service-card__image"
-                loading="lazy"
-              />
-            </figure>
-            <div class="service-card__body">
-              <h3 class="service-card__title" data-lang-es="Producción" data-lang-en="Production">Producción</h3>
-              <p class="service-card__description" data-lang-es="Planificación y ejecución integral de proyectos audiovisuales: spots publicitarios, videoclips, documentales y contenido corporativo." data-lang-en="Comprehensive planning and execution of audiovisual projects: commercials, music videos, documentaries and corporate content.">
-                Planificación y ejecución integral de proyectos audiovisuales: spots publicitarios, videoclips, documentales y contenido corporativo.
-              </p>
-            </div>
-          </li>
-
-          <li class="service-card">
-            <figure class="service-card__media">
-              <img
-                src="https://picsum.photos/seed/direccion/600/400"
-                alt="Dirección creativa — director en set"
-                class="service-card__image"
-                loading="lazy"
-              />
-            </figure>
-            <div class="service-card__body">
-              <h3 class="service-card__title" data-lang-es="Dirección" data-lang-en="Direction">Dirección</h3>
-              <p class="service-card__description" data-lang-es="Dirección creativa y artística con visión narrativa. Transformamos conceptos en imágenes que comunican y emocionan." data-lang-en="Creative and artistic direction with narrative vision. We transform concepts into images that communicate and move.">
-                Dirección creativa y artística con visión narrativa. Transformamos conceptos en imágenes que comunican y emocionan.
-              </p>
-            </div>
-          </li>
-
-          <li class="service-card">
-            <figure class="service-card__media">
-              <img
-                src="https://picsum.photos/seed/postproduccion/600/400"
-                alt="Postproducción — editor en sala de edición"
-                class="service-card__image"
-                loading="lazy"
-              />
-            </figure>
-            <div class="service-card__body">
-              <h3 class="service-card__title" data-lang-es="Postproducción" data-lang-en="Post-production">Postproducción</h3>
-              <p class="service-card__description" data-lang-es="Edición, colorización, motion graphics, VFX y mezcla de audio. El acabado que tu proyecto merece." data-lang-en="Editing, color grading, motion graphics, VFX and audio mixing. The finish your project deserves.">
-                Edición, colorización, motion graphics, VFX y mezcla de audio. El acabado que tu proyecto merece.
-              </p>
-            </div>
-          </li>
-
-          <li class="service-card">
-            <figure class="service-card__media">
-              <img
-                src="https://picsum.photos/seed/contenido-digital/600/400"
-                alt="Contenido digital — creación para redes sociales"
-                class="service-card__image"
-                loading="lazy"
-              />
-            </figure>
-            <div class="service-card__body">
-              <h3 class="service-card__title" data-lang-es="Contenido Digital" data-lang-en="Digital Content">Contenido Digital</h3>
-              <p class="service-card__description" data-lang-es="Estrategia y producción de contenido para plataformas digitales y redes sociales. Formatos adaptados a cada canal." data-lang-en="Strategy and content production for digital platforms and social media. Formats adapted to each channel.">
-                Estrategia y producción de contenido para plataformas digitales y redes sociales. Formatos adaptados a cada canal.
-              </p>
-            </div>
-          </li>
-
-          <li class="service-card">
-            <figure class="service-card__media">
-              <img
-                src="https://picsum.photos/seed/fotografia/600/400"
-                alt="Fotografía — sesión fotográfica profesional"
-                class="service-card__image"
-                loading="lazy"
-              />
-            </figure>
-            <div class="service-card__body">
-              <h3 class="service-card__title" data-lang-es="Fotografía" data-lang-en="Photography">Fotografía</h3>
-              <p class="service-card__description" data-lang-es="Fotografía publicitaria, editorial y de producto. Imágenes que refuerzan la identidad visual de tu marca." data-lang-en="Advertising, editorial and product photography. Images that reinforce your brand's visual identity.">
-                Fotografía publicitaria, editorial y de producto. Imágenes que refuerzan la identidad visual de tu marca.
-              </p>
-            </div>
-          </li>
-
-          <li class="service-card">
-            <figure class="service-card__media">
-              <img
-                src="https://picsum.photos/seed/transmision/600/400"
-                alt="Transmisión en vivo — producción de streaming"
-                class="service-card__image"
-                loading="lazy"
-              />
-            </figure>
-            <div class="service-card__body">
-              <h3 class="service-card__title" data-lang-es="Transmisión en Vivo" data-lang-en="Live Streaming">Transmisión en Vivo</h3>
-              <p class="service-card__description" data-lang-es="Producción y transmisión de eventos en vivo: conferencias, conciertos, lanzamientos y webinars con calidad broadcast." data-lang-en="Production and live streaming of events: conferences, concerts, launches and webinars with broadcast quality.">
-                Producción y transmisión de eventos en vivo: conferencias, conciertos, lanzamientos y webinars con calidad broadcast.
-              </p>
-            </div>
-          </li>
-
-        </ul>
+      <div class="hero-image-wrapper">
+        <img
+          src="https://placehold.co/800x600"
+          alt="Equipo de producción en set"
+          class="hero-image"
+          width="800"
+          height="600"
+          loading="eager"
+        >
       </div>
+
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         SECCIÓN 3 — QUIÉNES SOMOS
-    ═══════════════════════════════════════════ -->
-    <section id="about" class="section section--about" aria-labelledby="about-heading">
-      <div class="container">
+    <section id="servicios-preview" class="servicios-preview-section">
 
-        <div class="about__layout">
-
-          <div class="about__media-col">
-            <figure class="about__main-figure">
-              <img
-                src="https://picsum.photos/seed/equipo-productora/800/600"
-                alt="Equipo de la productora en set de rodaje"
-                class="about__main-image"
-                loading="lazy"
-              />
-            </figure>
-            <figure class="about__accent-figure">
-              <img
-                src="https://picsum.photos/seed/behind-scenes/400/400"
-                alt="Detrás de cámaras — producción en acción"
-                class="about__accent-image"
-                loading="lazy"
-              />
-            </figure>
-          </div>
-
-          <div class="about__content-col">
-            <header class="section__header section__header--left">
-              <p class="section__eyebrow" data-lang-es="Nuestra historia" data-lang-en="Our story">Nuestra historia</p>
-              <h2 id="about-heading" class="section__title" data-lang-es="Quiénes Somos" data-lang-en="About Us">Quiénes Somos</h2>
-            </header>
-
-            <p class="about__body-text" data-lang-es="Somos un equipo de creadores apasionados por el poder de la imagen en movimiento. Fundada con la convicción de que cada proyecto merece una mirada única, nuestra productora combina rigor técnico con sensibilidad artística." data-lang-en="We are a team of creators passionate about the power of moving images. Founded with the conviction that every project deserves a unique perspective, our production company combines technical rigor with artistic sensibility.">
-              Somos un equipo de creadores apasionados por el poder de la imagen en movimiento. Fundada con la convicción de que cada proyecto merece una mirada única, nuestra productora combina rigor técnico con sensibilidad artística.
-            </p>
-            <p class="about__body-text" data-lang-es="Trabajamos con marcas, artistas y organizaciones que entienden que una buena historia bien contada es la herramienta de comunicación más poderosa que existe." data-lang-en="We work with brands, artists and organizations that understand that a good story well told is the most powerful communication tool that exists.">
-              Trabajamos con marcas, artistas y organizaciones que entienden que una buena historia bien contada es la herramienta de comunicación más poderosa que existe.
-            </p>
-
-            <ul class="about__stats" role="list">
-              <li class="about__stat">
-                <span class="about__stat-number">+50</span>
-                <span class="about__stat-label" data-lang-es="Proyectos completados" data-lang-en="Completed projects">Proyectos completados</span>
-              </li>
-              <li class="about__stat">
-                <span class="about__stat-number">+30</span>
-                <span class="about__stat-label" data-lang-es="Clientes satisfechos" data-lang-en="Satisfied clients">Clientes satisfechos</span>
-              </li>
-              <li class="about__stat">
-                <span class="about__stat-number">5</span>
-                <span class="about__stat-label" data-lang-es="Años de experiencia" data-lang-en="Years of experience">Años de experiencia</span>
-              </li>
-            </ul>
-
-            <a href="#contact" class="btn btn--primary" data-lang-es="Trabajemos juntos" data-lang-en="Let's work together">Trabajemos juntos</a>
-          </div>
-
-        </div>
-
-        <div class="about__team">
-          <h3 class="about__team-title" data-lang-es="El equipo" data-lang-en="The team">El equipo</h3>
-          <ul class="about__team-grid" role="list">
-
-            <li class="team-card">
-              <figure class="team-card__media">
-                <img
-                  src="https://picsum.photos/seed/persona-directora/400/400"
-                  alt="Directora General — retrato profesional"
-                  class="team-card__image"
-                  loading="lazy"
-                />
-              </figure>
-              <div class="team-card__body">
-                <h4 class="team-card__name" data-lang-es="Nombre Pendiente" data-lang-en="Name Pending">Nombre Pendiente</h4>
-                <p class="team-card__role" data-lang-es="Directora General" data-lang-en="General Director">Directora General</p>
-              </div>
-            </li>
-
-            <li class="team-card">
-              <figure class="team-card__media">
-                <img
-                  src="https://picsum.photos/seed/persona-director-foto/400/400"
-                  alt="Director de Fotografía — retrato profesional"
-                  class="team-card__image"
-                  loading="lazy"
-                />
-              </figure>
-              <div class="team-card__body">
-                <h4 class="team-card__name" data-lang-es="Nombre Pendiente" data-lang-en="Name Pending">Nombre Pendiente</h4>
-                <p class="team-card__role" data-lang-es="Director de Fotografía" data-lang-en="Director of Photography">Director de Fotografía</p>
-              </div>
-            </li>
-
-            <li class="team-card">
-              <figure class="team-card__media">
-                <img
-                  src="https://picsum.photos/seed/persona-editora/400/400"
-                  alt="Editora — retrato profesional"
-                  class="team-card__image"
-                  loading="lazy"
-                />
-              </figure>
-              <div class="team-card__body">
-                <h4 class="team-card__name" data-lang-es="Nombre Pendiente" data-lang-en="Name Pending">Nombre Pendiente</h4>
-                <p class="team-card__role" data-lang-es="Editora" data-lang-en="Editor">Editora</p>
-              </div>
-            </li>
-
-            <li class="team-card">
-              <figure class="team-card__media">
-                <img
-                  src="https://picsum.photos/seed/persona-productor/400/400"
-                  alt="Productor Ejecutivo — retrato profesional"
-                  class="team-card__image"
-                  loading="lazy"
-                />
-              </figure>
-              <div class="team-card__body">
-                <h4 class="team-card__name" data-lang-es="Nombre Pendiente" data-lang-en="Name Pending">Nombre Pendiente</h4>
-                <p class="team-card__role" data-lang-es="Productor Ejecutivo" data-lang-en="Executive Producer">Productor Ejecutivo</p>
-              </div>
-            </li>
-
-          </ul>
-        </div>
-
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="serviciosPreview.title">
+          Lo que hacemos
+        </h2>
+        <p class="section-subtitle" data-i18n="serviciosPreview.subtitle">
+          Soluciones audiovisuales a medida para cada etapa de tu proyecto.
+        </p>
       </div>
-    </section>
 
-    <!-- ═══════════════════════════════════════════
-         SECCIÓN 4 — CONTACTO
-    ═══════════════════════════════════════════ -->
-    <section id="contact" class="section section--contact" aria-labelledby="contact-heading">
-      <div class="container">
+      <div class="servicios-grid">
 
-        <header class="section__header">
-          <p class="section__eyebrow" data-lang-es="Hablemos" data-lang-en="Let's talk">Hablemos</p>
-          <h2 id="contact-heading" class="section__title" data-lang-es="Contacto" data-lang-en="Contact">Contacto</h2>
-          <p class="section__subtitle" data-lang-es="¿Tienes un proyecto en mente? Cuéntanos. Respondemos en menos de 24 horas." data-lang-en="Do you have a project in mind? Tell us. We respond in less than 24 hours.">
-            ¿Tienes un proyecto en mente? Cuéntanos. Respondemos en menos de 24 horas.
-          </p>
-        </header>
-
-        <div class="contact__layout">
-
-          <div class="contact__info">
-            <h3 class="contact__info-title" data-lang-es="Información de contacto" data-lang-en="Contact information">Información de contacto</h3>
-
-            <ul class="contact__info-list" role="list">
-              <li class="contact__info-item">
-                <span class="contact__info-icon" aria-hidden="true">✉</span>
-                <a href="mailto:hola@productora.com" class="contact__info-link">hola@productora.com</a>
-              </li>
-              <li class="contact__info-item">
-                <span class="contact__info-icon" aria-hidden="true">✆</span>
-                <a href="tel:+34000000000" class="contact__info-link">+34 000 000 000</a>
-              </li>
-              <li class="contact__info-item">
-                <span class="contact__info-icon" aria-hidden="true">⌖</span>
-                <address class="contact__address">
-                  Ciudad, País<br />
-                  Dirección pendiente
-                </address>
-              </li>
-            </ul>
-
-            <div class="contact__social">
-              <h4 class="contact__social-title" data-lang-es="Síguenos" data-lang-en="Follow us">Síguenos</h4>
-              <ul class="contact__social-list" role="list">
-                <li>
-                  <a href="#" class="contact__social-link" aria-label="Instagram de la productora" rel="noopener noreferrer" target="_blank">
-                    Instagram
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="contact__social-link" aria-label="Vimeo de la productora" rel="noopener noreferrer" target="_blank">
-                    Vimeo
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="contact__social-link" aria-label="YouTube de la productora" rel="noopener noreferrer" target="_blank">
-                    YouTube
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="contact__social-link" aria-label="LinkedIn de la productora" rel="noopener noreferrer" target="_blank">
-                    LinkedIn
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="contact__form-wrapper">
-            <form
-              id="contact-form"
-              class="contact-form"
-              action="https://formspree.io/f/PENDIENTE_REEMPLAZAR"
-              method="POST"
-              novalidate
-              aria-label="Formulario de contacto"
+        <div class="servicio-card">
+          <div class="servicio-card-icon-wrapper">
+            <img
+              src="https://placehold.co/80x80"
+              alt="Icono producción de video"
+              class="servicio-card-icon"
+              width="80"
+              height="80"
+              loading="lazy"
             >
-              <div class="form-group">
-                <label for="field-name" class="form-label" data-lang-es="Nombre completo" data-lang-en="Full name">Nombre completo</label>
-                <input
-                  type="text"
-                  id="field-name"
-                  name="name"
-                  class="form-input"
-                  autocomplete="name"
-                  required
-                  aria-required="true"
-                  aria-describedby="field-name-error"
-                  data-lang-placeholder-es="Tu nombre"
-                  data-lang-placeholder-en="Your name"
-                  placeholder="Tu nombre"
-                />
-                <span id="field-name-error" class="form-error" role="alert" aria-live="polite"></span>
-              </div>
-
-              <div class="form-group">
-                <label for="field-email" class="form-label" data-lang-es="Correo electrónico" data-lang-en="Email address">Correo electrónico</label>
-                <input
-                  type="email"
-                  id="field-email"
-                  name="email"
-                  class="form-input"
-                  autocomplete="email"
-                  required
-                  aria-required="true"
-                  aria-describedby="field-email-error"
-                  data-lang-placeholder-es="tu@correo.com"
-                  data-lang-placeholder-en="you@email.com"
-                  placeholder="tu@correo.com"
-                />
-                <span id="field-email-error" class="form-error" role="alert" aria-live="polite"></span>
-              </div>
-
-              <div class="form-group">
-                <label for="field-service" class="form-label" data-lang-es="Servicio de interés" data-lang-en="Service of interest">Servicio de interés</label>
-                <select
-                  id="field-service"
-                  name="service"
-                  class="form-select"
-                  aria-describedby="field-service-error"
-                >
-                  <option value="" data-lang-es="Selecciona un servicio" data-lang-en="Select a service">Selecciona un servicio</option>
-                  <option value="produccion"       data-lang-es="Producción"          data-lang-en="Production">Producción</option>
-                  <option value="direccion"        data-lang-es="Dirección"           data-lang-en="Direction">Dirección</option>
-                  <option value="postproduccion"   data-lang-es="Postproducción"      data-lang-en="Post-production">Postproducción</option>
-                  <option value="contenido-digital" data-lang-es="Contenido Digital"  data-lang-en="Digital Content">Contenido Digital</option>
-                  <option value="fotografia"       data-lang-es="Fotografía"          data-lang-en="Photography">Fotografía</option>
-                  <option value="transmision"      data-lang-es="Transmisión en Vivo" data-lang-en="Live Streaming">Transmisión en Vivo</option>
-                  <option value="otro"             data-lang-es="Otro"                data-lang-en="Other">Otro</option>
-                </select>
-                <span id="field-service-error" class="form-error" role="alert" aria-live="polite"></span>
-              </div>
-
-              <div class="form-group">
-                <label for="field-message" class="form-label" data-lang-es="Mensaje" data-lang-en="Message">Mensaje</label>
-                <textarea
-                  id="field-message"
-                  name="message"
-                  class="form-textarea"
-                  rows="5"
-                  required
-                  aria-required="true"
-                  aria-describedby="field-message-error"
-                  data-lang-placeholder-es="Cuéntanos sobre tu proyecto..."
-                  data-lang-placeholder-en="Tell us about your project..."
-                  placeholder="Cuéntanos sobre tu proyecto..."
-                ></textarea>
-                <span id="field-message-error" class="form-error" role="alert" aria-live="polite"></span>
-              </div>
-
-              <div class="form-group form-group--checkbox">
-                <label class="form-checkbox-label">
-                  <input
-                    type="checkbox"
-                    id="field-privacy"
-                    name="privacy"
-                    class="form-checkbox"
-                    required
-                    aria-required="true"
-                    aria-describedby="field-privacy-error"
-                  />
-                  <span class="form-checkbox-text" data-lang-es="Acepto la política de privacidad y el tratamiento de mis datos." data-lang-en="I accept the privacy policy and the processing of my data.">
-                    Acepto la política de privacidad y el tratamiento de mis datos.
-                  </span>
-                </label>
-                <span id="field-privacy-error" class="form-error" role="alert" aria-live="polite"></span>
-              </div>
-
-              <div id="form-status" class="form-status" role="status" aria-live="polite" aria-atomic="true"></div>
-
-              <button type="submit" id="form-submit" class="btn btn--primary btn--full-width" data-lang-es="Enviar mensaje" data-lang-en="Send message">
-                Enviar mensaje
-              </button>
-            </form>
           </div>
-
+          <h3 class="servicio-card-title" data-i18n="serviciosPreview.card1.title">
+            Producción de Video
+          </h3>
+          <p class="servicio-card-description" data-i18n="serviciosPreview.card1.description">
+            Desde la preproducción hasta la entrega final, gestionamos cada detalle de tu proyecto audiovisual.
+          </p>
         </div>
+
+        <div class="servicio-card">
+          <div class="servicio-card-icon-wrapper">
+            <img
+              src="https://placehold.co/80x80"
+              alt="Icono fotografía comercial"
+              class="servicio-card-icon"
+              width="80"
+              height="80"
+              loading="lazy"
+            >
+          </div>
+          <h3 class="servicio-card-title" data-i18n="serviciosPreview.card2.title">
+            Fotografía Comercial
+          </h3>
+          <p class="servicio-card-description" data-i18n="serviciosPreview.card2.description">
+            Imágenes de alto impacto que comunican la esencia de tu marca con precisión y estilo.
+          </p>
+        </div>
+
+        <div class="servicio-card">
+          <div class="servicio-card-icon-wrapper">
+            <img
+              src="https://placehold.co/80x80"
+              alt="Icono postproducción"
+              class="servicio-card-icon"
+              width="80"
+              height="80"
+              loading="lazy"
+            >
+          </div>
+          <h3 class="servicio-card-title" data-i18n="serviciosPreview.card3.title">
+            Postproducción
+          </h3>
+          <p class="servicio-card-description" data-i18n="serviciosPreview.card3.description">
+            Edición, colorización y efectos visuales que elevan la calidad de cada pieza al siguiente nivel.
+          </p>
+        </div>
+
       </div>
+
+      <div class="section-cta">
+        <a href="servicios.html" class="btn btn-secondary" data-i18n="serviciosPreview.cta">
+          Ver todos los servicios
+        </a>
+      </div>
+
+    </section>
+
+    <section id="nosotros-preview" class="nosotros-preview-section">
+
+      <div class="nosotros-preview-image-wrapper">
+        <img
+          src="https://placehold.co/700x500"
+          alt="El equipo de la productora trabajando"
+          class="nosotros-preview-image"
+          width="700"
+          height="500"
+          loading="lazy"
+        >
+      </div>
+
+      <div class="nosotros-preview-content">
+        <h2 class="section-title" data-i18n="nosotrosPreview.title">
+          Quiénes somos
+        </h2>
+        <p class="nosotros-preview-text" data-i18n="nosotrosPreview.text">
+          Somos un equipo apasionado por contar historias. Con más de una década de experiencia, combinamos creatividad y técnica para producir contenido que conecta marcas con personas.
+        </p>
+        <a href="nosotros.html" class="btn btn-secondary" data-i18n="nosotrosPreview.cta">
+          Conoce al equipo
+        </a>
+      </div>
+
+    </section>
+
+    <section id="portafolio-preview" class="portafolio-preview-section">
+
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="portafolioPreview.title">
+          Nuestro trabajo
+        </h2>
+        <p class="section-subtitle" data-i18n="portafolioPreview.subtitle">
+          Una selección de proyectos que reflejan nuestra forma de trabajar.
+        </p>
+      </div>
+
+      <div class="portafolio-grid">
+
+        <article class="portafolio-card">
+          <div class="portafolio-card-image-wrapper">
+            <img
+              src="https://placehold.co/600x400"
+              alt="Proyecto audiovisual 1"
+              class="portafolio-card-image"
+              width="600"
+              height="400"
+              loading="lazy"
+            >
+          </div>
+          <div class="portafolio-card-body">
+            <span class="portafolio-card-category" data-i18n="portafolioPreview.card1.category">
+              Video Corporativo
+            </span>
+            <h3 class="portafolio-card-title" data-i18n="portafolioPreview.card1.title">
+              Campaña de marca — Cliente A
+            </h3>
+          </div>
+        </article>
+
+        <article class="portafolio-card">
+          <div class="portafolio-card-image-wrapper">
+            <img
+              src="https://placehold.co/600x400"
+              alt="Proyecto audiovisual 2"
+              class="portafolio-card-image"
+              width="600"
+              height="400"
+              loading="lazy"
+            >
+          </div>
+          <div class="portafolio-card-body">
+            <span class="portafolio-card-category" data-i18n="portafolioPreview.card2.category">
+              Fotografía Comercial
+            </span>
+            <h3 class="portafolio-card-title" data-i18n="portafolioPreview.card2.title">
+              Sesión de producto — Cliente B
+            </h3>
+          </div>
+        </article>
+
+        <article class="portafolio-card">
+          <div class="portafolio-card-image-wrapper">
+            <img
+              src="https://placehold.co/600x400"
+              alt="Proyecto audiovisual 3"
+              class="portafolio-card-image"
+              width="600"
+              height="400"
+              loading="lazy"
+            >
+          </div>
+          <div class="portafolio-card-body">
+            <span class="portafolio-card-category" data-i18n="portafolioPreview.card3.category">
+              Postproducción
+            </span>
+            <h3 class="portafolio-card-title" data-i18n="portafolioPreview.card3.title">
+              Documental institucional — Cliente C
+            </h3>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="section-cta">
+        <a href="portafolio.html" class="btn btn-secondary" data-i18n="portafolioPreview.cta">
+          Ver portafolio completo
+        </a>
+      </div>
+
+    </section>
+
+    <section id="contacto-cta" class="contacto-cta-section">
+
+      <div class="contacto-cta-content">
+        <h2 class="contacto-cta-title" data-i18n="contactoCta.title">
+          ¿Tienes un proyecto en mente?
+        </h2>
+        <p class="contacto-cta-text" data-i18n="contactoCta.text">
+          Hablemos. Estamos listos para convertir tu idea en una pieza audiovisual memorable.
+        </p>
+        <a href="contacto.html" class="btn btn-primary" data-i18n="contactoCta.cta">
+          Contáctanos
+        </a>
+      </div>
+
     </section>
 
   </main>
 
-  <!-- ═══════════════════════════════════════════
-       FOOTER
-  ═══════════════════════════════════════════ -->
-  <footer id="site-footer" class="site-footer">
-    <div class="container">
-      <div class="footer__layout">
+  <div id="footer-placeholder"></div>
 
-        <div class="footer__brand">
-          <a href="#home" class="footer__logo" aria-label="Volver al inicio">PRODUCTORA</a>
-          <p class="footer__tagline" data-lang-es="Creamos historias que impactan." data-lang-en="We create stories that impact.">
-            Creamos historias que impactan.
-          </p>
-        </div>
-
-        <nav class="footer__nav" aria-label="Navegación del pie de página">
-          <ul class="footer__nav-list" role="list">
-            <li><a href="#home"     class="footer__nav-link" data-lang-es="Inicio"        data-lang-en="Home">Inicio</a></li>
-            <li><a href="#services" class="footer__nav-link" data-lang-es="Servicios"     data-lang-en="Services">Servicios</a></li>
-            <li><a href="#about"    class="footer__nav-link" data-lang-es="Quiénes Somos" data-lang-en="About Us">Quiénes Somos</a></li>
-            <li><a href="#contact"  class="footer__nav-link" data-lang-es="Contacto"      data-lang-en="Contact">Contacto</a></li>
-          </ul>
-        </nav>
-
-        <div class="footer__social">
-          <ul class="footer__social-list" role="list">
-            <li><a href="#" class="footer__social-link" aria-label="Instagram" rel="noopener noreferrer" target="_blank">IG</a></li>
-            <li><a href="#" class="footer__social-link" aria-label="Vimeo"     rel="noopener noreferrer" target="_blank">VI</a></li>
-            <li><a href="#" class="footer__social-link" aria-label="YouTube"   rel="noopener noreferrer" target="_blank">YT</a></li>
-            <li><a href="#" class="footer__social-link" aria-label="LinkedIn"  rel="noopener noreferrer" target="_blank">LI</a></li>
-          </ul>
-        </div>
-
-      </div>
-
-      <div class="footer__bottom">
-        <p class="footer__copyright">
-          <span data-lang-es="© 2025 Productora — Nombre Pendiente. Todos los derechos reservados." data-lang-en="© 2025 Productora — Name Pending. All rights reserved.">
-            © 2025 Productora — Nombre Pendiente. Todos los derechos reservados.
-          </span>
-        </p>
-      </div
+  <script src="js/main.js"></script>
+</body>
+</html>

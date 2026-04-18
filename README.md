@@ -1,62 +1,53 @@
-# [Nombre Productora]
-
-Sitio web estático de presencia digital para productora audiovisual/creativa. Cubre cuatro secciones: Home, Servicios, Quiénes Somos y Contacto.
+# Productora Web — Sitio Corporativo
+Sitio estático de presentación corporativa. 4 páginas HTML. Sin backend. Sin dependencias de build.
 
 ## Estructura de archivos
 
 ```
 /
 ├── index.html
-├── styles.css
-├── main.js
-├── contact.js
+├── servicios.html
+├── quienes-somos.html
+├── contacto.html
+├── css/
+│   └── styles.css
+├── js/
+│   ├── main.js
+│   ├── config.js
+│   └── i18n.js
 └── README.md
 ```
 
-| Archivo | Responsabilidad |
-|---|---|
-| `index.html` | Estructura semántica HTML5 de las cuatro secciones del sitio |
-| `styles.css` | Estilos globales: reset, layout, componentes y responsive |
-| `main.js` | Navegación, scroll suave, animaciones e interacciones generales |
-| `contact.js` | Validación del formulario e integración con Formspree |
-| `README.md` | Documentación operativa de despliegue, configuración y riesgos |
+## Cómo ejecutar localmente
 
-## Ejecución local
+1. Clona o descarga este repositorio.
+2. Abre `index.html` directamente en tu navegador.
+3. No se requiere servidor local, compilación ni instalación de dependencias.
 
-1. Clonar o descargar el repositorio en tu máquina local.
-2. Abrir `index.html` directamente en el navegador o usar una extensión de servidor local como Live Server (VS Code) para evitar restricciones CORS en el formulario.
+> **Nota:** Si el navegador bloquea recursos por política CORS al abrir desde `file://`,
+> usa la extensión "Live Server" de VS Code o ejecuta `python -m http.server 8080`
+> desde la raíz del proyecto.
 
-> ⚠️ Abrir el archivo mediante el protocolo `file://` puede bloquear las llamadas a Formspree en algunos navegadores. Se recomienda usar Live Server o cualquier servidor HTTP local simple para garantizar el funcionamiento completo del formulario.
+## Configuración obligatoria antes del deploy
 
-## Configuración del formulario
+> ⚠️ **El formulario de contacto NO funcionará sin completar este paso.**
 
-1. Crear una cuenta gratuita en `https://formspree.io`.
-2. Crear un nuevo formulario en el dashboard de Formspree y copiar el endpoint generado (formato: `https://formspree.io/f/XXXXXXXX`).
-3. Abrir `contact.js` y reemplazar el valor de la constante `FORMSPREE_ENDPOINT` con el endpoint copiado.
-4. Verificar el correo de confirmación que Formspree envía al activar el formulario.
+1. Crea una cuenta gratuita en [Formspree](https://formspree.io).
+2. Crea un nuevo formulario y copia tu `FORM_ID` (el código alfanumérico de la URL).
+3. Abre el archivo `js/config.js`.
+4. Reemplaza el valor de `FORMSPREE_FORM_ID` con tu código:
 
-> 📌 El plan gratuito de Formspree tiene un límite de **50 envíos/mes**. Antes del lanzamiento público, evaluar el plan pago si el volumen esperado lo supera.
+```js
+// js/config.js
+const CONFIG = {
+  FORMSPREE_FORM_ID: "REEMPLAZAR_CON_TU_ID"
+};
+```
 
-## Despliegue
+5. Guarda el archivo. El formulario quedará operativo.
 
-### Netlify
+## Limitaciones conocidas
 
-1. Arrastrar la carpeta del proyecto al dashboard de Netlify en `https://app.netlify.com/drop`.
-
-### GitHub Pages
-
-1. Subir el repositorio a GitHub.
-2. Activar GitHub Pages desde `Settings > Pages > Branch: main / root`.
-
-### cPanel / Hosting tradicional
-
-1. Subir todos los archivos al directorio `public_html` vía FTP o el administrador de archivos del panel.
-
-## Riesgos conocidos
-
-| Riesgo | Nivel | Mitigación |
-|---|---|---|
-| Formspree tiene límite de 50 envíos/mes en plan gratuito | Bajo | Actualizar a plan pago antes del lanzamiento público |
-| Protección anti-XSS recae 100% en validación client-side | Medio | Sanitización estricta en JS y CSP headers en el hosting |
-| Toggle de idioma ES/EN implementado con `data-lang` básico | Bajo | Suficiente para MVP; migrar a i18n formal en versión posterior |
-| CDN y pruebas de carga son responsabilidad del hosting | Bajo | Documentado; fuera del alcance del código entregado |
+- **Formulario de contacto:** El plan gratuito de Formspree permite un máximo de 50 envíos por mes. Si se supera este límite, los mensajes no se entregarán. Contactar al equipo técnico para migrar al plan de pago (~$10 USD/mes).
+- **Imágenes:** Las imágenes actuales son placeholders temporales de `placehold.co` y `picsum.photos`. Deben reemplazarse con los assets finales antes del lanzamiento oficial. Ver comentarios `<!-- EDITABLE -->` en cada archivo HTML.
+- **Actualizaciones de contenido:** El sitio no tiene CMS. Cualquier cambio de texto o estructura requiere edición directa de los archivos HTML y un nuevo deploy.

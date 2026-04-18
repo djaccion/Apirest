@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Contacta con nuestra productora" />
+  <title>Contacto — Productora</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/i18n.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+
+  <!-- INYECCIÓN NAVBAR: main.js busca este id y lo puebla -->
+  <div id="navbar-placeholder"></div>
+
+  <main id="contacto-main">
+
+    <!-- SECCIÓN HERO -->
+    <section class="page-hero" aria-labelledby="contacto-heading">
+      <div class="container">
+        <h1 id="contacto-heading" data-i18n="contact.hero.title">
+          Hablemos
+        </h1>
+        <p class="page-hero__subtitle" data-i18n="contact.hero.subtitle">
+          Cuéntanos tu proyecto. Respondemos en menos de 24 horas.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN FORMULARIO -->
+    <section class="contact-section" aria-label="Formulario de contacto">
+      <div class="container contact-section__grid">
+
+        <!-- COLUMNA FORMULARIO -->
+        <div class="contact-section__form-col">
+
+          <form
+            id="contact-form"
+            novalidate
+            aria-describedby="form-status-msg"
+          >
+
+            <!-- Campo: Nombre -->
+            <div class="form-group">
+              <label for="field-name" data-i18n="contact.form.name.label">
+                Nombre completo
+              </label>
+              <input
+                type="text"
+                id="field-name"
+                name="name"
+                autocomplete="name"
+                required
+                minlength="2"
+                maxlength="80"
+                data-i18n-placeholder="contact.form.name.placeholder"
+                placeholder="Tu nombre"
+              />
+              <!-- main.js inyecta aquí el mensaje de error con id="error-name" -->
+            </div>
+
+            <!-- Campo: Email -->
+            <div class="form-group">
+              <label for="field-email" data-i18n="contact.form.email.label">
+                Correo electrónico
+              </label>
+              <input
+                type="email"
+                id="field-email"
+                name="email"
+                autocomplete="email"
+                required
+                maxlength="120"
+                data-i18n-placeholder="contact.form.email.placeholder"
+                placeholder="tu@correo.com"
+              />
+              <!-- main.js inyecta aquí el mensaje de error con id="error-email" -->
+            </div>
+
+            <!-- Campo: Teléfono -->
+            <div class="form-group">
+              <label for="field-phone" data-i18n="contact.form.phone.label">
+                Teléfono
+              </label>
+              <input
+                type="tel"
+                id="field-phone"
+                name="phone"
+                autocomplete="tel"
+                maxlength="20"
+                data-i18n-placeholder="contact.form.phone.placeholder"
+                placeholder="+34 600 000 000"
+              />
+            </div>
+
+            <!-- Campo: Servicio -->
+            <div class="form-group">
+              <label for="field-service" data-i18n="contact.form.service.label">
+                Servicio de interés
+              </label>
+              <select
+                id="field-service"
+                name="service"
+              >
+                <option value="" data-i18n="contact.form.service.placeholder">Selecciona un servicio</option>
+                <option value="video" data-i18n="contact.form.service.video">Producción de vídeo</option>
+                <option value="photo" data-i18n="contact.form.service.photo">Fotografía</option>
+                <option value="motion" data-i18n="contact.form.service.motion">Motion graphics</option>
+                <option value="other" data-i18n="contact.form.service.other">Otro</option>
+              </select>
+            </div>
+
+            <!-- Campo: Mensaje -->
+            <div class="form-group">
+              <label for="field-message" data-i18n="contact.form.message.label">
+                Mensaje
+              </label>
+              <textarea
+                id="field-message"
+                name="message"
+                required
+                minlength="10"
+                maxlength="1000"
+                rows="5"
+                data-i18n-placeholder="contact.form.message.placeholder"
+                placeholder="Cuéntanos tu proyecto..."
+              ></textarea>
+              <!-- main.js inyecta aquí el mensaje de error con id="error-message" -->
+            </div>
+
+            <!-- Mensaje de estado del formulario -->
+            <p id="form-status-msg" role="status" aria-live="polite"></p>
+
+            <!-- Botón de envío -->
+            <button
+              type="submit"
+              class="btn btn--primary"
+              data-i18n="contact.form.submit"
+            >
+              Enviar mensaje
+            </button>
+
+          </form>
+
+        </div>
+        <!-- /COLUMNA FORMULARIO -->
+
+        <!-- COLUMNA DATOS DE CONTACTO -->
+        <div class="contact-section__info-col">
+          <h2 class="contact-section__info-title" data-i18n="contact.info.title">
+            Información de contacto
+          </h2>
+
+          <ul class="contact-info-list">
+            <li class="contact-info-list__item">
+              <span class="contact-info-list__label" data-i18n="contact.info.email.label">Email</span>
+              <a href="mailto:hola@productora.com" class="contact-info-list__value">hola@productora.com</a>
+            </li>
+            <li class="contact-info-list__item">
+              <span class="contact-info-list__label" data-i18n="contact.info.phone.label">Teléfono</span>
+              <a href="tel:+34600000000" class="contact-info-list__value">+34 600 000 000</a>
+            </li>
+            <li class="contact-info-list__item">
+              <span class="contact-info-list__label" data-i18n="contact.info.address.label">Dirección</span>
+              <span class="contact-info-list__value" data-i18n="contact.info.address.value">Madrid, España</span>
+            </li>
+          </ul>
+
+          <figure class="contact-section__map">
+            <img
+              src="https://placehold.co/480x320"
+              alt="Mapa de ubicación de la productora"
+              width="480"
+              height="320"
+              loading="lazy"
+            />
+          </figure>
+        </div>
+        <!-- /COLUMNA DATOS DE CONTACTO -->
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- INYECCIÓN FOOTER: main.js busca este id y lo puebla -->
+  <div id="footer-placeholder"></div>
+
+</body>
+</html>
