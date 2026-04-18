@@ -1,0 +1,14 @@
+productora-web/assets/images/logo.webp
+
+Este archivo es un asset binario gráfico (imagen WebP). No puede ser generado como código fuente.
+
+ESPECIFICACIÓN TÉCNICA PARA EL DISEÑADOR:
+
+RUTA DESTINO     : productora-web/assets/images/logo.webp
+FORMATO          : WebP con canal alpha (transparencia) + fallback logo.jpg
+PESO MÁXIMO      : 200 KB
+FONDO            : Transparente
+DIMENSIONES      : 240x80px (desktop) / 120x40px (logo-mobile.webp)
+NOMBRADO         : logo.webp (sin mayúsculas, sin espacios)
+
+ACCIÓN REQUERIDA: Reasignar a Diseño Gráfico. Proveer valores HEX de marca antes de exportar.

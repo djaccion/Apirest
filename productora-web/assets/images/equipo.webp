@@ -1,0 +1,29 @@
+ESTE TICKET NO PUEDE SER COMPLETADO POR UN AGENTE DE CÓDIGO.
+
+El archivo `productora-web/assets/images/equipo.webp` es un activo binario gráfico, no un archivo de código generado por texto. Las instrucciones específicas del ticket lo confirman explícitamente en el Paso 1:
+
+"Confirmar que existe una fotografía de alta resolución del equipo (mínimo 1200px de ancho). Si no existe, detener y escalar al cliente/diseñador. No continuar con placeholders en producción."
+
+ESTADO: BLOQUEADO — ESCALADO AL CLIENTE/DISEÑADOR
+
+MOTIVO DEL BLOQUEO:
+No existe fotografía fuente del equipo disponible en el contexto de este ticket. Generar un placeholder binario o un archivo WebP sintético violaría directamente la restricción del ADR (Sección 5) y el criterio de aceptación de "Ancho ≥ 1200px" con contenido real del equipo.
+
+ACCIÓN REQUERIDA POR EL CLIENTE O DISEÑADOR:
+1. Proveer fotografía fuente del equipo en resolución mínima 1200px de ancho (JPG, PNG o RAW).
+2. Exportar a WebP usando uno de los métodos documentados en el Paso 3 de las instrucciones (cwebp -q 82, Squoosh, o Photoshop/Figma/Affinity).
+3. Verificar peso ≤ 200KB y depositar el archivo resultante en: productora-web/assets/images/equipo.webp
+
+COMANDOS LISTOS PARA EJECUTAR CUANDO EXISTA LA FUENTE:
+
+cwebp -q 82 equipo-fuente.jpg -o productora-web/assets/images/equipo.webp
+
+Verificación posterior:
+
+ls -lh productora-web/assets/images/equipo.webp
+file productora-web/assets/images/equipo.webp
+
+El resultado de `file` debe contener: RIFF....WEBP
+El resultado de `ls -lh` debe mostrar: ≤ 200K
+
+Este ticket permanece abierto hasta que el activo gráfico fuente sea entregado.

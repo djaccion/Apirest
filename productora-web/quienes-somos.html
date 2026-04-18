@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Conoce al equipo humano detrás de nuestra productora audiovisual: historia, valores y las personas que dan vida a cada proyecto creativo." />
+  <title>Quiénes Somos | Productora Creativa</title>
+
+  <!-- CSS CRÍTICO INLINE: solo las propiedades que evitan el flash de layout -->
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    .page-hero { min-height: 40vh; }
+  </style>
+
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+  <!-- [A] HEADER / NAVEGACIÓN GLOBAL -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo" aria-label="Ir al inicio">
+        <img
+          src="assets/images/logo.webp"
+          alt="Productora Creativa - Logo"
+          width="160"
+          height="48"
+        />
+      </a>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="servicios.html" class="nav-link">Servicios</a></li>
+          <li>
+            <a href="quienes-somos.html" class="nav-link nav-link--active"
+               aria-current="page">Quiénes Somos</a>
+          </li>
+          <li><a href="contacto.html" class="nav-link">Contacto</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav"
+              aria-label="Abrir menú">
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- [B] MAIN -->
+  <main>
+
+    <!-- [B1] HERO DE SECCIÓN -->
+    <section class="page-hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <h1 id="hero-heading" class="page-hero__title">Quiénes Somos</h1>
+        <p class="page-hero__subtitle">
+          Un equipo apasionado por contar historias que transforman ideas en imágenes que perduran.
+        </p>
+      </div>
+    </section>
+
+    <!-- [B2] HISTORIA -->
+    <section id="historia" aria-labelledby="historia-heading">
+      <div class="container">
+        <h2 id="historia-heading" class="section-title">Nuestra Historia</h2>
+        <div class="section-content">
+          <!-- EDITAR AQUÍ: texto de historia de la empresa -->
+          <p class="section-text">
+            Fundada en 2010, nuestra productora nació de la convicción de que cada marca tiene una historia única que merece ser contada con autenticidad y creatividad. Lo que comenzó como un pequeño estudio con una cámara y grandes sueños, se ha convertido en un equipo multidisciplinar que ha colaborado con más de 200 clientes en toda la región.
+          </p>
+          <p class="section-text">
+            A lo largo de estos años hemos producido documentales, campañas publicitarias, contenido para redes sociales y piezas corporativas que han ganado reconocimiento en festivales nacionales e internacionales. Cada proyecto es para nosotros una oportunidad de superar los límites de lo posible.
+          </p>
+        </div>
+        <figure class="historia-figure">
+          <img
+            src="assets/images/historia-equipo.webp"
+            alt="El equipo de Productora Creativa reunido en el estudio durante los primeros años de la empresa"
+            width="1200"
+            height="600"
+            loading="lazy"
+          />
+          <figcaption class="figura-caption">Nuestros inicios en el estudio, 2010.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- [B3] EQUIPO -->
+    <section id="equipo" aria-labelledby="equipo-heading">
+      <div class="container">
+        <h2 id="equipo-heading" class="section-title">Nuestro Equipo</h2>
+        <p class="section-text section-text--centered">
+          <!-- EDITAR AQUÍ: descripción introductoria del equipo -->
+          Personas talentosas, curiosas y comprometidas con la excelencia creativa.
+        </p>
+        <ul class="team-grid" role="list">
+
+          <!-- EDITAR AQUÍ: tarjeta de miembro del equipo -->
+          <li class="team-card">
+            <article>
+              <figure class="team-card__figure">
+                <img
+                  src="assets/images/equipo-ana-garcia.webp"
+                  alt="Ana García, Directora General de Productora Creativa"
+                  width="400"
+                  height="400"
+                  loading="lazy"
+                />
+              </figure>
+              <div class="team-card__body">
+                <h3 class="team-card__name">Ana García</h3>
+                <p class="team-card__role">Directora General</p>
+                <p class="team-card__bio">
+                  Con más de 15 años de experiencia en producción audiovisual, Ana lidera la visión estratégica y creativa de cada proyecto.
+                </p>
+              </div>
+            </article>
+          </li>
+
+          <!-- EDITAR AQUÍ: tarjeta de miembro del equipo -->
+          <li class="team-card">
+            <article>
+              <figure class="team-card__figure">
+                <img
+                  src="assets/images/equipo-carlos-mendez.webp"
+                  alt="Carlos Méndez, Director de Fotografía de Productora Creativa"
+                  width="400"
+                  height="400"
+                  loading="lazy"
+                />
+              </figure>
+              <div class="team-card__body">
+                <h3 class="team-card__name">Carlos Méndez</h3>
+                <p class="team-card__role">Director de Fotografía</p>
+                <p class="team-card__bio">
+                  Especialista en cinematografía y colorimetría, Carlos transforma cada escena en una obra visual de impacto memorable.
+                </p>
+              </div>
+            </article>
+          </li>
+
+          <!-- EDITAR AQUÍ: tarjeta de miembro del equipo -->
+          <li class="team-card">
+            <article>
+              <figure class="team-card__figure">
+                <img
+                  src="assets/images/equipo-lucia-torres.webp"
+                  alt="Lucía Torres, Directora de Arte de Productora Creativa"
+                  width="400"
+                  height="400"
+                  loading="lazy"
+                />
+              </figure>
+              <div class="team-card__body">
+                <h3 class="team-card__name">Lucía Torres</h3>
+                <p class="team-card__role">Directora de Arte</p>
+                <p class="team-card__bio">
+                  Lucía diseña los universos visuales de cada producción, asegurando coherencia estética desde el concepto hasta la pantalla.
+                </p>
+              </div>
+            </article>
+          </li>
+
+          <!-- EDITAR AQUÍ: tarjeta de miembro del equipo -->
+          <li class="team-card">
+            <article>
+              <figure class="team-card__figure">
+                <img
+                  src="assets/images/equipo-roberto-silva.webp"
+                  alt="Roberto Silva, Editor y Post-producción de Productora Creativa"
+                  width="400"
+                  height="400"
+                  loading="lazy"
+                />
+              </figure>
+              <div class="team-card__body">
+                <h3 class="team-card__name">Roberto Silva</h3>
+                <p class="team-card__role">Editor & Post-producción</p>
+                <p class="team-card__bio">
+                  Roberto da vida a las historias en la sala de montaje, con un ojo clínico para el ritmo narrativo y los efectos visuales.
+                </p>
+              </div>
+            </article>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+    <!-- [B4] VALORES -->
+    <section class="valores" aria-labelledby="valores-heading">
+      <div class="container">
+        <h2 id="valores-heading" class="section-title">Nuestros Valores</h2>
+        <p class="section-text section-text--centered">
+          <!-- EDITAR AQUÍ: descripción introductoria de valores -->
+          Los principios que guían cada decisión creativa y cada relación con nuestros clientes.
+        </p>
+        <ul class="valores-grid" role="list">
+
+          <!-- EDITAR AQUÍ: valor 1 -->
+          <li class="valor-card">
+            <article>
+              <h3 class="valor-card__title">Creatividad sin límites</h3>
+              <p class="valor-card__description">
+                Exploramos nuevas formas de contar historias, desafiando convenciones y apostando por ideas que sorprenden y emocionan.
+              </p>
+            </article>
+          </li>
+
+          <!-- EDITAR AQUÍ: valor 2 -->
+          <li class="valor-card">
+            <article>
+              <h3 class="valor-card__title">Compromiso con la calidad</h3>
+              <p class="valor-card__description">
+                Cada detalle importa. Desde el guion hasta la entrega final, mantenemos estándares de excelencia que hablan por sí solos.
+              </p>
+            </article>
+          </li>
+
+          <!-- EDITAR AQUÍ: valor 3 -->
+          <li class="valor-card">
+            <article>
+              <h3 class="valor-card__title">Colaboración genuina</h3>
+              <p class="valor-card__description">
+                Trabajamos junto a nuestros clientes como socios estratégicos, escuchando, adaptándonos y construyendo juntos cada proyecto.
+              </p>
+            </article>
+          </li>
+
+          <!-- EDITAR AQUÍ: valor 4 -->
+          <li class="valor-card">
+            <article>
+              <h3 class="valor-card__title">Impacto real</h3>
+              <p class="valor-card__description">
+                Medimos el éxito por los resultados que generamos: audiencias que se conectan, marcas que crecen e historias que perduran.
+              </p>
+            </article>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- [C] FOOTER GLOBAL -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+
+        <div class="footer-brand">
+          <a href="index.html" class="site-logo" aria-label="Ir al inicio">
+            <img
+              src="assets/images/logo.webp"
+              alt="Productora Creativa - Logo"
+              width="120"
+              height="36"
+              loading="lazy"
+            />
+          </a>
+          <!-- EDITAR AQUÍ: tagline de la productora -->
+          <p class="footer-tagline">Historias que transforman.</p>
+        </div>
+
+        <nav class="footer-nav" aria-label="Navegación del pie de página">
+          <h2 class="footer-nav__title">Páginas</h2>
+          <ul class="footer-nav__list">
+            <li><a href="index.html" class="footer-nav__link">Home</a></li>
+            <li><a href="servicios.html" class="footer-nav__link">Servicios</a></li>
+            <li><a href="quienes-somos.html" class="footer-nav__link">Quiénes Somos</a></li>
+            <li><a href="contacto.html" class="footer-nav__link">Contacto</a></li>
+          </ul>
+        </nav>
+
+        <address class="footer-contact">
+          <h2 class="footer-contact__title">Contacto</h2>
+          <!-- EDITAR AQUÍ: datos de contacto reales -->
+          <p class="footer-contact__item">
+            <a href="mailto:hola@productoracreativa.com" class="footer-contact__link">
+              hola@productoracreativa.com
+            </a>
+          </p>
+          <p class="footer-contact__item">
+            <a href="tel:+34600000000" class="footer-contact__link">
+              +34 600 000 000
+            </a>
+          </p>
+        </address>
+
+      </div>
+
+      <div class="footer-bottom">
+        <!-- EDITAR AQUÍ: año y nombre legal -->
+        <p class="footer-legal">
+          &copy; <span id="footer-year">2024</span> Productora Creativa. Todos los derechos reservados.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- [D] JS GLOBAL -->
+  <script src="js/main.js" defer></script>
+
+</body>
+</html>
