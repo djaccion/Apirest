@@ -1,193 +1,469 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Servicios de producción audiovisual — Productora">
-  <title>Servicios — Productora</title>
-  <link rel="stylesheet" href="styles/main.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Descubre nuestros servicios de producción audiovisual: video corporativo, fotografía, motion graphics, transmisiones en vivo, podcasting y dirección creativa." />
+  <title data-i18n="services.pageTitle">Servicios — Productora</title>
+
+  <!-- CSS: orden obligatorio, no alterar -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/servicios.css" />
 </head>
 <body>
 
-  <header class="site-header">
-    <div class="container site-header__inner">
-      <a href="index.html" class="site-header__logo" aria-label="Inicio — Productora">
-        <img src="assets/images/logo.svg" alt="Productora" width="140" height="40">
+  <!-- NAV -->
+  <header class="site-header" role="banner">
+    <nav class="nav container" aria-label="Navegación principal">
+      <a href="index.html" class="nav__logo" aria-label="Ir al inicio">
+        <img src="https://placehold.co/140x40/1a1a1a/ffffff?text=PRODUCTORA"
+             alt="Logo Productora"
+             width="140"
+             height="40" />
       </a>
-      <button class="nav__toggle" aria-expanded="false" aria-controls="main-nav" aria-label="Abrir menú">
+
+      <button class="nav__toggle"
+              aria-controls="nav-menu"
+              aria-expanded="false"
+              aria-label="Abrir menú de navegación">
         <span class="nav__toggle-bar"></span>
         <span class="nav__toggle-bar"></span>
         <span class="nav__toggle-bar"></span>
       </button>
-      <nav id="main-nav" class="nav" aria-label="Navegación principal">
-        <ul class="nav__list">
-          <li class="nav__item">
-            <a href="index.html" class="nav__link">Inicio</a>
-          </li>
-          <li class="nav__item">
-            <a href="servicios.html" class="nav__link nav__link--active" aria-current="page">Servicios</a>
-          </li>
-          <li class="nav__item">
-            <a href="quienes-somos.html" class="nav__link">Quiénes Somos</a>
-          </li>
-          <li class="nav__item">
-            <a href="contacto.html" class="nav__link">Contacto</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+
+      <ul class="nav__menu" id="nav-menu" role="list">
+        <li class="nav__item">
+          <a href="index.html"
+             class="nav__link"
+             data-i18n="nav.home">
+            Inicio
+          </a>
+        </li>
+        <li class="nav__item">
+          <a href="servicios.html"
+             class="nav__link nav__link--active"
+             aria-current="page"
+             data-i18n="nav.services">
+            Servicios
+          </a>
+        </li>
+        <li class="nav__item">
+          <a href="quienes-somos.html"
+             class="nav__link"
+             data-i18n="nav.about">
+            Quiénes Somos
+          </a>
+        </li>
+        <li class="nav__item">
+          <a href="contacto.html"
+             class="nav__link"
+             data-i18n="nav.contact">
+            Contacto
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav__lang-switcher">
+        <button class="lang-btn lang-btn--active"
+                data-lang-switch="es"
+                aria-label="Cambiar idioma a español"
+                aria-pressed="true">
+          ES
+        </button>
+        <span class="lang-btn__separator" aria-hidden="true">/</span>
+        <button class="lang-btn"
+                data-lang-switch="en"
+                aria-label="Switch language to English"
+                aria-pressed="false">
+          EN
+        </button>
+      </div>
+    </nav>
   </header>
 
+  <!-- MAIN -->
   <main id="main-content">
 
-    <section class="page-hero">
+    <section class="page-hero" aria-labelledby="services-heading">
       <div class="container">
-        <h1 class="page-hero__title">Nuestros Servicios</h1>
-        <p class="page-hero__subtitle">
-          <!-- EDITAR AQUÍ: subtítulo descriptivo de 1 línea, máx. 120 caracteres -->
-          Producción audiovisual integral para marcas que quieren contar historias reales.
+        <h1 id="services-heading"
+            class="page-hero__title"
+            data-i18n="services.heroTitle">
+          Nuestros Servicios
+        </h1>
+        <p class="page-hero__subtitle"
+           data-i18n="services.heroSubtitle">
+          Producción audiovisual con propósito. Cada proyecto, una historia única.
         </p>
       </div>
     </section>
 
-    <section class="services" aria-labelledby="services-heading">
+    <section class="services-grid" aria-label="Catálogo de servicios">
       <div class="container">
+        <ul class="services-grid__list" role="list">
 
-        <h2 id="services-heading" class="section__title">¿Qué hacemos?</h2>
+          <!-- TARJETA 1 — Video Corporativo -->
+          <li class="service-card">
+            <article aria-labelledby="service-title-1">
+              <div class="service-card__media">
+                <img src="https://picsum.photos/seed/videocorp/600/400"
+                     alt="Producción de video corporativo"
+                     class="service-card__image"
+                     width="600"
+                     height="400"
+                     loading="lazy" />
+              </div>
+              <div class="service-card__body">
+                <div class="service-card__icon" aria-hidden="true">🎬</div>
+                <h2 id="service-title-1"
+                    class="service-card__title"
+                    data-i18n="services.card1.title">
+                  Video Corporativo
+                </h2>
+                <p class="service-card__description"
+                   data-i18n="services.card1.description">
+                  Contamos la historia de tu marca con narrativas visuales que conectan con tu audiencia. Desde entrevistas ejecutivas hasta videos de producto de alto impacto.
+                </p>
+                <ul class="service-card__features" role="list" aria-label="Características del servicio">
+                  <li class="service-card__feature" data-i18n="services.card1.feature1">Guión y preproducción</li>
+                  <li class="service-card__feature" data-i18n="services.card1.feature2">Rodaje profesional</li>
+                  <li class="service-card__feature" data-i18n="services.card1.feature3">Postproducción y color</li>
+                </ul>
+                <a href="contacto.html"
+                   class="service-card__cta btn btn--secondary"
+                   data-i18n="services.cardCta">
+                  Solicitar cotización
+                </a>
+              </div>
+            </article>
+          </li>
 
-        <div class="services__grid">
+          <!-- TARJETA 2 — Fotografía Profesional -->
+          <li class="service-card">
+            <article aria-labelledby="service-title-2">
+              <div class="service-card__media">
+                <img src="https://picsum.photos/seed/fotografia/600/400"
+                     alt="Fotografía profesional para marcas"
+                     class="service-card__image"
+                     width="600"
+                     height="400"
+                     loading="lazy" />
+              </div>
+              <div class="service-card__body">
+                <div class="service-card__icon" aria-hidden="true">📷</div>
+                <h2 id="service-title-2"
+                    class="service-card__title"
+                    data-i18n="services.card2.title">
+                  Fotografía Profesional
+                </h2>
+                <p class="service-card__description"
+                   data-i18n="services.card2.description">
+                  Imágenes que comunican. Fotografía de producto, editorial, eventos corporativos y retratos de equipo con dirección de arte incluida.
+                </p>
+                <ul class="service-card__features" role="list" aria-label="Características del servicio">
+                  <li class="service-card__feature" data-i18n="services.card2.feature1">Dirección de arte</li>
+                  <li class="service-card__feature" data-i18n="services.card2.feature2">Retoque y edición</li>
+                  <li class="service-card__feature" data-i18n="services.card2.feature3">Entrega en alta resolución</li>
+                </ul>
+                <a href="contacto.html"
+                   class="service-card__cta btn btn--secondary"
+                   data-i18n="services.cardCta">
+                  Solicitar cotización
+                </a>
+              </div>
+            </article>
+          </li>
 
-          <article class="service-card">
-            <div class="service-card__icon" aria-hidden="true">
-              🎬
-            </div>
-            <h3 class="service-card__title">
-              <!-- EDITAR AQUÍ -->
-              Producción de Video Corporativo
-            </h3>
-            <p class="service-card__description">
-              <!-- EDITAR AQUÍ: descripción de 2-3 líneas, máx. 200 caracteres -->
-              Creamos piezas audiovisuales que comunican la identidad y valores
-              de tu empresa con narrativa profesional.
-            </p>
-          </article>
+          <!-- TARJETA 3 — Motion Graphics & Animación -->
+          <li class="service-card">
+            <article aria-labelledby="service-title-3">
+              <div class="service-card__media">
+                <img src="https://picsum.photos/seed/motion/600/400"
+                     alt="Motion graphics y animación"
+                     class="service-card__image"
+                     width="600"
+                     height="400"
+                     loading="lazy" />
+              </div>
+              <div class="service-card__body">
+                <div class="service-card__icon" aria-hidden="true">✨</div>
+                <h2 id="service-title-3"
+                    class="service-card__title"
+                    data-i18n="services.card3.title">
+                  Motion Graphics &amp; Animación
+                </h2>
+                <p class="service-card__description"
+                   data-i18n="services.card3.description">
+                  Damos vida a conceptos abstractos. Animaciones 2D, infografías en movimiento y piezas de identidad visual animada para digital y broadcast.
+                </p>
+                <ul class="service-card__features" role="list" aria-label="Características del servicio">
+                  <li class="service-card__feature" data-i18n="services.card3.feature1">Animación 2D y 3D</li>
+                  <li class="service-card__feature" data-i18n="services.card3.feature2">Infografías animadas</li>
+                  <li class="service-card__feature" data-i18n="services.card3.feature3">Identidad visual en movimiento</li>
+                </ul>
+                <a href="contacto.html"
+                   class="service-card__cta btn btn--secondary"
+                   data-i18n="services.cardCta">
+                  Solicitar cotización
+                </a>
+              </div>
+            </article>
+          </li>
 
-          <article class="service-card">
-            <div class="service-card__icon" aria-hidden="true">
-              📣
-            </div>
-            <h3 class="service-card__title">
-              <!-- EDITAR AQUÍ -->
-              Publicidad y Spots Comerciales
-            </h3>
-            <p class="service-card__description">
-              <!-- EDITAR AQUÍ -->
-              Desarrollamos campañas visuales de alto impacto para televisión,
-              redes sociales y plataformas digitales.
-            </p>
-          </article>
+          <!-- TARJETA 4 — Transmisiones en Vivo -->
+          <li class="service-card">
+            <article aria-labelledby="service-title-4">
+              <div class="service-card__media">
+                <img src="https://picsum.photos/seed/livestream/600/400"
+                     alt="Transmisiones en vivo y streaming"
+                     class="service-card__image"
+                     width="600"
+                     height="400"
+                     loading="lazy" />
+              </div>
+              <div class="service-card__body">
+                <div class="service-card__icon" aria-hidden="true">📡</div>
+                <h2 id="service-title-4"
+                    class="service-card__title"
+                    data-i18n="services.card4.title">
+                  Transmisiones en Vivo
+                </h2>
+                <p class="service-card__description"
+                   data-i18n="services.card4.description">
+                  Producción técnica y creativa para eventos en streaming. Conferencias, lanzamientos de producto, conciertos y eventos híbridos con calidad broadcast.
+                </p>
+                <ul class="service-card__features" role="list" aria-label="Características del servicio">
+                  <li class="service-card__feature" data-i18n="services.card4.feature1">Multicámara en vivo</li>
+                  <li class="service-card__feature" data-i18n="services.card4.feature2">Streaming multicanal</li>
+                  <li class="service-card__feature" data-i18n="services.card4.feature3">Grabación y archivo</li>
+                </ul>
+                <a href="contacto.html"
+                   class="service-card__cta btn btn--secondary"
+                   data-i18n="services.cardCta">
+                  Solicitar cotización
+                </a>
+              </div>
+            </article>
+          </li>
 
-          <article class="service-card">
-            <div class="service-card__icon" aria-hidden="true">
-              🎙️
-            </div>
-            <h3 class="service-card__title">
-              <!-- EDITAR AQUÍ -->
-              Podcasts y Contenido de Audio
-            </h3>
-            <p class="service-card__description">
-              <!-- EDITAR AQUÍ -->
-              Grabación, edición y masterización de podcasts y piezas sonoras
-              con calidad de estudio profesional.
-            </p>
-          </article>
+          <!-- TARJETA 5 — Producción de Podcast -->
+          <li class="service-card">
+            <article aria-labelledby="service-title-5">
+              <div class="service-card__media">
+                <img src="https://picsum.photos/seed/podcast/600/400"
+                     alt="Producción de podcast y contenido de audio"
+                     class="service-card__image"
+                     width="600"
+                     height="400"
+                     loading="lazy" />
+              </div>
+              <div class="service-card__body">
+                <div class="service-card__icon" aria-hidden="true">🎙️</div>
+                <h2 id="service-title-5"
+                    class="service-card__title"
+                    data-i18n="services.card5.title">
+                  Producción de Podcast
+                </h2>
+                <p class="service-card__description"
+                   data-i18n="services.card5.description">
+                  Tu voz, amplificada. Producción integral de podcasts corporativos y de marca: grabación, edición, diseño sonoro y distribución en plataformas.
+                </p>
+                <ul class="service-card__features" role="list" aria-label="Características del servicio">
+                  <li class="service-card__feature" data-i18n="services.card5.feature1">Grabación en estudio</li>
+                  <li class="service-card__feature" data-i18n="services.card5.feature2">Edición y diseño sonoro</li>
+                  <li class="service-card__feature" data-i18n="services.card5.feature3">Distribución en plataformas</li>
+                </ul>
+                <a href="contacto.html"
+                   class="service-card__cta btn btn--secondary"
+                   data-i18n="services.cardCta">
+                  Solicitar cotización
+                </a>
+              </div>
+            </article>
+          </li>
 
-          <article class="service-card">
-            <div class="service-card__icon" aria-hidden="true">
-              📸
-            </div>
-            <h3 class="service-card__title">
-              <!-- EDITAR AQUÍ -->
-              Fotografía Comercial
-            </h3>
-            <p class="service-card__description">
-              <!-- EDITAR AQUÍ -->
-              Sesiones fotográficas de producto, equipo y eventos corporativos
-              con dirección de arte y retoque profesional.
-            </p>
-          </article>
+          <!-- TARJETA 6 — Dirección Creativa -->
+          <li class="service-card">
+            <article aria-labelledby="service-title-6">
+              <div class="service-card__media">
+                <img src="https://picsum.photos/seed/creative/600/400"
+                     alt="Dirección creativa y estrategia de contenido"
+                     class="service-card__image"
+                     width="600"
+                     height="400"
+                     loading="lazy" />
+              </div>
+              <div class="service-card__body">
+                <div class="service-card__icon" aria-hidden="true">💡</div>
+                <h2 id="service-title-6"
+                    class="service-card__title"
+                    data-i18n="services.card6.title">
+                  Dirección Creativa
+                </h2>
+                <p class="service-card__description"
+                   data-i18n="services.card6.description">
+                  Estrategia y concepto antes de la cámara. Desarrollamos el universo visual de tu marca: moodboards, guías de estilo, conceptualización de campañas y consultoría creativa.
+                </p>
+                <ul class="service-card__features" role="list" aria-label="Características del servicio">
+                  <li class="service-card__feature" data-i18n="services.card6.feature1">Conceptualización de campaña</li>
+                  <li class="service-card__feature" data-i18n="services.card6.feature2">Guías de estilo visual</li>
+                  <li class="service-card__feature" data-i18n="services.card6.feature3">Consultoría de marca</li>
+                </ul>
+                <a href="contacto.html"
+                   class="service-card__cta btn btn--secondary"
+                   data-i18n="services.cardCta">
+                  Solicitar cotización
+                </a>
+              </div>
+            </article>
+          </li>
 
-          <article class="service-card">
-            <div class="service-card__icon" aria-hidden="true">
-              ✂️
-            </div>
-            <h3 class="service-card__title">
-              <!-- EDITAR AQUÍ -->
-              Postproducción y Edición
-            </h3>
-            <p class="service-card__description">
-              <!-- EDITAR AQUÍ -->
-              Color grading, motion graphics, efectos visuales y edición de
-              material propio o de terceros con acabado cinematográfico.
-            </p>
-          </article>
-
-          <article class="service-card">
-            <div class="service-card__icon" aria-hidden="true">
-              🎥
-            </div>
-            <h3 class="service-card__title">
-              <!-- EDITAR AQUÍ -->
-              Cobertura de Eventos
-            </h3>
-            <p class="service-card__description">
-              <!-- EDITAR AQUÍ -->
-              Registro audiovisual de lanzamientos, conferencias y eventos
-              corporativos con equipos multicámara y transmisión en vivo.
-            </p>
-          </article>
-
-        </div><!-- /.services__grid -->
-      </div><!-- /.container -->
+        </ul>
+      </div>
     </section>
 
-    <section class="services-cta" aria-labelledby="cta-heading">
-      <div class="container services-cta__inner">
-        <h2 id="cta-heading" class="services-cta__title">
-          <!-- EDITAR AQUÍ -->
-          ¿Tenés un proyecto en mente?
-        </h2>
-        <p class="services-cta__text">
-          <!-- EDITAR AQUÍ -->
-          Contanos tu idea y te preparamos una propuesta a medida sin compromiso.
-        </p>
-        <a href="contacto.html" class="btn btn--primary">Hablemos</a>
+    <!-- CTA de cierre -->
+    <section class="services-cta" aria-labelledby="services-cta-heading">
+      <div class="container">
+        <div class="services-cta__inner">
+          <h2 id="services-cta-heading"
+              class="services-cta__title"
+              data-i18n="services.ctaTitle">
+            ¿Tienes un proyecto en mente?
+          </h2>
+          <p class="services-cta__text"
+             data-i18n="services.ctaText">
+            Cuéntanos tu idea. Nuestro equipo está listo para convertirla en una pieza audiovisual que marque la diferencia.
+          </p>
+          <a href="contacto.html"
+             class="btn btn--primary services-cta__btn"
+             data-i18n="services.ctaBtn">
+            Hablemos de tu proyecto
+          </a>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <footer class="site-footer">
-    <div class="container site-footer__inner">
-      <p class="site-footer__copy">
-        <!-- EDITAR AQUÍ: actualiza el año si es necesario -->
-        &copy; <span id="footer-year"></span> Productora. Todos los derechos reservados.
-      </p>
-      <nav aria-label="Navegación secundaria">
-        <ul class="site-footer__nav">
-          <li><a href="index.html" class="site-footer__link">Inicio</a></li>
-          <li><a href="servicios.html" class="site-footer__link">Servicios</a></li>
-          <li><a href="quienes-somos.html" class="site-footer__link">Quiénes Somos</a></li>
-          <li><a href="contacto.html" class="site-footer__link">Contacto</a></li>
-        </ul>
-      </nav>
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="site-footer__grid">
+
+        <div class="site-footer__brand">
+          <a href="index.html" class="site-footer__logo-link" aria-label="Ir al inicio">
+            <img src="https://placehold.co/120x36/ffffff/1a1a1a?text=PRODUCTORA"
+                 alt="Logo Productora"
+                 width="120"
+                 height="36"
+                 loading="lazy" />
+          </a>
+          <p class="site-footer__tagline" data-i18n="footer.tagline">
+            Producción audiovisual con propósito.
+          </p>
+        </div>
+
+        <nav class="site-footer__nav" aria-label="Navegación del pie de página">
+          <h3 class="site-footer__nav-title" data-i18n="footer.navTitle">Páginas</h3>
+          <ul class="site-footer__nav-list" role="list">
+            <li>
+              <a href="index.html"
+                 class="site-footer__nav-link"
+                 data-i18n="nav.home">
+                Inicio
+              </a>
+            </li>
+            <li>
+              <a href="servicios.html"
+                 class="site-footer__nav-link"
+                 aria-current="page"
+                 data-i18n="nav.services">
+                Servicios
+              </a>
+            </li>
+            <li>
+              <a href="quienes-somos.html"
+                 class="site-footer__nav-link"
+                 data-i18n="nav.about">
+                Quiénes Somos
+              </a>
+            </li>
+            <li>
+              <a href="contacto.html"
+                 class="site-footer__nav-link"
+                 data-i18n="nav.contact">
+                Contacto
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="site-footer__contact">
+          <h3 class="site-footer__nav-title" data-i18n="footer.contactTitle">Contacto</h3>
+          <address class="site-footer__address">
+            <p>
+              <a href="mailto:hola@productora.com"
+                 class="site-footer__contact-link">
+                hola@productora.com
+              </a>
+            </p>
+            <p>
+              <a href="tel:+10000000000"
+                 class="site-footer__contact-link">
+                +1 (000) 000-0000
+              </a>
+            </p>
+          </address>
+        </div>
+
+        <div class="site-footer__social">
+          <h3 class="site-footer__nav-title" data-i18n="footer.socialTitle">Redes</h3>
+          <ul class="site-footer__social-list" role="list">
+            <li>
+              <a href="#"
+                 class="site-footer__social-link"
+                 aria-label="Instagram de Productora"
+                 rel="noopener noreferrer"
+                 target="_blank">
+                Instagram
+              </a>
+            </li>
+            <li>
+              <a href="#"
+                 class="site-footer__social-link"
+                 aria-label="LinkedIn de Productora"
+                 rel="noopener noreferrer"
+                 target="_blank">
+                LinkedIn
+              </a>
+            </li>
+            <li>
+              <a href="#"
+                 class="site-footer__social-link"
+                 aria-label="YouTube de Productora"
+                 rel="noopener noreferrer"
+                 target="_blank">
+                YouTube
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="site-footer__bottom">
+        <p class="site-footer__copy" data-i18n="footer.copy">
+          &copy; 2024 Productora. Todos los derechos reservados.
+        </p>
+      </div>
     </div>
   </footer>
 
-  <script src="js/main.js" defer></script>
-  <script defer>
-    document.getElementById('footer-year').textContent = new Date().getFullYear();
-  </script>
-
+  <!-- JS: orden obligatorio, no alterar -->
+  <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

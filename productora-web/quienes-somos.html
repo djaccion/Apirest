@@ -1,306 +1,280 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Conoce al equipo humano detrás de nuestra productora audiovisual: historia, valores y las personas que dan vida a cada proyecto creativo." />
-  <title>Quiénes Somos | Productora Creativa</title>
-
-  <!-- CSS CRÍTICO INLINE: solo las propiedades que evitan el flash de layout -->
-  <style>
-    body { margin: 0; font-family: sans-serif; }
-    .page-hero { min-height: 40vh; }
-  </style>
-
-  <link rel="stylesheet" href="styles/main.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="" data-i18n-meta="description">
+  <title data-i18n="page-title-quienes-somos">Quiénes Somos</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/quienes-somos.css">
 </head>
 <body>
-
-  <!-- [A] HEADER / NAVEGACIÓN GLOBAL -->
   <header class="site-header">
-    <div class="container">
-      <a href="index.html" class="site-logo" aria-label="Ir al inicio">
-        <img
-          src="assets/images/logo.webp"
-          alt="Productora Creativa - Logo"
-          width="160"
-          height="48"
-        />
+    <div class="site-header__inner">
+      <a href="index.html" class="site-header__logo" aria-label="Inicio">
+        <img src="https://placehold.co/160x48" alt="Logo productora" width="160" height="48">
       </a>
-      <nav class="site-nav" aria-label="Navegación principal">
-        <ul class="nav-list">
-          <li><a href="index.html" class="nav-link">Home</a></li>
-          <li><a href="servicios.html" class="nav-link">Servicios</a></li>
-          <li>
-            <a href="quienes-somos.html" class="nav-link nav-link--active"
-               aria-current="page">Quiénes Somos</a>
+      <nav class="nav" aria-label="Navegación principal">
+        <ul class="nav__list">
+          <li class="nav__item">
+            <a href="index.html" class="nav__link" data-i18n="nav-home">Inicio</a>
           </li>
-          <li><a href="contacto.html" class="nav-link">Contacto</a></li>
+          <li class="nav__item">
+            <a href="servicios.html" class="nav__link" data-i18n="nav-servicios">Servicios</a>
+          </li>
+          <li class="nav__item">
+            <a href="quienes-somos.html" class="nav__link nav__link--active" aria-current="page" data-i18n="nav-quienes-somos">Quiénes Somos</a>
+          </li>
+          <li class="nav__item">
+            <a href="contacto.html" class="nav__link" data-i18n="nav-contacto">Contacto</a>
+          </li>
         </ul>
       </nav>
-      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav"
-              aria-label="Abrir menú">
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
+      <div class="site-header__lang-switcher">
+        <button class="lang-btn" data-lang="es" aria-label="Cambiar idioma a español">ES</button>
+        <span class="lang-btn__separator" aria-hidden="true">|</span>
+        <button class="lang-btn" data-lang="en" aria-label="Switch language to English">EN</button>
+      </div>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menú">
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
       </button>
     </div>
   </header>
 
-  <!-- [B] MAIN -->
-  <main>
+  <main id="main-content">
 
-    <!-- [B1] HERO DE SECCIÓN -->
-    <section class="page-hero" aria-labelledby="hero-heading">
-      <div class="container">
-        <h1 id="hero-heading" class="page-hero__title">Quiénes Somos</h1>
-        <p class="page-hero__subtitle">
-          Un equipo apasionado por contar historias que transforman ideas en imágenes que perduran.
-        </p>
+    <!-- SECCIÓN HERO -->
+    <section class="qs-hero" aria-labelledby="qs-hero-title">
+      <div class="qs-hero__content">
+        <h1 id="qs-hero-title" data-i18n="qs-hero-title">Quiénes Somos</h1>
+        <p data-i18n="qs-hero-subtitle">Subtítulo institucional placeholder</p>
+      </div>
+      <div class="qs-hero__image-wrapper">
+        <img
+          src="https://picsum.photos/1200/400"
+          alt=""
+          role="presentation"
+          class="qs-hero__image"
+          width="1200"
+          height="400"
+        >
       </div>
     </section>
 
-    <!-- [B2] HISTORIA -->
-    <section id="historia" aria-labelledby="historia-heading">
-      <div class="container">
-        <h2 id="historia-heading" class="section-title">Nuestra Historia</h2>
-        <div class="section-content">
-          <!-- EDITAR AQUÍ: texto de historia de la empresa -->
-          <p class="section-text">
-            Fundada en 2010, nuestra productora nació de la convicción de que cada marca tiene una historia única que merece ser contada con autenticidad y creatividad. Lo que comenzó como un pequeño estudio con una cámara y grandes sueños, se ha convertido en un equipo multidisciplinar que ha colaborado con más de 200 clientes en toda la región.
+    <!-- SECCIÓN HISTORIA / MISIÓN -->
+    <section class="qs-historia" aria-labelledby="qs-historia-title">
+      <div class="qs-historia__text">
+        <h2 id="qs-historia-title" data-i18n="qs-historia-title">Nuestra Historia</h2>
+        <p data-i18n="qs-historia-body">
+          Texto placeholder de historia de la productora. Aquí se describirá el origen, evolución y trayectoria de la empresa desde sus inicios hasta la actualidad.
+        </p>
+      </div>
+      <div class="qs-historia__image-wrapper">
+        <img
+          src="https://picsum.photos/600/400?grayscale"
+          alt=""
+          role="presentation"
+          class="qs-historia__image"
+          width="600"
+          height="400"
+        >
+      </div>
+    </section>
+
+    <!-- SECCIÓN MISIÓN, VISIÓN Y VALORES -->
+    <section class="qs-valores" aria-labelledby="qs-valores-title">
+      <h2 id="qs-valores-title" data-i18n="qs-valores-title">Misión, Visión y Valores</h2>
+      <ul class="qs-valores__list" role="list">
+        <li class="qs-valores__item">
+          <div class="qs-valores__icon" aria-hidden="true">
+            <img src="https://placehold.co/64x64" alt="" role="presentation" width="64" height="64">
+          </div>
+          <h3 class="qs-valores__item-title" data-i18n="qs-valores-mision-title">Misión</h3>
+          <p class="qs-valores__item-body" data-i18n="qs-valores-mision-body">
+            Texto placeholder de misión de la productora.
           </p>
-          <p class="section-text">
-            A lo largo de estos años hemos producido documentales, campañas publicitarias, contenido para redes sociales y piezas corporativas que han ganado reconocimiento en festivales nacionales e internacionales. Cada proyecto es para nosotros una oportunidad de superar los límites de lo posible.
+        </li>
+        <li class="qs-valores__item">
+          <div class="qs-valores__icon" aria-hidden="true">
+            <img src="https://placehold.co/64x64" alt="" role="presentation" width="64" height="64">
+          </div>
+          <h3 class="qs-valores__item-title" data-i18n="qs-valores-vision-title">Visión</h3>
+          <p class="qs-valores__item-body" data-i18n="qs-valores-vision-body">
+            Texto placeholder de visión de la productora.
           </p>
-        </div>
-        <figure class="historia-figure">
-          <img
-            src="assets/images/historia-equipo.webp"
-            alt="El equipo de Productora Creativa reunido en el estudio durante los primeros años de la empresa"
-            width="1200"
-            height="600"
-            loading="lazy"
-          />
-          <figcaption class="figura-caption">Nuestros inicios en el estudio, 2010.</figcaption>
-        </figure>
-      </div>
+        </li>
+        <li class="qs-valores__item">
+          <div class="qs-valores__icon" aria-hidden="true">
+            <img src="https://placehold.co/64x64" alt="" role="presentation" width="64" height="64">
+          </div>
+          <h3 class="qs-valores__item-title" data-i18n="qs-valores-valores-title">Valores</h3>
+          <p class="qs-valores__item-body" data-i18n="qs-valores-valores-body">
+            Texto placeholder de valores de la productora.
+          </p>
+        </li>
+      </ul>
     </section>
 
-    <!-- [B3] EQUIPO -->
-    <section id="equipo" aria-labelledby="equipo-heading">
-      <div class="container">
-        <h2 id="equipo-heading" class="section-title">Nuestro Equipo</h2>
-        <p class="section-text section-text--centered">
-          <!-- EDITAR AQUÍ: descripción introductoria del equipo -->
-          Personas talentosas, curiosas y comprometidas con la excelencia creativa.
-        </p>
-        <ul class="team-grid" role="list">
-
-          <!-- EDITAR AQUÍ: tarjeta de miembro del equipo -->
-          <li class="team-card">
-            <article>
-              <figure class="team-card__figure">
-                <img
-                  src="assets/images/equipo-ana-garcia.webp"
-                  alt="Ana García, Directora General de Productora Creativa"
-                  width="400"
-                  height="400"
-                  loading="lazy"
-                />
-              </figure>
-              <div class="team-card__body">
-                <h3 class="team-card__name">Ana García</h3>
-                <p class="team-card__role">Directora General</p>
-                <p class="team-card__bio">
-                  Con más de 15 años de experiencia en producción audiovisual, Ana lidera la visión estratégica y creativa de cada proyecto.
-                </p>
-              </div>
-            </article>
-          </li>
-
-          <!-- EDITAR AQUÍ: tarjeta de miembro del equipo -->
-          <li class="team-card">
-            <article>
-              <figure class="team-card__figure">
-                <img
-                  src="assets/images/equipo-carlos-mendez.webp"
-                  alt="Carlos Méndez, Director de Fotografía de Productora Creativa"
-                  width="400"
-                  height="400"
-                  loading="lazy"
-                />
-              </figure>
-              <div class="team-card__body">
-                <h3 class="team-card__name">Carlos Méndez</h3>
-                <p class="team-card__role">Director de Fotografía</p>
-                <p class="team-card__bio">
-                  Especialista en cinematografía y colorimetría, Carlos transforma cada escena en una obra visual de impacto memorable.
-                </p>
-              </div>
-            </article>
-          </li>
-
-          <!-- EDITAR AQUÍ: tarjeta de miembro del equipo -->
-          <li class="team-card">
-            <article>
-              <figure class="team-card__figure">
-                <img
-                  src="assets/images/equipo-lucia-torres.webp"
-                  alt="Lucía Torres, Directora de Arte de Productora Creativa"
-                  width="400"
-                  height="400"
-                  loading="lazy"
-                />
-              </figure>
-              <div class="team-card__body">
-                <h3 class="team-card__name">Lucía Torres</h3>
-                <p class="team-card__role">Directora de Arte</p>
-                <p class="team-card__bio">
-                  Lucía diseña los universos visuales de cada producción, asegurando coherencia estética desde el concepto hasta la pantalla.
-                </p>
-              </div>
-            </article>
-          </li>
-
-          <!-- EDITAR AQUÍ: tarjeta de miembro del equipo -->
-          <li class="team-card">
-            <article>
-              <figure class="team-card__figure">
-                <img
-                  src="assets/images/equipo-roberto-silva.webp"
-                  alt="Roberto Silva, Editor y Post-producción de Productora Creativa"
-                  width="400"
-                  height="400"
-                  loading="lazy"
-                />
-              </figure>
-              <div class="team-card__body">
-                <h3 class="team-card__name">Roberto Silva</h3>
-                <p class="team-card__role">Editor & Post-producción</p>
-                <p class="team-card__bio">
-                  Roberto da vida a las historias en la sala de montaje, con un ojo clínico para el ritmo narrativo y los efectos visuales.
-                </p>
-              </div>
-            </article>
-          </li>
-
-        </ul>
-      </div>
+    <!-- SECCIÓN EQUIPO -->
+    <section class="qs-equipo" aria-labelledby="qs-equipo-title">
+      <h2 id="qs-equipo-title" data-i18n="qs-equipo-title">Nuestro Equipo</h2>
+      <p class="qs-equipo__intro" data-i18n="qs-equipo-intro">
+        Texto placeholder de introducción al equipo de la productora.
+      </p>
+      <ul class="qs-equipo__list" role="list">
+        <li class="qs-equipo__member">
+          <div class="qs-equipo__member-photo-wrapper">
+            <img
+              src="https://picsum.photos/300/300?random=1"
+              alt="Foto de integrante del equipo 1"
+              class="qs-equipo__member-photo"
+              width="300"
+              height="300"
+            >
+          </div>
+          <div class="qs-equipo__member-info">
+            <h3 class="qs-equipo__member-name" data-i18n="qs-equipo-member1-name">Nombre Apellido</h3>
+            <p class="qs-equipo__member-role" data-i18n="qs-equipo-member1-role">Cargo / Rol</p>
+            <p class="qs-equipo__member-bio" data-i18n="qs-equipo-member1-bio">
+              Breve descripción del integrante y su trayectoria profesional.
+            </p>
+          </div>
+        </li>
+        <li class="qs-equipo__member">
+          <div class="qs-equipo__member-photo-wrapper">
+            <img
+              src="https://picsum.photos/300/300?random=2"
+              alt="Foto de integrante del equipo 2"
+              class="qs-equipo__member-photo"
+              width="300"
+              height="300"
+            >
+          </div>
+          <div class="qs-equipo__member-info">
+            <h3 class="qs-equipo__member-name" data-i18n="qs-equipo-member2-name">Nombre Apellido</h3>
+            <p class="qs-equipo__member-role" data-i18n="qs-equipo-member2-role">Cargo / Rol</p>
+            <p class="qs-equipo__member-bio" data-i18n="qs-equipo-member2-bio">
+              Breve descripción del integrante y su trayectoria profesional.
+            </p>
+          </div>
+        </li>
+        <li class="qs-equipo__member">
+          <div class="qs-equipo__member-photo-wrapper">
+            <img
+              src="https://picsum.photos/300/300?random=3"
+              alt="Foto de integrante del equipo 3"
+              class="qs-equipo__member-photo"
+              width="300"
+              height="300"
+            >
+          </div>
+          <div class="qs-equipo__member-info">
+            <h3 class="qs-equipo__member-name" data-i18n="qs-equipo-member3-name">Nombre Apellido</h3>
+            <p class="qs-equipo__member-role" data-i18n="qs-equipo-member3-role">Cargo / Rol</p>
+            <p class="qs-equipo__member-bio" data-i18n="qs-equipo-member3-bio">
+              Breve descripción del integrante y su trayectoria profesional.
+            </p>
+          </div>
+        </li>
+        <li class="qs-equipo__member">
+          <div class="qs-equipo__member-photo-wrapper">
+            <img
+              src="https://picsum.photos/300/300?random=4"
+              alt="Foto de integrante del equipo 4"
+              class="qs-equipo__member-photo"
+              width="300"
+              height="300"
+            >
+          </div>
+          <div class="qs-equipo__member-info">
+            <h3 class="qs-equipo__member-name" data-i18n="qs-equipo-member4-name">Nombre Apellido</h3>
+            <p class="qs-equipo__member-role" data-i18n="qs-equipo-member4-role">Cargo / Rol</p>
+            <p class="qs-equipo__member-bio" data-i18n="qs-equipo-member4-bio">
+              Breve descripción del integrante y su trayectoria profesional.
+            </p>
+          </div>
+        </li>
+      </ul>
     </section>
 
-    <!-- [B4] VALORES -->
-    <section class="valores" aria-labelledby="valores-heading">
-      <div class="container">
-        <h2 id="valores-heading" class="section-title">Nuestros Valores</h2>
-        <p class="section-text section-text--centered">
-          <!-- EDITAR AQUÍ: descripción introductoria de valores -->
-          Los principios que guían cada decisión creativa y cada relación con nuestros clientes.
-        </p>
-        <ul class="valores-grid" role="list">
-
-          <!-- EDITAR AQUÍ: valor 1 -->
-          <li class="valor-card">
-            <article>
-              <h3 class="valor-card__title">Creatividad sin límites</h3>
-              <p class="valor-card__description">
-                Exploramos nuevas formas de contar historias, desafiando convenciones y apostando por ideas que sorprenden y emocionan.
-              </p>
-            </article>
-          </li>
-
-          <!-- EDITAR AQUÍ: valor 2 -->
-          <li class="valor-card">
-            <article>
-              <h3 class="valor-card__title">Compromiso con la calidad</h3>
-              <p class="valor-card__description">
-                Cada detalle importa. Desde el guion hasta la entrega final, mantenemos estándares de excelencia que hablan por sí solos.
-              </p>
-            </article>
-          </li>
-
-          <!-- EDITAR AQUÍ: valor 3 -->
-          <li class="valor-card">
-            <article>
-              <h3 class="valor-card__title">Colaboración genuina</h3>
-              <p class="valor-card__description">
-                Trabajamos junto a nuestros clientes como socios estratégicos, escuchando, adaptándonos y construyendo juntos cada proyecto.
-              </p>
-            </article>
-          </li>
-
-          <!-- EDITAR AQUÍ: valor 4 -->
-          <li class="valor-card">
-            <article>
-              <h3 class="valor-card__title">Impacto real</h3>
-              <p class="valor-card__description">
-                Medimos el éxito por los resultados que generamos: audiencias que se conectan, marcas que crecen e historias que perduran.
-              </p>
-            </article>
-          </li>
-
-        </ul>
+    <!-- SECCIÓN CTA CONTACTO -->
+    <section class="qs-cta" aria-labelledby="qs-cta-title">
+      <div class="qs-cta__inner">
+        <h2 id="qs-cta-title" data-i18n="qs-cta-title">¿Querés trabajar con nosotros?</h2>
+        <p data-i18n="qs-cta-body">Texto placeholder de llamada a la acción hacia la página de contacto.</p>
+        <a href="contacto.html" class="qs-cta__btn" data-i18n="qs-cta-btn">Contactanos</a>
       </div>
     </section>
 
   </main>
 
-  <!-- [C] FOOTER GLOBAL -->
   <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-
-        <div class="footer-brand">
-          <a href="index.html" class="site-logo" aria-label="Ir al inicio">
-            <img
-              src="assets/images/logo.webp"
-              alt="Productora Creativa - Logo"
-              width="120"
-              height="36"
-              loading="lazy"
-            />
-          </a>
-          <!-- EDITAR AQUÍ: tagline de la productora -->
-          <p class="footer-tagline">Historias que transforman.</p>
-        </div>
-
-        <nav class="footer-nav" aria-label="Navegación del pie de página">
-          <h2 class="footer-nav__title">Páginas</h2>
-          <ul class="footer-nav__list">
-            <li><a href="index.html" class="footer-nav__link">Home</a></li>
-            <li><a href="servicios.html" class="footer-nav__link">Servicios</a></li>
-            <li><a href="quienes-somos.html" class="footer-nav__link">Quiénes Somos</a></li>
-            <li><a href="contacto.html" class="footer-nav__link">Contacto</a></li>
-          </ul>
-        </nav>
-
-        <address class="footer-contact">
-          <h2 class="footer-contact__title">Contacto</h2>
-          <!-- EDITAR AQUÍ: datos de contacto reales -->
-          <p class="footer-contact__item">
-            <a href="mailto:hola@productoracreativa.com" class="footer-contact__link">
-              hola@productoracreativa.com
-            </a>
-          </p>
-          <p class="footer-contact__item">
-            <a href="tel:+34600000000" class="footer-contact__link">
-              +34 600 000 000
-            </a>
-          </p>
-        </address>
-
+    <div class="site-footer__inner">
+      <div class="site-footer__brand">
+        <a href="index.html" class="site-footer__logo-link" aria-label="Inicio">
+          <img src="https://placehold.co/120x40" alt="Logo productora" width="120" height="40">
+        </a>
+        <p class="site-footer__tagline" data-i18n="footer-tagline">Tagline placeholder de la productora.</p>
       </div>
-
-      <div class="footer-bottom">
-        <!-- EDITAR AQUÍ: año y nombre legal -->
-        <p class="footer-legal">
-          &copy; <span id="footer-year">2024</span> Productora Creativa. Todos los derechos reservados.
-        </p>
+      <nav class="site-footer__nav" aria-label="Navegación de pie de página">
+        <ul class="site-footer__nav-list" role="list">
+          <li><a href="index.html" class="site-footer__nav-link" data-i18n="nav-home">Inicio</a></li>
+          <li><a href="servicios.html" class="site-footer__nav-link" data-i18n="nav-servicios">Servicios</a></li>
+          <li><a href="quienes-somos.html" class="site-footer__nav-link" data-i18n="nav-quienes-somos">Quiénes Somos</a></li>
+          <li><a href="contacto.html" class="site-footer__nav-link" data-i18n="nav-contacto">Contacto</a></li>
+        </ul>
+      </nav>
+      <div class="site-footer__social">
+        <a href="#" class="site-footer__social-link" aria-label="Instagram de la productora" rel="noopener noreferrer" target="_blank">
+          <img src="https://placehold.co/24x24" alt="" role="presentation" width="24" height="24">
+        </a>
+        <a href="#" class="site-footer__social-link" aria-label="YouTube de la productora" rel="noopener noreferrer" target="_blank">
+          <img src="https://placehold.co/24x24" alt="" role="presentation" width="24" height="24">
+        </a>
+        <a href="#" class="site-footer__social-link" aria-label="LinkedIn de la productora" rel="noopener noreferrer" target="_blank">
+          <img src="https://placehold.co/24x24" alt="" role="presentation" width="24" height="24">
+        </a>
       </div>
+      <p class="site-footer__copy">
+        <small data-i18n="footer-copy">&copy; 2024 Productora. Todos los derechos reservados.</small>
+      </p>
     </div>
   </footer>
 
-  <!-- [D] JS GLOBAL -->
-  <script src="js/main.js" defer></script>
+  <script src="js/i18n.js"></script>
+  <script>
+    (function () {
+      // Inicialización del menú hamburguesa (mobile nav toggle)
+      var toggleBtn = document.querySelector('.nav__toggle');
+      var navList = document.querySelector('.nav__list');
 
+      if (toggleBtn && navList) {
+        toggleBtn.addEventListener('click', function () {
+          var isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+          toggleBtn.setAttribute('aria-expanded', String(!isExpanded));
+          navList.classList.toggle('nav__list--open');
+        });
+      }
+
+      // Inicialización del switcher de idioma
+      var langBtns = document.querySelectorAll('.lang-btn[data-lang]');
+      langBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var lang = btn.getAttribute('data-lang');
+          if (typeof window.setLanguage === 'function') {
+            window.setLanguage(lang);
+          }
+        });
+      });
+
+      // Aplicar idioma guardado o por defecto al cargar
+      if (typeof window.initI18n === 'function') {
+        window.initI18n();
+      }
+    })();
+  </script>
 </body>
 </html>

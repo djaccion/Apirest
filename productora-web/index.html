@@ -3,367 +3,204 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Productora audiovisual creativa. Producimos contenido visual de alto impacto: video, fotografía y dirección de arte. <!-- EDITAR AQUÍ -->">
-  <title>[Nombre Productora] — Producción Audiovisual <!-- EDITAR AQUÍ --></title>
-  <link rel="canonical" href="https://[dominio].com/index.html">
-  <link rel="stylesheet" href="styles/main.css">
-  <style>
-    /* CSS CRÍTICO: completar cuando main.css esté definido */
-    /* .hero { opacity: 0; } */
-    /* body { background-color: #000; } */
-    /* @font-face { } */
-  </style>
+  <meta name="description" content="[placeholder descripción SEO de la productora]">
+  <title>Productora | Home</title>
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
+
   <header class="site-header">
-    <nav class="nav-primary" aria-label="Navegación principal">
-      <a href="index.html" class="nav-logo" aria-label="Ir al inicio">
+    <div class="container">
+
+      <a href="index.html" class="site-logo" aria-label="Ir al inicio">
         <img
-          src="assets/images/logo.webp"
-          alt="[Nombre Productora] logo"
-          width="120"
-          height="40"
-          loading="eager">
+          src="https://placehold.co/160x48"
+          alt="Logo Productora"
+          width="160"
+          height="48"
+        >
       </a>
-      <button
-        class="nav-toggle"
-        aria-expanded="false"
-        aria-controls="nav-menu"
-        aria-label="Abrir menú">
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
-      </button>
-      <ul id="nav-menu" class="nav-menu" role="list">
-        <li><a href="index.html" class="nav-link nav-link--active" aria-current="page">Inicio</a></li>
-        <li><a href="servicios.html" class="nav-link">Servicios</a></li>
-        <li><a href="quienes-somos.html" class="nav-link">Quiénes Somos</a></li>
-        <li><a href="contacto.html" class="nav-link">Contacto</a></li>
-        <li><a href="index-en.html" class="nav-link nav-link--lang" lang="en" hreflang="en">EN</a></li>
-      </ul>
-    </nav>
+
+      <nav id="site-nav" class="site-nav" aria-label="Navegación principal">
+        <ul class="site-nav__list">
+          <li class="site-nav__item site-nav__item--active">
+            <a href="index.html" class="site-nav__link" data-lang-key="nav.home"></a>
+          </li>
+          <li class="site-nav__item">
+            <a href="servicios.html" class="site-nav__link" data-lang-key="nav.services"></a>
+          </li>
+          <li class="site-nav__item">
+            <a href="quienes-somos.html" class="site-nav__link" data-lang-key="nav.about"></a>
+          </li>
+          <li class="site-nav__item">
+            <a href="contacto.html" class="site-nav__link" data-lang-key="nav.contact"></a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <button
+          class="lang-switcher"
+          aria-label="Cambiar idioma"
+          data-lang-key="nav.langToggle"
+        ></button>
+        <button
+          class="nav-toggle"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </button>
+      </div>
+
+    </div>
   </header>
 
-  <main>
-    <!-- =============================================
-         SECCIÓN: HERO
-         ============================================= -->
-    <section class="hero" aria-labelledby="hero-heading">
-      <div class="hero__content">
-        <h1 id="hero-heading" class="hero__title">
-          <!-- EDITAR AQUÍ — Titular principal de la productora -->
-          Creamos historias que impactan
-        </h1>
-        <p class="hero__subtitle">
-          <!-- EDITAR AQUÍ — Subtítulo o tagline -->
-          Producción audiovisual con visión creativa y ejecución de alto nivel.
-        </p>
-        <a href="servicios.html" class="btn btn--primary">Ver servicios</a>
-      </div>
-      <picture class="hero__media">
-        <!-- EDITAR AQUÍ — Reemplazar src con imagen real en formato WebP, máx 200KB -->
-        <source srcset="assets/images/hero.webp" type="image/webp">
-        <img
-          src="assets/images/hero.jpg"
-          alt="Equipo de producción audiovisual en set de grabación"
-          width="1440"
-          height="810"
-          loading="eager"
-          fetchpriority="high">
-      </picture>
-    </section>
+  <main id="main-content">
 
-    <!-- =============================================
-         SECCIÓN: SERVICIOS DESTACADOS
-         ============================================= -->
-    <section class="services-preview" aria-labelledby="services-preview-heading">
-      <div class="services-preview__header">
-        <h2 id="services-preview-heading" class="section-title">
-          <!-- EDITAR AQUÍ -->
-          Nuestros Servicios
-        </h2>
-        <p class="section-subtitle">
-          <!-- EDITAR AQUÍ -->
-          Soluciones audiovisuales integrales para marcas y proyectos creativos.
-        </p>
-      </div>
-      <ul class="services-preview__grid" role="list">
-        <li class="service-card">
-          <picture class="service-card__media">
-            <source srcset="assets/images/servicio-video.webp" type="image/webp">
-            <img
-              src="assets/images/servicio-video.jpg"
-              alt="Producción de video corporativo"
-              width="400"
-              height="300"
-              loading="lazy">
-          </picture>
-          <div class="service-card__body">
-            <h3 class="service-card__title">
-              <!-- EDITAR AQUÍ -->
-              Producción de Video
-            </h3>
-            <p class="service-card__description">
-              <!-- EDITAR AQUÍ -->
-              Desde spots publicitarios hasta documentales. Contamos tu historia con imágenes que conectan.
-            </p>
-            <a href="servicios.html#video" class="btn btn--secondary">Saber más</a>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container">
+        <div class="hero__content">
+          <h1 id="hero-title" class="hero__title" data-lang-key="home.hero.title"></h1>
+          <p class="hero__subtitle" data-lang-key="home.hero.subtitle"></p>
+          <div class="hero__actions">
+            <a href="servicios.html" class="btn btn--primary" data-lang-key="home.hero.cta.services"></a>
+            <a href="contacto.html" class="btn btn--secondary" data-lang-key="home.hero.cta.contact"></a>
           </div>
-        </li>
-        <li class="service-card">
-          <picture class="service-card__media">
-            <source srcset="assets/images/servicio-fotografia.webp" type="image/webp">
-            <img
-              src="assets/images/servicio-fotografia.jpg"
-              alt="Sesión de fotografía profesional"
-              width="400"
-              height="300"
-              loading="lazy">
-          </picture>
-          <div class="service-card__body">
-            <h3 class="service-card__title">
-              <!-- EDITAR AQUÍ -->
-              Fotografía
-            </h3>
-            <p class="service-card__description">
-              <!-- EDITAR AQUÍ -->
-              Fotografía de producto, editorial y eventos. Imágenes que comunican la esencia de tu marca.
-            </p>
-            <a href="servicios.html#fotografia" class="btn btn--secondary">Saber más</a>
-          </div>
-        </li>
-        <li class="service-card">
-          <picture class="service-card__media">
-            <source srcset="assets/images/servicio-direccion-arte.webp" type="image/webp">
-            <img
-              src="assets/images/servicio-direccion-arte.jpg"
-              alt="Dirección de arte y concepto visual"
-              width="400"
-              height="300"
-              loading="lazy">
-          </picture>
-          <div class="service-card__body">
-            <h3 class="service-card__title">
-              <!-- EDITAR AQUÍ -->
-              Dirección de Arte
-            </h3>
-            <p class="service-card__description">
-              <!-- EDITAR AQUÍ -->
-              Concepto visual, estética y narrativa. Construimos la identidad visual de cada proyecto.
-            </p>
-            <a href="servicios.html#direccion-arte" class="btn btn--secondary">Saber más</a>
-          </div>
-        </li>
-      </ul>
-      <div class="services-preview__cta">
-        <a href="servicios.html" class="btn btn--primary">Ver todos los servicios</a>
+        </div>
+        <div class="hero__media">
+          <img
+            src="https://picsum.photos/800/600"
+            alt="Imagen hero productora"
+            width="800"
+            height="600"
+            class="hero__image"
+          >
+        </div>
       </div>
     </section>
 
-    <!-- =============================================
-         SECCIÓN: QUIÉNES SOMOS (RESUMEN)
-         ============================================= -->
-    <section class="about-preview" aria-labelledby="about-preview-heading">
-      <picture class="about-preview__media">
-        <source srcset="assets/images/equipo.webp" type="image/webp">
-        <img
-          src="assets/images/equipo.jpg"
-          alt="Equipo creativo de la productora"
-          width="720"
-          height="480"
-          loading="lazy">
-      </picture>
-      <div class="about-preview__content">
-        <h2 id="about-preview-heading" class="section-title">
-          <!-- EDITAR AQUÍ -->
-          Quiénes Somos
-        </h2>
-        <p class="about-preview__text">
-          <!-- EDITAR AQUÍ — Párrafo breve de presentación de la productora -->
-          Somos un equipo de creadores apasionados por el audiovisual. Combinamos técnica y creatividad para producir contenido que trasciende y genera impacto real en las audiencias.
-        </p>
-        <a href="quienes-somos.html" class="btn btn--secondary">Conocer el equipo</a>
+    <section class="services-preview" aria-labelledby="services-preview-title">
+      <div class="container">
+        <h2 id="services-preview-title" class="section-title" data-lang-key="home.services.title"></h2>
+        <p class="section-subtitle" data-lang-key="home.services.subtitle"></p>
+        <ul class="services-preview__grid">
+          <li class="service-card">
+            <div class="service-card__media">
+              <img
+                src="https://placehold.co/400x300"
+                alt="Servicio 1"
+                width="400"
+                height="300"
+                class="service-card__image"
+              >
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title" data-lang-key="home.services.item1.title"></h3>
+              <p class="service-card__description" data-lang-key="home.services.item1.description"></p>
+            </div>
+          </li>
+          <li class="service-card">
+            <div class="service-card__media">
+              <img
+                src="https://placehold.co/400x300"
+                alt="Servicio 2"
+                width="400"
+                height="300"
+                class="service-card__image"
+              >
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title" data-lang-key="home.services.item2.title"></h3>
+              <p class="service-card__description" data-lang-key="home.services.item2.description"></p>
+            </div>
+          </li>
+          <li class="service-card">
+            <div class="service-card__media">
+              <img
+                src="https://placehold.co/400x300"
+                alt="Servicio 3"
+                width="400"
+                height="300"
+                class="service-card__image"
+              >
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title" data-lang-key="home.services.item3.title"></h3>
+              <p class="service-card__description" data-lang-key="home.services.item3.description"></p>
+            </div>
+          </li>
+        </ul>
+        <div class="services-preview__footer">
+          <a href="servicios.html" class="btn btn--outline" data-lang-key="home.services.cta"></a>
+        </div>
       </div>
     </section>
 
-    <!-- =============================================
-         SECCIÓN: TRABAJOS DESTACADOS / PORTAFOLIO
-         ============================================= -->
-    <section class="portfolio-preview" aria-labelledby="portfolio-preview-heading">
-      <div class="portfolio-preview__header">
-        <h2 id="portfolio-preview-heading" class="section-title">
-          <!-- EDITAR AQUÍ -->
-          Trabajos Recientes
-        </h2>
+    <section class="about-preview" aria-labelledby="about-preview-title">
+      <div class="container">
+        <div class="about-preview__media">
+          <img
+            src="https://picsum.photos/600/400"
+            alt="Quiénes somos"
+            width="600"
+            height="400"
+            class="about-preview__image"
+          >
+        </div>
+        <div class="about-preview__content">
+          <h2 id="about-preview-title" class="section-title" data-lang-key="home.about.title"></h2>
+          <p class="about-preview__text" data-lang-key="home.about.description"></p>
+          <a href="quienes-somos.html" class="btn btn--primary" data-lang-key="home.about.cta"></a>
+        </div>
       </div>
-      <ul class="portfolio-preview__grid" role="list">
-        <li class="portfolio-card">
-          <article class="portfolio-card__inner">
-            <picture class="portfolio-card__media">
-              <source srcset="assets/images/trabajo-01.webp" type="image/webp">
-              <img
-                src="assets/images/trabajo-01.jpg"
-                alt="[Descripción del trabajo 1 — EDITAR AQUÍ]"
-                width="600"
-                height="400"
-                loading="lazy">
-            </picture>
-            <div class="portfolio-card__overlay">
-              <h3 class="portfolio-card__title">
-                <!-- EDITAR AQUÍ -->
-                Proyecto Ejemplo 01
-              </h3>
-              <p class="portfolio-card__category">
-                <!-- EDITAR AQUÍ — Ej: Video Corporativo -->
-                Video Corporativo
-              </p>
-            </div>
-          </article>
-        </li>
-        <li class="portfolio-card">
-          <article class="portfolio-card__inner">
-            <picture class="portfolio-card__media">
-              <source srcset="assets/images/trabajo-02.webp" type="image/webp">
-              <img
-                src="assets/images/trabajo-02.jpg"
-                alt="[Descripción del trabajo 2 — EDITAR AQUÍ]"
-                width="600"
-                height="400"
-                loading="lazy">
-            </picture>
-            <div class="portfolio-card__overlay">
-              <h3 class="portfolio-card__title">
-                <!-- EDITAR AQUÍ -->
-                Proyecto Ejemplo 02
-              </h3>
-              <p class="portfolio-card__category">
-                <!-- EDITAR AQUÍ -->
-                Fotografía Editorial
-              </p>
-            </div>
-          </article>
-        </li>
-        <li class="portfolio-card">
-          <article class="portfolio-card__inner">
-            <picture class="portfolio-card__media">
-              <source srcset="assets/images/trabajo-03.webp" type="image/webp">
-              <img
-                src="assets/images/trabajo-03.jpg"
-                alt="[Descripción del trabajo 3 — EDITAR AQUÍ]"
-                width="600"
-                height="400"
-                loading="lazy">
-            </picture>
-            <div class="portfolio-card__overlay">
-              <h3 class="portfolio-card__title">
-                <!-- EDITAR AQUÍ -->
-                Proyecto Ejemplo 03
-              </h3>
-              <p class="portfolio-card__category">
-                <!-- EDITAR AQUÍ -->
-                Dirección de Arte
-              </p>
-            </div>
-          </article>
-        </li>
-      </ul>
     </section>
 
-    <!-- =============================================
-         SECCIÓN: LLAMADA A LA ACCIÓN (CTA)
-         ============================================= -->
-    <section class="cta-banner" aria-labelledby="cta-banner-heading">
-      <div class="cta-banner__content">
-        <h2 id="cta-banner-heading" class="cta-banner__title">
-          <!-- EDITAR AQUÍ -->
-          ¿Tienes un proyecto en mente?
-        </h2>
-        <p class="cta-banner__text">
-          <!-- EDITAR AQUÍ -->
-          Hablemos. Cuéntanos tu idea y la convertimos en realidad.
-        </p>
-        <a href="contacto.html" class="btn btn--primary">Contactar ahora</a>
-      </div>
-    </section>
   </main>
 
   <footer class="site-footer">
-    <div class="site-footer__top">
+    <div class="container">
       <div class="site-footer__brand">
-        <a href="index.html" class="nav-logo" aria-label="Ir al inicio">
+        <a href="index.html" class="site-logo" aria-label="Ir al inicio">
           <img
-            src="assets/images/logo.webp"
-            alt="[Nombre Productora] logo"
-            width="100"
-            height="34"
-            loading="lazy">
+            src="https://placehold.co/120x36"
+            alt="Logo Productora"
+            width="120"
+            height="36"
+          >
         </a>
-        <p class="site-footer__tagline">
-          <!-- EDITAR AQUÍ -->
-          Producción audiovisual con propósito.
-        </p>
+        <p class="site-footer__tagline" data-lang-key="footer.tagline"></p>
       </div>
       <nav class="site-footer__nav" aria-label="Navegación del pie de página">
-        <ul class="site-footer__nav-list" role="list">
-          <li><a href="index.html" class="site-footer__nav-link">Inicio</a></li>
-          <li><a href="servicios.html" class="site-footer__nav-link">Servicios</a></li>
-          <li><a href="quienes-somos.html" class="site-footer__nav-link">Quiénes Somos</a></li>
-          <li><a href="contacto.html" class="site-footer__nav-link">Contacto</a></li>
+        <ul class="site-footer__nav-list">
+          <li class="site-footer__nav-item">
+            <a href="index.html" class="site-footer__nav-link" data-lang-key="nav.home"></a>
+          </li>
+          <li class="site-footer__nav-item">
+            <a href="servicios.html" class="site-footer__nav-link" data-lang-key="nav.services"></a>
+          </li>
+          <li class="site-footer__nav-item">
+            <a href="quienes-somos.html" class="site-footer__nav-link" data-lang-key="nav.about"></a>
+          </li>
+          <li class="site-footer__nav-item">
+            <a href="contacto.html" class="site-footer__nav-link" data-lang-key="nav.contact"></a>
+          </li>
         </ul>
       </nav>
-      <div class="site-footer__social">
-        <h3 class="site-footer__social-title">
-          <!-- EDITAR AQUÍ -->
-          Síguenos
-        </h3>
-        <ul class="site-footer__social-list" role="list">
-          <li>
-            <a
-              href="https://instagram.com/[usuario]"
-              class="site-footer__social-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram de [Nombre Productora]">
-              <!-- EDITAR AQUÍ — Reemplazar [usuario] con el handle real -->
-              Instagram
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://vimeo.com/[usuario]"
-              class="site-footer__social-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Vimeo de [Nombre Productora]">
-              <!-- EDITAR AQUÍ -->
-              Vimeo
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://linkedin.com/company/[usuario]"
-              class="site-footer__social-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn de [Nombre Productora]">
-              <!-- EDITAR AQUÍ -->
-              LinkedIn
-            </a>
-          </li>
-        </ul>
+      <div class="site-footer__legal">
+        <p class="site-footer__copyright" data-lang-key="footer.copyright"></p>
       </div>
-    </div>
-    <div class="site-footer__bottom">
-      <p class="site-footer__legal">
-        <!-- EDITAR AQUÍ — Actualizar año y nombre legal -->
-        &copy; <span id="footer-year">2024</span> [Nombre Productora]. Todos los derechos reservados.
-      </p>
-      <p class="site-footer__legal">
-        <a href="politica-privacidad.html" class="site-footer__nav-link">Política de Privacidad</a>
-      </p>
     </div>
   </footer>
 
-  <script src="js/main.js" defer></script>
+  <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
