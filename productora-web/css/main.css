@@ -1,0 +1,69 @@
+/*
+ * main.css — Punto de entrada de estilos
+ * Productora Web (SCRUM-20)
+ * Contiene: tokens de diseño globales + imports de módulos
+ * NO agregar reglas de estilo directamente en este archivo
+ */
+
+@import './reset.css';
+@import './layout.css';
+@import './components.css';
+@import './responsive.css';
+
+:root {
+  /* Paleta de colores primaria */
+  --color-primario: #1a1a2e;
+  --color-primario-claro: #16213e;
+  --color-acento: #e94560;
+  --color-acento-hover: #c73652;
+
+  /* Paleta de colores neutros */
+  --color-fondo: #0f0f0f;
+  --color-fondo-seccion: #1a1a1a;
+  --color-superficie: #242424;
+  --color-borde: #333333;
+
+  /* Tipografía */
+  --color-texto-primario: #ffffff;
+  --color-texto-secundario: #b0b0b0;
+  --color-texto-muted: #666666;
+  --fuente-principal: 'Montserrat', sans-serif;
+  --fuente-cuerpo: 'Open Sans', sans-serif;
+  --tamanio-base: 16px;
+  --escala-xs: 0.75rem;
+  --escala-sm: 0.875rem;
+  --escala-md: 1rem;
+  --escala-lg: 1.25rem;
+  --escala-xl: 1.5rem;
+  --escala-2xl: 2rem;
+  --escala-3xl: 2.5rem;
+  --escala-4xl: 3.5rem;
+
+  /* Espaciado */
+  --espacio-xs: 0.5rem;
+  --espacio-sm: 1rem;
+  --espacio-md: 1.5rem;
+  --espacio-lg: 2rem;
+  --espacio-xl: 3rem;
+  --espacio-2xl: 5rem;
+  --espacio-seccion: 6rem;
+
+  /* Bordes y sombras */
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 16px;
+  --radio-pill: 50px;
+  --sombra-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --sombra-elevada: 0 8px 40px rgba(0, 0, 0, 0.6);
+  --sombra-acento: 0 4px 20px rgba(233, 69, 96, 0.3);
+
+  /* Transiciones */
+  --transicion-rapida: 150ms ease;
+  --transicion-normal: 300ms ease;
+  --transicion-lenta: 500ms ease;
+
+  /* Layout */
+  --ancho-maximo: 1200px;
+  --ancho-contenido: 900px;
+  --altura-nav: 70px;
+}

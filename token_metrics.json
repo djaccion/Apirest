@@ -1,8 +1,8 @@
 {
-  "tokens_input": 147538,
-  "tokens_output": 56669,
-  "tokens_total": 204207,
-  "estimated_hours": 19.6,
+  "tokens_input": 91726,
+  "tokens_output": 25591,
+  "tokens_total": 117317,
+  "estimated_hours": 8.9,
   "modelo": "claude-sonnet-4-6",
   "skills_loaded": true,
   "skills_count": 4,
@@ -28,30 +28,30 @@
       "skill_name": "QA-VALIDACION"
     }
   ],
-  "timestamp": "2026-04-18T02:30:13.617Z",
+  "timestamp": "2026-04-18T15:55:28.823Z",
   "by_agent": {
     "arquitecto": {
       "input": 4166,
-      "output": 1876,
+      "output": 1621,
       "calls": 1,
       "skill_name": "DISEÑO-ARQUITECTURA"
     },
     "tech_lead": {
-      "input": 29085,
-      "output": 16499,
-      "calls": 11,
+      "input": 17510,
+      "output": 10499,
+      "calls": 7,
       "skill_name": "MICROPLANIFICACION-DISEÑO"
     },
     "desarrollador": {
-      "input": 38506,
-      "output": 35562,
-      "calls": 16,
+      "input": 31511,
+      "output": 10879,
+      "calls": 11,
       "skill_name": "FRONTEND-DESARROLLO"
     },
     "qa": {
-      "input": 75781,
-      "output": 2732,
-      "calls": 16,
+      "input": 38539,
+      "output": 2592,
+      "calls": 11,
       "skill_name": "QA-VALIDACION"
     }
   }
