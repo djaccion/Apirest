@@ -1,51 +1,54 @@
-# The Power Grid — Dashboard de Simulación de Valor
-Dashboard interactivo con temática cyberpunk para presentaciones de preventa.
-Aplicación 100% estática: HTML5 + CSS3 + Vanilla JS ES6+. Sin dependencias.
+# Tsoft — Saludos Internacionales
+Página estática que muestra saludos coloquiales de los países donde Tsoft tiene oficinas.
+Sin dependencias. Sin servidor de aplicaciones. Sin build step.
 
-## Estructura del Proyecto
+## Estructura del proyecto
 
 ```
-/
-├── index.html          # Punto de entrada. Orquesta la carga de módulos JS.
-├── styles.css          # Estilos globales y tokens de color (:root).
-├── README.md           # Este archivo.
-└── src/
-    ├── main.js         # Inicialización del loop y wiring de módulos.
-    ├── state.js        # Estado global y KPI_CONFIG. Fuente única de verdad.
-    ├── kpi-engine.js   # Motor de cálculo y animación de KPIs.
-    ├── canvas-renderer.js  # Renderizado Canvas (partículas, radar, velocímetro).
-    └── ui-controller.js    # Manejadores de eventos DOM y lógica de UI.
+index.html        → Página principal con todo el contenido de saludos
+css/styles.css    → Estilos globales y variables de marca
+js/main.js        → Toggle del menú hamburguesa (móvil)
+README.md         → Este archivo
 ```
 
-## Requisitos Previos
+## Cómo ejecutar localmente
 
-- Un navegador moderno con soporte ES6 Modules (Chrome 61+, Firefox 60+, Safari 10.1+, Edge 16+).
-- Un servidor HTTP local para servir los archivos estáticos (requerido por la política CORS de ES6 Modules — **no funciona abriendo `index.html` directamente con `file://`**).
+**Método A — Abrir directamente (sin servidor):**
 
-## Cómo Levantar el Proyecto
+Abre `index.html` en cualquier navegador moderno.
+Doble clic sobre el archivo es suficiente.
 
-> ⚠️ No abras index.html directamente desde el explorador de archivos. Los módulos ES6 requieren un servidor HTTP para resolver imports. El navegador bloqueará la carga con un error CORS.
+**Método B — Servidor local con Python (recomendado para evitar restricciones CORS en algunos navegadores):**
 
-### Opción A — VS Code Live Server (Recomendado para demo)
-1. Instala la extensión **Live Server** en VS Code.
-2. Haz clic derecho sobre `index.html` → **"Open with Live Server"**.
-3. El dashboard abre automáticamente en `http://127.0.0.1:5500`.
-
-### Opción B — Python (sin instalación adicional)
 ```bash
 # Python 3
-python3 -m http.server 8080
+python -m http.server 8080
+# Luego abre: http://localhost:8080
 ```
-Abre `http://localhost:8080` en el navegador.
 
-### Opción C — Node.js `npx serve` (si Node está disponible)
-```bash
-npx serve .
-```
-Abre la URL que indique la terminal (por defecto `http://localhost:3000`).
+## Países incluidos
 
-## Notas Operativas
+| País | Saludo coloquial |
+|---|---|
+| Argentina | ¡Buenas! |
+| Chile | ¡Buenas! |
+| Colombia | ¡Quiubo! |
+| México | ¡Qué onda! |
+| Perú | ¡Habla! |
+| Uruguay | ¡Buenas! |
+| Brasil | Oi! |
+| España | ¡Buenas! |
+| Estados Unidos | Hey! |
 
-- **Estado en memoria:** Los valores del simulador se reinician al recargar la página. Es el comportamiento esperado — no hay persistencia.
-- **Rendimiento:** Si se detecta consumo elevado de CPU, el cap de partículas es configurable directamente en `src/state.js`.
-- **Pestaña en segundo plano:** El loop de animación se pausa automáticamente cuando la pestaña no está visible, reduciendo el consumo de recursos.
+## Cómo agregar un nuevo país
+
+1. Abre `index.html`.
+2. Localiza el bloque de tarjeta de cualquier país existente (busca el comentario `<!-- CARD PAÍS -->`).
+3. Duplica ese bloque completo y reemplaza el nombre del país y el saludo.
+4. Guarda el archivo y recarga el navegador.
+
+## Despliegue
+
+Sube los archivos a cualquier hosting de archivos estáticos con HTTPS habilitado.
+Opciones válidas: GitHub Pages, Netlify, Vercel (modo estático), Nginx.
+No se requiere configuración de servidor de aplicaciones ni variables de entorno.

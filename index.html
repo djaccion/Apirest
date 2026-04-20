@@ -3,61 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simulador de valor en tiempo real para visualizar el flujo de entrega de software y métricas clave del equipo.">
-  <title>The Power Grid — Simulador de Valor</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="description" content="Saludos internacionales de los países donde Tsoft tiene oficinas.">
+  <title>Saludos Internacionales — Tsoft</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-  <div id="overdrive-overlay" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="site-header__inner">
 
-  <main id="dashboard">
+      <a href="#main-content" class="skip-link">Saltar al contenido</a>
 
-    <section id="canvas-layer">
-      <canvas id="particleCanvas" aria-hidden="true"></canvas>
-      <canvas id="connectionCanvas" aria-hidden="true"></canvas>
+      <div class="site-header__brand">
+        <span class="site-header__logo-text">Tsoft</span>
+      </div>
+
+      <nav class="site-nav" aria-label="Navegación principal">
+        <button
+          class="site-nav__toggle"
+          aria-expanded="false"
+          aria-controls="nav-menu"
+          type="button"
+        >
+          <span class="site-nav__toggle-icon" aria-hidden="true">☰</span>
+          <span class="sr-only">Abrir menú</span>
+        </button>
+
+        <ul class="site-nav__menu" id="nav-menu" role="list">
+          <li><a href="#saludos" class="site-nav__link">Saludos</a></li>
+          <li><a href="#sobre-tsoft" class="site-nav__link">Sobre Tsoft</a></li>
+        </ul>
+      </nav>
+
+    </div>
+  </header>
+
+  <main id="main-content" class="site-main">
+
+    <section id="saludos" class="greetings-section" aria-labelledby="greetings-title">
+      <h1 id="greetings-title" class="greetings-section__title">Saludos Internacionales</h1>
+      <p class="greetings-section__subtitle">Conoce cómo saludamos en cada país donde Tsoft tiene presencia.</p>
+
+      <div class="cards-grid">
+
+        <article class="greeting-card">
+          <div class="greeting-card__flag" aria-hidden="true">🇦🇷</div>
+          <h2 class="greeting-card__country">Argentina</h2>
+          <p class="greeting-card__greeting">¡Hola!</p>
+          <p class="greeting-card__language">Español</p>
+        </article>
+
+        <article class="greeting-card">
+          <div class="greeting-card__flag" aria-hidden="true">🇧🇷</div>
+          <h2 class="greeting-card__country">Brasil</h2>
+          <p class="greeting-card__greeting">Olá!</p>
+          <p class="greeting-card__language">Portugués</p>
+        </article>
+
+        <article class="greeting-card">
+          <div class="greeting-card__flag" aria-hidden="true">🇺🇸</div>
+          <h2 class="greeting-card__country">Estados Unidos</h2>
+          <p class="greeting-card__greeting">Hello!</p>
+          <p class="greeting-card__language">Inglés</p>
+        </article>
+
+        <article class="greeting-card">
+          <div class="greeting-card__flag" aria-hidden="true">🇲🇽</div>
+          <h2 class="greeting-card__country">México</h2>
+          <p class="greeting-card__greeting">¡Buenas!</p>
+          <p class="greeting-card__language">Español</p>
+        </article>
+
+        <article class="greeting-card">
+          <div class="greeting-card__flag" aria-hidden="true">🇨🇴</div>
+          <h2 class="greeting-card__country">Colombia</h2>
+          <p class="greeting-card__greeting">¡Quiubo!</p>
+          <p class="greeting-card__language">Español</p>
+        </article>
+
+        <article class="greeting-card">
+          <div class="greeting-card__flag" aria-hidden="true">🇪🇸</div>
+          <h2 class="greeting-card__country">España</h2>
+          <p class="greeting-card__greeting">¡Buenas!</p>
+          <p class="greeting-card__language">Español</p>
+        </article>
+
+      </div>
     </section>
 
-    <section id="nodes-panel">
-
-      <button id="node-gitlab" class="node-btn" data-node="gitlab" type="button">
-        <span class="node-icon" aria-hidden="true">⬡</span>
-        <span class="node-label">GitLab</span>
-        <span class="node-status" aria-live="polite">OFFLINE</span>
-      </button>
-
-      <button id="node-ci" class="node-btn" data-node="ci" type="button">
-        <span class="node-icon" aria-hidden="true">⬡</span>
-        <span class="node-label">CI Pipeline</span>
-        <span class="node-status" aria-live="polite">OFFLINE</span>
-      </button>
-
-      <button id="node-security" class="node-btn" data-node="security" type="button">
-        <span class="node-icon" aria-hidden="true">⬡</span>
-        <span class="node-label">Security Scan</span>
-        <span class="node-status" aria-live="polite">OFFLINE</span>
-      </button>
-
-      <button id="node-registry" class="node-btn" data-node="registry" type="button">
-        <span class="node-icon" aria-hidden="true">⬡</span>
-        <span class="node-label">Registry</span>
-        <span class="node-status" aria-live="polite">OFFLINE</span>
-      </button>
-
-      <button id="node-deploy" class="node-btn" data-node="deploy" type="button">
-        <span class="node-icon" aria-hidden="true">⬡</span>
-        <span class="node-label">Deploy</span>
-        <span class="node-status" aria-live="polite">OFFLINE</span>
-      </button>
-
-    </section>
-
-    <section id="kpi-panel">
+    <section id="sobre-tsoft" class="about-section" aria-labelledby="about-title">
+      <h2 id="about-title" class="about-section__title">Sobre Tsoft</h2>
+      <p class="about-section__body">
+        Tsoft es una empresa de tecnología con presencia en múltiples países de América y Europa.
+        Nuestro equipo multicultural trabaja de forma colaborativa para construir soluciones digitales
+        de alto impacto para clientes de todo el mundo.
+      </p>
     </section>
 
   </main>
 
-  <script type="module" src="src/main.js"></script>
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__copy">&copy; 2025 Tsoft. Todos los derechos reservados.</p>
+    </div>
+  </footer>
 
+  <script src="js/main.js" defer></script>
 </body>
 </html>

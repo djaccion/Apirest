@@ -1,0 +1,367 @@
+/* ============================================================
+   css/styles.css — Tsoft International Greetings
+   ============================================================ */
+
+/* ============================================================
+   PASO 1 — Variables CSS (Design Tokens)
+   ============================================================ */
+:root {
+  --color-primary: #0A2463;
+  --color-primary-light: #1E4DB7;
+  --color-accent: #E63946;
+  --color-bg: #F8F9FA;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #212529;
+  --color-text-secondary: #6C757D;
+  --color-border: #DEE2E6;
+  --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --radius-card: 12px;
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.14);
+  --transition-card: transform 0.2s ease, box-shadow 0.2s ease;
+  --max-width-content: 1200px;
+  --spacing-section: 4rem;
+}
+
+/* ============================================================
+   PASO 2 — Reset Mínimo
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ============================================================
+   PASO 3 — Estilos Base de body
+   ============================================================ */
+body {
+  font-family: var(--font-stack);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   PASO 4 — Header / Navbar
+   ============================================================ */
+header {
+  background-color: var(--color-primary);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--max-width-content);
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+}
+
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-menu a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.nav-menu a:hover {
+  color: #fff;
+}
+
+.nav-toggle {
+  display: none;
+}
+
+/* ============================================================
+   PASO 5 — Sección Hero
+   ============================================================ */
+.hero {
+  background-color: var(--color-primary);
+  color: #fff;
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+}
+
+.hero__inner {
+  max-width: var(--max-width-content);
+  margin: 0 auto;
+}
+
+.hero__title {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  margin: 0 0 1rem;
+  line-height: 1.2;
+}
+
+.hero__subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   PASO 6 — Sección de Tarjetas (Greetings)
+   ============================================================ */
+.greetings-section {
+  padding: var(--spacing-section) 1.5rem;
+  max-width: var(--max-width-content);
+  margin: 0 auto;
+}
+
+.greetings-section__title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  margin: 0 0 0.5rem;
+}
+
+.greetings-section__subtitle {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin: 0 0 2.5rem;
+}
+
+/* ============================================================
+   PASO 7 — Grid de Tarjetas
+   ============================================================ */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ============================================================
+   PASO 8 — Tarjeta Individual
+   ============================================================ */
+.greeting-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  transition: var(--transition-card);
+}
+
+.greeting-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.greeting-card__flag {
+  font-size: 2.75rem;
+  line-height: 1;
+}
+
+.greeting-card__country {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.greeting-card__greeting {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.greeting-card__language {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ============================================================
+   PASO 9 — Sección About
+   ============================================================ */
+.about-section {
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-section) 1.5rem;
+}
+
+.about-section__title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  margin: 0 0 1rem;
+  max-width: var(--max-width-content);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-section__body {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 1.8;
+}
+
+/* ============================================================
+   PASO 10 — Footer
+   ============================================================ */
+footer,
+.site-footer {
+  background-color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 1.5rem 1.5rem;
+}
+
+.site-footer__inner {
+  max-width: var(--max-width-content);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.site-footer__copy {
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* ============================================================
+   PASO 11 — Accesibilidad: Skip Link
+   ============================================================ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background-color: var(--color-accent);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 6px 6px;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 200;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================
+   PASO 12 — Responsive (Mobile)
+   ============================================================ */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    padding: 0.4rem 0.6rem;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .nav-menu {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--color-primary-light);
+    padding: 0.5rem 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .nav-menu.is-open {
+    display: flex;
+  }
+
+  .nav-menu li {
+    width: 100%;
+  }
+
+  .nav-menu a {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .hero {
+    padding: 3rem 1.25rem 2.5rem;
+  }
+
+  .greetings-section {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .about-section {
+    padding: 2.5rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cards-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
