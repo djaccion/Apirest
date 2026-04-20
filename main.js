@@ -1,498 +1,516 @@
-// ============================================================
-// === STATE ===
-// ============================================================
-
-const globalState = {
+const PowerGrid = {
+  state: {
     modules: {
-        jira: false,
-        confluence: false,
-        bitbucket: false,
-        compass: false,
-        rovo: false
+      gitlab:   false,
+      gitlabCI: false,
+      xray:     false,
+      datadog:  false,
+      rovo:     false
     },
     overdrive: false,
     animationFrameId: null,
     particles: [],
     pulses: []
+  },
+  config: {
+    kpis: [
+      {
+        id: 'deployFreq',
+        domId: 'kpi-deploy-freq',
+        base: 2,
+        max: 24,
+        current: 2,
+        target: 2,
+        unit: '/h',
+        boosts: { gitlab: 4, gitlabCI: 8, xray: 2, datadog: 2, rovo: 4 },
+        inverse: false
+      },
+      {
+        id: 'leadTime',
+        domId: 'kpi-lead-time',
+        base: 72,
+        max: 4,
+        current: 72,
+        target: 72,
+        unit: 'h',
+        boosts: { gitlab: 12, gitlabCI: 20, xray: 8, datadog: 4, rovo: 8 },
+        inverse: true
+      },
+      {
+        id: 'changeFailRate',
+        domId: 'kpi-fail-rate',
+        base: 15,
+        max: 1,
+        current: 15,
+        target: 15,
+        unit: '%',
+        boosts: { gitlab: 2, gitlabCI: 3, xray: 5, datadog: 3, rovo: 1 },
+        inverse: true
+      },
+      {
+        id: 'mttr',
+        domId: 'kpi-mttr',
+        base: 240,
+        max: 8,
+        current: 240,
+        target: 240,
+        unit: 'min',
+        boosts: { gitlab: 20, gitlabCI: 10, xray: 15, datadog: 60, rovo: 10 },
+        inverse: true
+      },
+      {
+        id: 'coverage',
+        domId: 'kpi-coverage',
+        base: 40,
+        max: 98,
+        current: 40,
+        target: 40,
+        unit: '%',
+        boosts: { gitlab: 5, gitlabCI: 8, xray: 30, datadog: 5, rovo: 5 },
+        inverse: false
+      }
+    ],
+    overdriveFactor: 1.15,
+    particleCount: 80,
+    connectionDistance: 120
+  },
+  canvas: {},
+  kpi: {},
+  ui: {}
 };
 
-const KPI_CONFIG = {
-    ttm: {
-        label: 'Reducción TTM',
-        unit: '%',
-        base: 0,
-        max: 75,
-        current: 0,
-        target: 0,
-        elementId: 'kpi-ttm',
-        boosts: { jira: 10, confluence: 8, bitbucket: 15, compass: 12, rovo: 20 }
-    },
-    defects: {
-        label: 'Reducción Defectos',
-        unit: '%',
-        base: 0,
-        max: 60,
-        current: 0,
-        target: 0,
-        elementId: 'kpi-defects',
-        boosts: { jira: 8, confluence: 5, bitbucket: 18, compass: 7, rovo: 15 }
-    },
-    velocity: {
-        label: 'Aumento Velocidad',
-        unit: 'x',
-        base: 1.0,
-        max: 4.5,
-        current: 1.0,
-        target: 1.0,
-        elementId: 'kpi-velocity',
-        boosts: { jira: 0.4, confluence: 0.3, bitbucket: 0.5, compass: 0.4, rovo: 0.9 }
-    },
-    cost: {
-        label: 'Eficiencia de Costo',
-        unit: '%',
-        base: 0,
-        max: 55,
-        current: 0,
-        target: 0,
-        elementId: 'kpi-cost',
-        boosts: { jira: 7, confluence: 6, bitbucket: 10, compass: 9, rovo: 18 }
-    }
+/* ─────────────────────────────────────────────
+   CANVAS — init
+───────────────────────────────────────────── */
+PowerGrid.canvas.init = function () {
+  var container = document.getElementById('canvas-container');
+  if (!container) return;
+
+  var existing = document.getElementById('canvas-particles');
+  if (existing) {
+    PowerGrid.canvas.el = existing;
+  } else {
+    PowerGrid.canvas.el = document.createElement('canvas');
+    PowerGrid.canvas.el.id = 'canvas-particles';
+    container.appendChild(PowerGrid.canvas.el);
+  }
+
+  PowerGrid.canvas.ctx = PowerGrid.canvas.el.getContext('2d');
+  PowerGrid.canvas.resize();
+
+  window.addEventListener('resize', function () {
+    PowerGrid.canvas.resize();
+  });
 };
 
-// ============================================================
-// === KPI ENGINE ===
-// ============================================================
+PowerGrid.canvas.resize = function () {
+  var container = document.getElementById('canvas-container');
+  if (!container || !PowerGrid.canvas.el) return;
+  PowerGrid.canvas.el.width  = container.offsetWidth;
+  PowerGrid.canvas.el.height = container.offsetHeight;
+};
 
-function calculateTargets() {
-    Object.keys(KPI_CONFIG).forEach(function(key) {
-        var kpi = KPI_CONFIG[key];
-        var total = kpi.base;
-        Object.keys(globalState.modules).forEach(function(mod) {
-            if (globalState.modules[mod]) {
-                total += kpi.boosts[mod];
-            }
-        });
-        if (globalState.overdrive) {
-            var allBoosts = Object.values(kpi.boosts).reduce(function(a, b) { return a + b; }, 0);
-            var boostedSum = kpi.base + allBoosts;
-            var overdriveBonus = kpi.max - boostedSum;
-            total += overdriveBonus;
-        }
-        total = Math.min(total, kpi.max);
-        kpi.target = parseFloat(total.toFixed(2));
+/* ─────────────────────────────────────────────
+   PARTICLES — init & update
+───────────────────────────────────────────── */
+PowerGrid.canvas.initParticles = function () {
+  PowerGrid.state.particles = [];
+  var w = PowerGrid.canvas.el ? PowerGrid.canvas.el.width  : window.innerWidth;
+  var h = PowerGrid.canvas.el ? PowerGrid.canvas.el.height : window.innerHeight;
+  var count = PowerGrid.config.particleCount;
+
+  for (var i = 0; i < count; i++) {
+    PowerGrid.state.particles.push({
+      x:  Math.random() * w,
+      y:  Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6,
+      radius: Math.random() * 1.8 + 0.8,
+      alpha:  Math.random() * 0.5 + 0.3
     });
-}
+  }
+};
 
-function animateKPIs() {
-    var allSettled = true;
-    Object.keys(KPI_CONFIG).forEach(function(key) {
-        var kpi = KPI_CONFIG[key];
-        var diff = kpi.target - kpi.current;
-        if (Math.abs(diff) > 0.01) {
-            kpi.current += diff * 0.08;
-            allSettled = false;
-        } else {
-            kpi.current = kpi.target;
-        }
-    });
-    _renderKPIValues();
-    return allSettled;
-}
+PowerGrid.canvas.updateParticles = function () {
+  var w = PowerGrid.canvas.el.width;
+  var h = PowerGrid.canvas.el.height;
+  var particles = PowerGrid.state.particles;
 
-function _renderKPIValues() {
-    Object.keys(KPI_CONFIG).forEach(function(key) {
-        var kpi = KPI_CONFIG[key];
-        var el = document.getElementById(kpi.elementId);
-        if (!el) return;
-        var display = kpi.unit === 'x'
-            ? kpi.current.toFixed(2) + kpi.unit
-            : Math.round(kpi.current) + kpi.unit;
-        el.textContent = display;
-        _updateKPIDelta(key, kpi);
-    });
-    _updateDerivedKPIs();
-}
+  for (var i = 0; i < particles.length; i++) {
+    var p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
 
-function _updateKPIDelta(key, kpi) {
-    var deltaMap = {
-        ttm: 'kpi-ttm-delta',
-        defects: 'kpi-defects-delta',
-        velocity: 'kpi-velocity-delta',
-        cost: 'kpi-cost-delta'
-    };
-    var deltaId = deltaMap[key];
-    if (!deltaId) return;
-    var deltaEl = document.getElementById(deltaId);
-    if (!deltaEl) return;
-    var diff = kpi.current - kpi.base;
-    if (kpi.unit === 'x') {
-        deltaEl.textContent = diff >= 0 ? '+' + diff.toFixed(2) + 'x vs base' : diff.toFixed(2) + 'x vs base';
-    } else {
-        deltaEl.textContent = diff >= 0 ? '+' + Math.round(diff) + '% vs base' : Math.round(diff) + '% vs base';
+    if (p.x < 0)  { p.x = 0;  p.vx *= -1; }
+    if (p.x > w)  { p.x = w;  p.vx *= -1; }
+    if (p.y < 0)  { p.y = 0;  p.vy *= -1; }
+    if (p.y > h)  { p.y = h;  p.vy *= -1; }
+  }
+};
+
+/* ─────────────────────────────────────────────
+   PULSES — spawn & update
+───────────────────────────────────────────── */
+PowerGrid.canvas.spawnPulse = function (x1, y1, x2, y2) {
+  PowerGrid.state.pulses.push({
+    x1: x1, y1: y1,
+    x2: x2, y2: y2,
+    t: 0,
+    speed: 0.012 + Math.random() * 0.008
+  });
+};
+
+PowerGrid.canvas.updatePulses = function () {
+  var pulses = PowerGrid.state.pulses;
+  for (var i = pulses.length - 1; i >= 0; i--) {
+    pulses[i].t += pulses[i].speed;
+    if (pulses[i].t >= 1) {
+      pulses.splice(i, 1);
     }
-}
+  }
+};
 
-function _updateDerivedKPIs() {
-    var activeCount = Object.values(globalState.modules).filter(Boolean).length;
-    var roiEl = document.getElementById('kpi-roi');
-    var roiDeltaEl = document.getElementById('kpi-roi-delta');
-    var hoursEl = document.getElementById('kpi-hours');
-    var hoursDeltaEl = document.getElementById('kpi-hours-delta');
+/* ─────────────────────────────────────────────
+   DRAW — main render call
+───────────────────────────────────────────── */
+PowerGrid.canvas.draw = function () {
+  var ctx        = PowerGrid.canvas.ctx;
+  var w          = PowerGrid.canvas.el.width;
+  var h          = PowerGrid.canvas.el.height;
+  var particles  = PowerGrid.state.particles;
+  var pulses     = PowerGrid.state.pulses;
+  var maxDist    = PowerGrid.config.connectionDistance;
+  var overdrive  = PowerGrid.state.overdrive;
 
-    if (roiEl) {
-        var roiVal = activeCount * 47 + (globalState.overdrive ? 85 : 0);
-        var currentRoi = parseFloat(roiEl.textContent) || 0;
-        var newRoi = currentRoi + (roiVal - currentRoi) * 0.08;
-        roiEl.textContent = Math.round(newRoi) + '%';
-    }
-    if (roiDeltaEl) {
-        roiDeltaEl.textContent = activeCount > 0 ? '+' + (activeCount * 47 + (globalState.overdrive ? 85 : 0)) + '% ROI proyectado' : 'Sin módulos activos';
-    }
-    if (hoursEl) {
-        var hoursVal = activeCount * 12 + (globalState.overdrive ? 20 : 0);
-        var currentHours = parseFloat(hoursEl.textContent) || 0;
-        var newHours = currentHours + (hoursVal - currentHours) * 0.08;
-        hoursEl.textContent = Math.round(newHours) + 'h';
-    }
-    if (hoursDeltaEl) {
-        hoursDeltaEl.textContent = activeCount > 0 ? '-' + (activeCount * 12 + (globalState.overdrive ? 20 : 0)) + 'h/semana ahorradas' : 'Sin módulos activos';
-    }
-}
+  ctx.clearRect(0, 0, w, h);
 
-// ============================================================
-// === CANVAS: PARTICLES ===
-// ============================================================
+  /* — connections — */
+  for (var i = 0; i < particles.length; i++) {
+    for (var j = i + 1; j < particles.length; j++) {
+      var dx   = particles[i].x - particles[j].x;
+      var dy   = particles[i].y - particles[j].y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
 
-function initParticles(canvas) {
-    globalState.particles = [];
-    var count = 80;
-    for (var i = 0; i < count; i++) {
-        globalState.particles.push(_createParticle(canvas));
-    }
-}
-
-function _createParticle(canvas) {
-    return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        radius: Math.random() * 2 + 1,
-        alpha: Math.random() * 0.5 + 0.1,
-        color: _getParticleColor()
-    };
-}
-
-function _getParticleColor() {
-    var colors = ['#00c8ff', '#7b61ff', '#00ffb3', '#ff6b35'];
-    return colors[Math.floor(Math.random() * colors.length)];
-}
-
-function drawParticles(ctx, canvas) {
-    globalState.particles.forEach(function(p) {
-        _updateParticlePosition(p, canvas);
+      if (dist < maxDist) {
+        var lineAlpha = (1 - dist / maxDist) * 0.25;
+        if (overdrive) lineAlpha *= 1.6;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.alpha;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-    });
-}
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = overdrive
+          ? 'rgba(255, 180, 0, ' + lineAlpha + ')'
+          : 'rgba(0, 210, 255, '  + lineAlpha + ')';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
 
-function _updateParticlePosition(p, canvas) {
-    var speedMult = globalState.overdrive ? 2.5 : 1;
-    p.x += p.vx * speedMult;
-    p.y += p.vy * speedMult;
-    if (p.x < 0) p.x = canvas.width;
-    if (p.x > canvas.width) p.x = 0;
-    if (p.y < 0) p.y = canvas.height;
-    if (p.y > canvas.height) p.y = 0;
-}
-
-// ============================================================
-// === CANVAS: CONNECTIONS ===
-// ============================================================
-
-function drawConnections(ctx) {
-    var particles = globalState.particles;
-    var maxDist = globalState.overdrive ? 120 : 80;
-    for (var i = 0; i < particles.length; i++) {
-        for (var j = i + 1; j < particles.length; j++) {
-            _drawConnectionLine(ctx, particles[i], particles[j], maxDist);
+        /* randomly spawn a pulse on active connections */
+        if (Math.random() < 0.0008) {
+          PowerGrid.canvas.spawnPulse(
+            particles[i].x, particles[i].y,
+            particles[j].x, particles[j].y
+          );
         }
+      }
     }
-    _updatePulses(ctx);
-}
+  }
 
-function _drawConnectionLine(ctx, p1, p2, maxDist) {
-    var dx = p1.x - p2.x;
-    var dy = p1.y - p2.y;
-    var dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist > maxDist) return;
-    var alpha = (1 - dist / maxDist) * 0.3;
+  /* — pulses — */
+  for (var p = 0; p < pulses.length; p++) {
+    var pulse = pulses[p];
+    var px = pulse.x1 + (pulse.x2 - pulse.x1) * pulse.t;
+    var py = pulse.y1 + (pulse.y2 - pulse.y1) * pulse.t;
+    var pulseAlpha = 1 - pulse.t;
+
     ctx.beginPath();
-    ctx.moveTo(p1.x, p1.y);
-    ctx.lineTo(p2.x, p2.y);
-    ctx.strokeStyle = 'rgba(0, 200, 255, ' + alpha + ')';
-    ctx.lineWidth = 0.5;
-    ctx.stroke();
-}
-
-function _updatePulses(ctx) {
-    var activeCount = Object.values(globalState.modules).filter(Boolean).length;
-    if (activeCount > 0 && Math.random() < 0.02 * activeCount) {
-        _spawnPulse();
-    }
-    globalState.pulses = globalState.pulses.filter(function(pulse) {
-        return _drawAndUpdatePulse(ctx, pulse);
-    });
-}
-
-function _spawnPulse() {
-    var particles = globalState.particles;
-    if (particles.length < 2) return;
-    var i = Math.floor(Math.random() * particles.length);
-    var j = Math.floor(Math.random() * particles.length);
-    if (i === j) return;
-    globalState.pulses.push({
-        x: particles[i].x,
-        y: particles[i].y,
-        tx: particles[j].x,
-        ty: particles[j].y,
-        progress: 0,
-        speed: 0.03 + Math.random() * 0.02
-    });
-}
-
-function _drawAndUpdatePulse(ctx, pulse) {
-    pulse.progress += pulse.speed;
-    if (pulse.progress >= 1) return false;
-    var x = pulse.x + (pulse.tx - pulse.x) * pulse.progress;
-    var y = pulse.y + (pulse.ty - pulse.y) * pulse.progress;
-    ctx.beginPath();
-    ctx.arc(x, y, 3, 0, Math.PI * 2);
-    ctx.fillStyle = globalState.overdrive ? '#ff6b35' : '#00ffb3';
-    ctx.globalAlpha = 1 - pulse.progress;
+    ctx.arc(px, py, overdrive ? 3 : 2, 0, Math.PI * 2);
+    ctx.fillStyle = overdrive
+      ? 'rgba(255, 220, 50, ' + pulseAlpha + ')'
+      : 'rgba(100, 240, 255, ' + pulseAlpha + ')';
     ctx.fill();
-    ctx.globalAlpha = 1;
-    return true;
-}
+  }
 
-// ============================================================
-// === CANVAS: CHARTS ===
-// ============================================================
+  /* — particles — */
+  for (var k = 0; k < particles.length; k++) {
+    var pt = particles[k];
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+    var pAlpha = overdrive ? Math.min(pt.alpha * 1.4, 1) : pt.alpha;
+    ctx.fillStyle = overdrive
+      ? 'rgba(255, 200, 80, ' + pAlpha + ')'
+      : 'rgba(0, 220, 255, '  + pAlpha + ')';
+    ctx.fill();
+  }
+};
 
-function drawCharts() {
-    _drawBarCharts();
-}
+/* ─────────────────────────────────────────────
+   ANIMATION LOOP
+───────────────────────────────────────────── */
+PowerGrid.canvas.loop = function () {
+  PowerGrid.canvas.updateParticles();
+  PowerGrid.canvas.updatePulses();
+  PowerGrid.canvas.draw();
+  PowerGrid.state.animationFrameId = requestAnimationFrame(PowerGrid.canvas.loop);
+};
 
-function _drawBarCharts() {
-    var barFills = document.querySelectorAll('.bar-fill');
-    barFills.forEach(function(bar) {
-        var kpiKey = bar.getAttribute('data-kpi');
-        if (!kpiKey || !KPI_CONFIG[kpiKey]) return;
-        var kpi = KPI_CONFIG[kpiKey];
-        var pct = kpi.unit === 'x'
-            ? ((kpi.current - kpi.base) / (kpi.max - kpi.base)) * 100
-            : (kpi.current / kpi.max) * 100;
-        pct = Math.max(0, Math.min(100, pct));
-        bar.style.width = pct.toFixed(1) + '%';
-        _updateBarColor(bar, pct);
-    });
-}
+PowerGrid.canvas.start = function () {
+  if (PowerGrid.state.animationFrameId !== null) return;
+  PowerGrid.canvas.loop();
+};
 
-function _updateBarColor(bar, pct) {
-    if (globalState.overdrive) {
-        bar.style.background = 'linear-gradient(90deg, #ff6b35, #ffcc00)';
-    } else if (pct > 66) {
-        bar.style.background = 'linear-gradient(90deg, #00c8ff, #00ffb3)';
-    } else if (pct > 33) {
-        bar.style.background = 'linear-gradient(90deg, #7b61ff, #00c8ff)';
+PowerGrid.canvas.stop = function () {
+  if (PowerGrid.state.animationFrameId !== null) {
+    cancelAnimationFrame(PowerGrid.state.animationFrameId);
+    PowerGrid.state.animationFrameId = null;
+  }
+};
+
+/* ─────────────────────────────────────────────
+   KPI — target calculation
+───────────────────────────────────────────── */
+PowerGrid.kpi.calculateTargets = function () {
+  var modules   = PowerGrid.state.modules;
+  var overdrive = PowerGrid.state.overdrive;
+  var factor    = PowerGrid.config.overdriveFactor;
+  var kpis      = PowerGrid.config.kpis;
+
+  for (var i = 0; i < kpis.length; i++) {
+    var kpi = kpis[i];
+
+    if (kpi.inverse) {
+      /* starts at base, each active module reduces the value */
+      var reduced = kpi.base;
+      for (var mod in kpi.boosts) {
+        if (modules[mod]) {
+          reduced -= kpi.boosts[mod];
+        }
+      }
+      if (overdrive) {
+        /* overdrive pushes further toward max (lower) */
+        var gap = reduced - kpi.max;
+        reduced = reduced - gap * (factor - 1);
+      }
+      kpi.target = Math.max(reduced, kpi.max);
     } else {
-        bar.style.background = 'linear-gradient(90deg, #7b61ff, #a78bfa)';
+      /* starts at base, each active module increases the value */
+      var boosted = kpi.base;
+      for (var mod in kpi.boosts) {
+        if (modules[mod]) {
+          boosted += kpi.boosts[mod];
+        }
+      }
+      if (overdrive) {
+        var gap = kpi.max - boosted;
+        boosted = boosted + gap * (factor - 1);
+      }
+      kpi.target = Math.min(boosted, kpi.max);
     }
-}
+  }
+};
 
-// ============================================================
-// === UI CONTROLLER ===
-// ============================================================
+/* ─────────────────────────────────────────────
+   KPI — animate current toward target
+───────────────────────────────────────────── */
+PowerGrid.kpi.animateValues = function () {
+  var kpis    = PowerGrid.config.kpis;
+  var lerpRate = 0.04;
 
-function bindModuleToggles() {
-    Object.keys(globalState.modules).forEach(function(mod) {
-        var toggle = document.getElementById('toggle-' + mod);
-        if (!toggle) return;
-        toggle.addEventListener('change', function() {
-            globalState.modules[mod] = toggle.checked;
-            _onModuleChange(mod, toggle.checked);
+  for (var i = 0; i < kpis.length; i++) {
+    var kpi  = kpis[i];
+    var diff = kpi.target - kpi.current;
+
+    if (Math.abs(diff) < 0.05) {
+      kpi.current = kpi.target;
+    } else {
+      kpi.current += diff * lerpRate;
+    }
+  }
+};
+
+/* ─────────────────────────────────────────────
+   KPI — render values to DOM
+───────────────────────────────────────────── */
+PowerGrid.kpi.render = function () {
+  var kpis = PowerGrid.config.kpis;
+
+  for (var i = 0; i < kpis.length; i++) {
+    var kpi = kpis[i];
+    var el  = document.getElementById(kpi.domId);
+    if (!el) continue;
+
+    var display;
+    if (kpi.unit === '/h' || kpi.unit === 'x') {
+      display = kpi.current.toFixed(1);
+    } else if (kpi.unit === '%') {
+      display = kpi.current.toFixed(1);
+    } else {
+      display = Math.round(kpi.current);
+    }
+
+    el.textContent = display + kpi.unit;
+
+    /* colour feedback: green when near max, amber mid, red near base */
+    var progress;
+    if (kpi.inverse) {
+      progress = (kpi.base - kpi.current) / (kpi.base - kpi.max);
+    } else {
+      progress = (kpi.current - kpi.base) / (kpi.max - kpi.base);
+    }
+    progress = Math.max(0, Math.min(1, progress));
+
+    el.classList.remove('kpi-good', 'kpi-warn', 'kpi-bad');
+    if (progress >= 0.66) {
+      el.classList.add('kpi-good');
+    } else if (progress >= 0.33) {
+      el.classList.add('kpi-warn');
+    } else {
+      el.classList.add('kpi-bad');
+    }
+  }
+};
+
+/* ─────────────────────────────────────────────
+   UI — live clock
+───────────────────────────────────────────── */
+PowerGrid.ui.startClock = function () {
+  var el = document.getElementById('live-clock');
+  if (!el) return;
+
+  function tick() {
+    var now = new Date();
+    var hh  = String(now.getHours()).padStart(2, '0');
+    var mm  = String(now.getMinutes()).padStart(2, '0');
+    var ss  = String(now.getSeconds()).padStart(2, '0');
+    el.textContent = hh + ':' + mm + ':' + ss;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+};
+
+/* ─────────────────────────────────────────────
+   UI — module toggle buttons
+───────────────────────────────────────────── */
+PowerGrid.ui.bindModuleToggles = function () {
+  var moduleKeys = ['gitlab', 'gitlabCI', 'xray', 'datadog', 'rovo'];
+
+  for (var i = 0; i < moduleKeys.length; i++) {
+    (function (key) {
+      var btn = document.getElementById('toggle-' + key);
+      if (!btn) return;
+
+      btn.addEventListener('click', function () {
+        PowerGrid.state.modules[key] = !PowerGrid.state.modules[key];
+        btn.classList.toggle('active', PowerGrid.state.modules[key]);
+        PowerGrid.kpi.calculateTargets();
+        PowerGrid.ui.updateOverdriveAvailability();
+      });
+    })(moduleKeys[i]);
+  }
+};
+
+/* ─────────────────────────────────────────────
+   UI — overdrive toggle
+───────────────────────────────────────────── */
+PowerGrid.ui.bindOverdriveToggle = function () {
+  var btn = document.getElementById('toggle-overdrive');
+  if (!btn) return;
+
+  btn.addEventListener('click', function () {
+    var modules = PowerGrid.state.modules;
+    var anyActive = modules.gitlab || modules.gitlabCI ||
+                    modules.xray   || modules.datadog  || modules.rovo;
+
+    if (!anyActive && !PowerGrid.state.overdrive) return;
+
+    PowerGrid.state.overdrive = !PowerGrid.state.overdrive;
+    btn.classList.toggle('active', PowerGrid.state.overdrive);
+    document.getElementById('app-root') &&
+      document.getElementById('app-root').classList.toggle('overdrive-active', PowerGrid.state.overdrive);
+    PowerGrid.kpi.calculateTargets();
+  });
+};
+
+PowerGrid.ui.updateOverdriveAvailability = function () {
+  var btn = document.getElementById('toggle-overdrive');
+  if (!btn) return;
+
+  var modules   = PowerGrid.state.modules;
+  var anyActive = modules.gitlab || modules.gitlabCI ||
+                  modules.xray   || modules.datadog  || modules.rovo;
+
+  btn.disabled = !anyActive;
+
+  if (!anyActive && PowerGrid.state.overdrive) {
+    PowerGrid.state.overdrive = false;
+    btn.classList.remove('active');
+    var root = document.getElementById('app-root');
+    if (root) root.classList.remove('overdrive-active');
+    PowerGrid.kpi.calculateTargets();
+  }
+};
+
+/* ─────────────────────────────────────────────
+   UI — modal handlers
+───────────────────────────────────────────── */
+PowerGrid.ui.bindModals = function () {
+  var overlays = document.querySelectorAll('.modal-overlay');
+
+  for (var i = 0; i < overlays.length; i++) {
+    (function (overlay) {
+      var closeBtn = overlay.querySelector('.modal-close-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+          overlay.classList.remove('visible');
         });
-    });
-}
+      }
 
-function _onModuleChange(mod, active) {
-    calculateTargets();
-    _updateModuleCardState(mod, active);
-    _addLogEntry(mod, active);
-    _updateStatusIndicator();
-    _updateOverdriveButton();
-}
-
-function _updateModuleCardState(mod, active) {
-    var card = document.getElementById('module-card-' + mod);
-    if (!card) return;
-    if (active) {
-        card.classList.add('status-active');
-    } else {
-        card.classList.remove('status-active');
-    }
-    var dot = card.querySelector('.status-dot');
-    if (dot) {
-        dot.classList.toggle('status-active', active);
-    }
-}
-
-function _addLogEntry(mod, active) {
-    var logContainer = document.getElementById('activity-log');
-    if (!logContainer) return;
-    var entry = document.createElement('div');
-    entry.className = 'log-entry';
-    var time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    var modLabel = mod.charAt(0).toUpperCase() + mod.slice(1);
-    entry.innerHTML = '<span class="log-time">' + time + '</span> ' +
-        '<span class="log-module">' + modLabel + '</span> ' +
-        (active ? '<span class="log-action log-on">ACTIVADO</span>' : '<span class="log-action log-off">DESACTIVADO</span>');
-    logContainer.insertBefore(entry, logContainer.firstChild);
-    _trimLog(logContainer);
-}
-
-function _trimLog(logContainer) {
-    var entries = logContainer.querySelectorAll('.log-entry:not(.log-entry-system)');
-    if (entries.length > 20) {
-        for (var i = 20; i < entries.length; i++) {
-            entries[i].remove();
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) {
+          overlay.classList.remove('visible');
         }
-    }
-}
+      });
+    })(overlays[i]);
+  }
 
-function _updateStatusIndicator() {
-    var activeCount = Object.values(globalState.modules).filter(Boolean).length;
-    var statusLabel = document.getElementById('status-label');
-    var statusDot = document.querySelector('#status-indicator .status-dot');
-    if (statusLabel) {
-        if (globalState.overdrive) {
-            statusLabel.textContent = 'OVERDRIVE ACTIVO';
-        } else if (activeCount === 0) {
-            statusLabel.textContent = 'Sistema en espera';
-        } else if (activeCount < 3) {
-            statusLabel.textContent = 'Parcialmente activo';
-        } else if (activeCount < 5) {
-            statusLabel.textContent = 'Alta integración';
-        } else {
-            statusLabel.textContent = 'Integración completa';
-        }
-    }
-    if (statusDot) {
-        statusDot.classList.toggle('status-active', activeCount > 0 || globalState.overdrive);
-    }
-}
+  /* open triggers — buttons with data-modal attribute */
+  var triggers = document.querySelectorAll('[data-modal]');
+  for (var j = 0; j < triggers.length; j++) {
+    (function (trigger) {
+      trigger.addEventListener('click', function () {
+        var targetId = trigger.getAttribute('data-modal');
+        var modal    = document.getElementById(targetId);
+        if (modal) modal.classList.add('visible');
+      });
+    })(triggers[j]);
+  }
+};
 
-function _updateOverdriveButton() {
-    var btn = document.getElementById('btn-overdrive');
-    if (!btn) return;
-    var activeCount = Object.values(globalState.modules).filter(Boolean).length;
-    btn.disabled = activeCount < 5;
-    if (globalState.overdrive) {
-        btn.classList.add('overdrive-active');
-    } else {
-        btn.classList.remove('overdrive-active');
-    }
-}
+/* ─────────────────────────────────────────────
+   MAIN RENDER LOOP (KPI tick inside rAF)
+───────────────────────────────────────────── */
+PowerGrid.mainLoop = function () {
+  PowerGrid.kpi.animateValues();
+  PowerGrid.kpi.render();
+  requestAnimationFrame(PowerGrid.mainLoop);
+};
 
-function bindOverdriveButton() {
-    var btn = document.getElementById('btn-overdrive');
-    if (!btn) return;
-    btn.addEventListener('click', function() {
-        var activeCount = Object.values(globalState.modules).filter(Boolean).length;
-        if (activeCount < 5) return;
-        globalState.overdrive = !globalState.overdrive;
-        _onOverdriveChange();
-    });
-}
+/* ─────────────────────────────────────────────
+   BOOT
+───────────────────────────────────────────── */
+PowerGrid.init = function () {
+  PowerGrid.canvas.init();
+  PowerGrid.canvas.initParticles();
+  PowerGrid.canvas.start();
 
-function _onOverdriveChange() {
-    calculateTargets();
-    _updateStatusIndicator();
-    _updateOverdriveButton();
-    _addOverdriveLogEntry();
-    var appEl = document.getElementById('app');
-    if (appEl) {
-        appEl.classList.toggle('overdrive-mode', globalState.overdrive);
-    }
-}
+  PowerGrid.kpi.calculateTargets();
 
-function _addOverdriveLogEntry() {
-    var logContainer = document.getElementById('activity-log');
-    if (!logContainer) return;
-    var entry = document.createElement('div');
-    entry.className = 'log-entry log-entry-system';
-    var time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    entry.innerHTML = '<span class="log-time">' + time + '</span> ' +
-        '<span class="log-module">SISTEMA</span> ' +
-        (globalState.overdrive
-            ? '<span class="log-action log-on">⚡ OVERDRIVE ACTIVADO — Máximo rendimiento</span>'
-            : '<span class="log-action log-off">OVERDRIVE DESACTIVADO</span>');
-    logContainer.insertBefore(entry, logContainer.firstChild);
-}
+  PowerGrid.ui.startClock();
+  PowerGrid.ui.bindModuleToggles();
+  PowerGrid.ui.bindOverdriveToggle();
+  PowerGrid.ui.updateOverdriveAvailability();
+  PowerGrid.ui.bindModals();
 
-// ============================================================
-// === INIT ===
-// ============================================================
+  requestAnimationFrame(PowerGrid.mainLoop);
+};
 
-function init() {
-    var canvas = document.getElementById('particles-canvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    _resizeCanvas(canvas);
-    window.addEventListener('resize', function() { _resizeCanvas(canvas); });
-    initParticles(canvas);
-    bindModuleToggles();
-    bindOverdriveButton();
-    calculateTargets();
-    _updateStatusIndicator();
-    _updateOverdriveButton();
-    _startAnimationLoop(canvas, ctx);
-    _addSystemLogEntry('Sistema inicializado. Todos los módulos en espera.');
-}
-
-function _resizeCanvas(canvas) {
-    var container = canvas.parentElement;
-    if (!container) return;
-    canvas.width = container.offsetWidth || window.innerWidth;
-    canvas.height = container.offsetHeight || window.innerHeight;
-}
-
-function _startAnimationLoop(canvas, ctx) {
-    function loop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawParticles(ctx, canvas);
-        drawConnections(ctx);
-        animateKPIs();
-        drawCharts();
-        globalState.animationFrameId = requestAnimationFrame(loop);
-    }
-    globalState.animationFrameId = requestAnimationFrame(loop);
-}
-
-function _addSystemLogEntry(message) {
-    var logContainer = document.getElementById('activity-log');
-    if (!logContainer) return;
-    var entry = document.createElement('div');
-    entry.className = 'log-entry log-entry-system';
-    var time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    entry.innerHTML = '<span class="log-time">' + time + '</span> ' +
-        '<span class="log-module">SISTEMA</span> ' +
-        '<span class="log-action">' + message + '</span>';
-    logContainer.insertBefore(entry, logContainer.firstChild);
-}
-
-window.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', PowerGrid.init);

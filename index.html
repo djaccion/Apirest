@@ -1,210 +1,153 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Power Grid — Atlassian ROI Simulator</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>The Power Grid — Atlassian Integration Control</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+  <div id="app-root">
 
-  <div id="app">
+    <div id="canvas-container" aria-hidden="true">
+      <canvas id="canvas-particles"></canvas>
+      <canvas id="canvas-connections"></canvas>
+    </div>
 
-    <!-- BLOQUE A: Header -->
-    <header id="header">
-      <div id="header-brand">
-        <span id="header-logo-icon">⚡</span>
-        <div id="header-titles">
-          <h1 id="header-title">THE POWER GRID</h1>
-          <p id="header-subtitle">Atlassian · Fábrica de Software Aumentada · ROI Simulator</p>
-        </div>
+    <header id="dashboard-header">
+      <div id="header-left">
+        <span id="system-status-indicator" class="status-dot"></span>
+        <h1 id="dashboard-title">THE POWER GRID</h1>
       </div>
-      <div id="header-status">
-        <span id="status-indicator" class="status-dot status-active"></span>
-        <span id="status-label">SISTEMA OPERATIVO</span>
+      <div id="header-center">
+        <span class="header-subtitle">ATLASSIAN INTEGRATION CONTROL — MISSION ACTIVE</span>
+      </div>
+      <div id="header-right">
+        <span id="live-clock" aria-live="polite">--:--:--</span>
       </div>
     </header>
 
-    <!-- BLOQUE B: Panel de Control (módulos) -->
-    <section id="control-panel">
-      <h2 id="control-panel-title">⚙ MÓDULOS ACTIVOS</h2>
-
-      <div id="modules-grid">
-
-        <!-- Módulo 1 -->
-        <div class="module-card" id="module-card-jira">
-          <div class="module-icon">🎯</div>
-          <div class="module-info">
-            <span class="module-name">Jira + AI</span>
-            <span class="module-desc">Planificación inteligente</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-jira" class="module-toggle" data-module="jira" />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-        <!-- Módulo 2 -->
-        <div class="module-card" id="module-card-confluence">
-          <div class="module-icon">📚</div>
-          <div class="module-info">
-            <span class="module-name">Confluence + AI</span>
-            <span class="module-desc">Conocimiento aumentado</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-confluence" class="module-toggle" data-module="confluence" />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-        <!-- Módulo 3 -->
-        <div class="module-card" id="module-card-bitbucket">
-          <div class="module-icon">🔀</div>
-          <div class="module-info">
-            <span class="module-name">Bitbucket + AI</span>
-            <span class="module-desc">Revisión de código</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-bitbucket" class="module-toggle" data-module="bitbucket" />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-        <!-- Módulo 4 -->
-        <div class="module-card" id="module-card-compass">
-          <div class="module-icon">🧭</div>
-          <div class="module-info">
-            <span class="module-name">Compass + AI</span>
-            <span class="module-desc">Salud de servicios</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-compass" class="module-toggle" data-module="compass" />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-        <!-- Módulo 5 -->
-        <div class="module-card" id="module-card-rovo">
-          <div class="module-icon">🤖</div>
-          <div class="module-info">
-            <span class="module-name">Rovo AI</span>
-            <span class="module-desc">Agente autónomo</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggle-rovo" class="module-toggle" data-module="rovo" />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
+    <section id="kpi-bar" aria-label="Indicadores clave de rendimiento">
+      <div class="kpi-card" id="kpi-deployment-freq">
+        <span class="kpi-label">DEPLOY FREQ</span>
+        <span class="kpi-value" id="kpi-val-deployment-freq">0</span>
+        <span class="kpi-unit">/ día</span>
       </div>
-
-      <button id="btn-overdrive">⚡ OVERDRIVE — ACTIVAR TODO</button>
-
+      <div class="kpi-card" id="kpi-lead-time">
+        <span class="kpi-label">LEAD TIME</span>
+        <span class="kpi-value" id="kpi-val-lead-time">0</span>
+        <span class="kpi-unit">hrs</span>
+      </div>
+      <div class="kpi-card" id="kpi-mttr">
+        <span class="kpi-label">MTTR</span>
+        <span class="kpi-value" id="kpi-val-mttr">0</span>
+        <span class="kpi-unit">min</span>
+      </div>
+      <div class="kpi-card" id="kpi-change-fail">
+        <span class="kpi-label">CHANGE FAIL</span>
+        <span class="kpi-value" id="kpi-val-change-fail">0</span>
+        <span class="kpi-unit">%</span>
+      </div>
+      <div class="kpi-card" id="kpi-open-incidents">
+        <span class="kpi-label">OPEN INC</span>
+        <span class="kpi-value" id="kpi-val-open-incidents">0</span>
+        <span class="kpi-unit">activos</span>
+      </div>
+      <div class="kpi-card" id="kpi-pipeline-health">
+        <span class="kpi-label">PIPELINE</span>
+        <span class="kpi-value" id="kpi-val-pipeline-health">0</span>
+        <span class="kpi-unit">% ok</span>
+      </div>
     </section>
 
-    <!-- BLOQUE C: Grid de KPIs -->
-    <section id="kpi-grid">
+    <main id="dashboard-main">
 
-      <div class="kpi-card" id="kpi-card-roi">
-        <span class="kpi-label">ROI ESTIMADO</span>
-        <span class="kpi-value" id="kpi-roi">0%</span>
-        <span class="kpi-delta" id="kpi-roi-delta">—</span>
-      </div>
+      <section id="panel-pipelines" class="dashboard-panel" aria-label="Estado de pipelines">
+        <div class="panel-header">
+          <h2 class="panel-title">PIPELINES</h2>
+          <span class="panel-badge" id="badge-pipelines">0 activos</span>
+        </div>
+        <div class="panel-body" id="pipelines-list">
+        </div>
+      </section>
 
-      <div class="kpi-card" id="kpi-card-hours">
-        <span class="kpi-label">HORAS AHORRADAS / MES</span>
-        <span class="kpi-value" id="kpi-hours">0h</span>
-        <span class="kpi-delta" id="kpi-hours-delta">—</span>
-      </div>
+      <section id="panel-incidents" class="dashboard-panel" aria-label="Incidentes activos">
+        <div class="panel-header">
+          <h2 class="panel-title">INCIDENTS</h2>
+          <span class="panel-badge" id="badge-incidents">0 abiertos</span>
+        </div>
+        <div class="panel-body" id="incidents-list">
+        </div>
+      </section>
 
-      <div class="kpi-card" id="kpi-card-velocity">
-        <span class="kpi-label">VELOCIDAD DE ENTREGA</span>
-        <span class="kpi-value" id="kpi-velocity">+0%</span>
-        <span class="kpi-delta" id="kpi-velocity-delta">—</span>
-      </div>
+      <section id="panel-deployments" class="dashboard-panel" aria-label="Historial de despliegues">
+        <div class="panel-header">
+          <h2 class="panel-title">DEPLOYMENTS</h2>
+          <span class="panel-badge" id="badge-deployments">últimas 24h</span>
+        </div>
+        <div class="panel-body" id="deployments-list">
+        </div>
+      </section>
 
-      <div class="kpi-card" id="kpi-card-cost">
-        <span class="kpi-label">REDUCCIÓN DE COSTES</span>
-        <span class="kpi-value" id="kpi-cost">$0</span>
-        <span class="kpi-delta" id="kpi-cost-delta">—</span>
-      </div>
-
-      <div class="kpi-card" id="kpi-card-incidents">
-        <span class="kpi-label">INCIDENTES EVITADOS</span>
-        <span class="kpi-value" id="kpi-incidents">0</span>
-        <span class="kpi-delta" id="kpi-incidents-delta">—</span>
-      </div>
-
-      <div class="kpi-card" id="kpi-card-score">
-        <span class="kpi-label">POWER SCORE</span>
-        <span class="kpi-value" id="kpi-score">0</span>
-        <span class="kpi-delta" id="kpi-score-delta">—</span>
-      </div>
-
-    </section>
-
-    <!-- BLOQUE D: Canvas de visualizaciones -->
-    <section id="viz-canvas">
-
-      <div id="viz-bar-chart" class="viz-panel">
-        <h3 class="viz-title">IMPACTO POR MÓDULO</h3>
-        <div id="bar-chart-container" class="chart-container">
-          <div class="bar-group" id="bar-jira">
-            <div class="bar-fill" id="bar-fill-jira" data-module="jira"></div>
-            <span class="bar-label">Jira</span>
+      <section id="panel-jira" class="dashboard-panel" aria-label="Estado de Jira">
+        <div class="panel-header">
+          <h2 class="panel-title">JIRA BOARD</h2>
+          <span class="panel-badge" id="badge-jira">0 issues</span>
+        </div>
+        <div class="panel-body" id="jira-board">
+          <div class="jira-column" id="jira-col-todo">
+            <h3 class="jira-col-title">TO DO</h3>
+            <div class="jira-col-body" id="jira-todo-list"></div>
           </div>
-          <div class="bar-group" id="bar-confluence">
-            <div class="bar-fill" id="bar-fill-confluence" data-module="confluence"></div>
-            <span class="bar-label">Confluence</span>
+          <div class="jira-column" id="jira-col-inprogress">
+            <h3 class="jira-col-title">IN PROGRESS</h3>
+            <div class="jira-col-body" id="jira-inprogress-list"></div>
           </div>
-          <div class="bar-group" id="bar-bitbucket">
-            <div class="bar-fill" id="bar-fill-bitbucket" data-module="bitbucket"></div>
-            <span class="bar-label">Bitbucket</span>
-          </div>
-          <div class="bar-group" id="bar-compass">
-            <div class="bar-fill" id="bar-fill-compass" data-module="compass"></div>
-            <span class="bar-label">Compass</span>
-          </div>
-          <div class="bar-group" id="bar-rovo">
-            <div class="bar-fill" id="bar-fill-rovo" data-module="rovo"></div>
-            <span class="bar-label">Rovo</span>
+          <div class="jira-column" id="jira-col-done">
+            <h3 class="jira-col-title">DONE</h3>
+            <div class="jira-col-body" id="jira-done-list"></div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div id="viz-power-meter" class="viz-panel">
-        <h3 class="viz-title">POWER METER</h3>
-        <div id="power-meter-container">
-          <div id="power-meter-track">
-            <div id="power-meter-fill"></div>
-          </div>
-          <span id="power-meter-label">0 / 5 módulos activos</span>
+      <section id="panel-confluence" class="dashboard-panel" aria-label="Actividad de Confluence">
+        <div class="panel-header">
+          <h2 class="panel-title">CONFLUENCE</h2>
+          <span class="panel-badge" id="badge-confluence">actividad reciente</span>
         </div>
-      </div>
+        <div class="panel-body" id="confluence-list">
+        </div>
+      </section>
 
-      <div id="viz-activity-log" class="viz-panel">
-        <h3 class="viz-title">LOG DE ACTIVIDAD</h3>
-        <ul id="activity-log-list">
-          <li class="log-entry log-entry-system" id="log-entry-init">Sistema iniciado. Esperando activación de módulos.</li>
-        </ul>
-      </div>
+      <section id="panel-activity" class="dashboard-panel" aria-label="Feed de actividad global">
+        <div class="panel-header">
+          <h2 class="panel-title">ACTIVITY FEED</h2>
+          <span class="panel-badge" id="badge-activity">live</span>
+        </div>
+        <div class="panel-body" id="activity-feed">
+        </div>
+      </section>
 
-    </section>
+    </main>
 
-    <!-- BLOQUE E: Footer de estado -->
-    <footer id="footer">
-      <div id="footer-left">
-        <span id="footer-version">v1.0.0</span>
-        <span id="footer-separator">·</span>
-        <span id="footer-build">Build: POWER-GRID-ALPHA</span>
-      </div>
-      <div id="footer-center">
-        <span id="footer-tagline">Atlassian · Fábrica de Software Aumentada</span>
-      </div>
-      <div id="footer-right">
-        <span id="footer-timestamp">—</span>
-      </div>
+    <footer id="dashboard-footer">
+      <span id="footer-sync-status">SYNC: <span id="footer-sync-time">--</span></span>
+      <span id="footer-env">ENV: PRODUCTION</span>
+      <span id="footer-version">v1.0.0</span>
     </footer>
+
+    <div id="modal-overlay" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div id="modal-box" class="modal-box">
+        <div class="modal-header">
+          <h2 id="modal-title" class="modal-title">Detalle</h2>
+          <button id="modal-close" class="modal-close-btn" aria-label="Cerrar modal">&times;</button>
+        </div>
+        <div id="modal-content" class="modal-content"></div>
+      </div>
+    </div>
+
+    <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
 
   </div>
 
