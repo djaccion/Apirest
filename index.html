@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simulador de valor en tiempo real para visualizar el flujo de entrega de software y métricas clave del equipo.">
+  <title>The Power Grid — Simulador de Valor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="overdrive-overlay" aria-hidden="true"></div>
+
+  <main id="dashboard">
+
+    <section id="canvas-layer">
+      <canvas id="particleCanvas" aria-hidden="true"></canvas>
+      <canvas id="connectionCanvas" aria-hidden="true"></canvas>
+    </section>
+
+    <section id="nodes-panel">
+
+      <button id="node-gitlab" class="node-btn" data-node="gitlab" type="button">
+        <span class="node-icon" aria-hidden="true">⬡</span>
+        <span class="node-label">GitLab</span>
+        <span class="node-status" aria-live="polite">OFFLINE</span>
+      </button>
+
+      <button id="node-ci" class="node-btn" data-node="ci" type="button">
+        <span class="node-icon" aria-hidden="true">⬡</span>
+        <span class="node-label">CI Pipeline</span>
+        <span class="node-status" aria-live="polite">OFFLINE</span>
+      </button>
+
+      <button id="node-security" class="node-btn" data-node="security" type="button">
+        <span class="node-icon" aria-hidden="true">⬡</span>
+        <span class="node-label">Security Scan</span>
+        <span class="node-status" aria-live="polite">OFFLINE</span>
+      </button>
+
+      <button id="node-registry" class="node-btn" data-node="registry" type="button">
+        <span class="node-icon" aria-hidden="true">⬡</span>
+        <span class="node-label">Registry</span>
+        <span class="node-status" aria-live="polite">OFFLINE</span>
+      </button>
+
+      <button id="node-deploy" class="node-btn" data-node="deploy" type="button">
+        <span class="node-icon" aria-hidden="true">⬡</span>
+        <span class="node-label">Deploy</span>
+        <span class="node-status" aria-live="polite">OFFLINE</span>
+      </button>
+
+    </section>
+
+    <section id="kpi-panel">
+    </section>
+
+  </main>
+
+  <script type="module" src="src/main.js"></script>
+
+</body>
+</html>
