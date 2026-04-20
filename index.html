@@ -1,113 +1,213 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Saludos internacionales de los países donde Tsoft tiene oficinas.">
-  <title>Saludos Internacionales — Tsoft</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Power Grid — Atlassian ROI Simulator</title>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
 
-  <header class="site-header">
-    <div class="site-header__inner">
+  <div id="app">
 
-      <a href="#main-content" class="skip-link">Saltar al contenido</a>
+    <!-- BLOQUE A: Header -->
+    <header id="header">
+      <div id="header-brand">
+        <span id="header-logo-icon">⚡</span>
+        <div id="header-titles">
+          <h1 id="header-title">THE POWER GRID</h1>
+          <p id="header-subtitle">Atlassian · Fábrica de Software Aumentada · ROI Simulator</p>
+        </div>
+      </div>
+      <div id="header-status">
+        <span id="status-indicator" class="status-dot status-active"></span>
+        <span id="status-label">SISTEMA OPERATIVO</span>
+      </div>
+    </header>
 
-      <div class="site-header__brand">
-        <span class="site-header__logo-text">Tsoft</span>
+    <!-- BLOQUE B: Panel de Control (módulos) -->
+    <section id="control-panel">
+      <h2 id="control-panel-title">⚙ MÓDULOS ACTIVOS</h2>
+
+      <div id="modules-grid">
+
+        <!-- Módulo 1 -->
+        <div class="module-card" id="module-card-jira">
+          <div class="module-icon">🎯</div>
+          <div class="module-info">
+            <span class="module-name">Jira + AI</span>
+            <span class="module-desc">Planificación inteligente</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-jira" class="module-toggle" data-module="jira" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Módulo 2 -->
+        <div class="module-card" id="module-card-confluence">
+          <div class="module-icon">📚</div>
+          <div class="module-info">
+            <span class="module-name">Confluence + AI</span>
+            <span class="module-desc">Conocimiento aumentado</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-confluence" class="module-toggle" data-module="confluence" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Módulo 3 -->
+        <div class="module-card" id="module-card-bitbucket">
+          <div class="module-icon">🔀</div>
+          <div class="module-info">
+            <span class="module-name">Bitbucket + AI</span>
+            <span class="module-desc">Revisión de código</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-bitbucket" class="module-toggle" data-module="bitbucket" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Módulo 4 -->
+        <div class="module-card" id="module-card-compass">
+          <div class="module-icon">🧭</div>
+          <div class="module-info">
+            <span class="module-name">Compass + AI</span>
+            <span class="module-desc">Salud de servicios</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-compass" class="module-toggle" data-module="compass" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Módulo 5 -->
+        <div class="module-card" id="module-card-rovo">
+          <div class="module-icon">🤖</div>
+          <div class="module-info">
+            <span class="module-name">Rovo AI</span>
+            <span class="module-desc">Agente autónomo</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-rovo" class="module-toggle" data-module="rovo" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
       </div>
 
-      <nav class="site-nav" aria-label="Navegación principal">
-        <button
-          class="site-nav__toggle"
-          aria-expanded="false"
-          aria-controls="nav-menu"
-          type="button"
-        >
-          <span class="site-nav__toggle-icon" aria-hidden="true">☰</span>
-          <span class="sr-only">Abrir menú</span>
-        </button>
+      <button id="btn-overdrive">⚡ OVERDRIVE — ACTIVAR TODO</button>
 
-        <ul class="site-nav__menu" id="nav-menu" role="list">
-          <li><a href="#saludos" class="site-nav__link">Saludos</a></li>
-          <li><a href="#sobre-tsoft" class="site-nav__link">Sobre Tsoft</a></li>
+    </section>
+
+    <!-- BLOQUE C: Grid de KPIs -->
+    <section id="kpi-grid">
+
+      <div class="kpi-card" id="kpi-card-roi">
+        <span class="kpi-label">ROI ESTIMADO</span>
+        <span class="kpi-value" id="kpi-roi">0%</span>
+        <span class="kpi-delta" id="kpi-roi-delta">—</span>
+      </div>
+
+      <div class="kpi-card" id="kpi-card-hours">
+        <span class="kpi-label">HORAS AHORRADAS / MES</span>
+        <span class="kpi-value" id="kpi-hours">0h</span>
+        <span class="kpi-delta" id="kpi-hours-delta">—</span>
+      </div>
+
+      <div class="kpi-card" id="kpi-card-velocity">
+        <span class="kpi-label">VELOCIDAD DE ENTREGA</span>
+        <span class="kpi-value" id="kpi-velocity">+0%</span>
+        <span class="kpi-delta" id="kpi-velocity-delta">—</span>
+      </div>
+
+      <div class="kpi-card" id="kpi-card-cost">
+        <span class="kpi-label">REDUCCIÓN DE COSTES</span>
+        <span class="kpi-value" id="kpi-cost">$0</span>
+        <span class="kpi-delta" id="kpi-cost-delta">—</span>
+      </div>
+
+      <div class="kpi-card" id="kpi-card-incidents">
+        <span class="kpi-label">INCIDENTES EVITADOS</span>
+        <span class="kpi-value" id="kpi-incidents">0</span>
+        <span class="kpi-delta" id="kpi-incidents-delta">—</span>
+      </div>
+
+      <div class="kpi-card" id="kpi-card-score">
+        <span class="kpi-label">POWER SCORE</span>
+        <span class="kpi-value" id="kpi-score">0</span>
+        <span class="kpi-delta" id="kpi-score-delta">—</span>
+      </div>
+
+    </section>
+
+    <!-- BLOQUE D: Canvas de visualizaciones -->
+    <section id="viz-canvas">
+
+      <div id="viz-bar-chart" class="viz-panel">
+        <h3 class="viz-title">IMPACTO POR MÓDULO</h3>
+        <div id="bar-chart-container" class="chart-container">
+          <div class="bar-group" id="bar-jira">
+            <div class="bar-fill" id="bar-fill-jira" data-module="jira"></div>
+            <span class="bar-label">Jira</span>
+          </div>
+          <div class="bar-group" id="bar-confluence">
+            <div class="bar-fill" id="bar-fill-confluence" data-module="confluence"></div>
+            <span class="bar-label">Confluence</span>
+          </div>
+          <div class="bar-group" id="bar-bitbucket">
+            <div class="bar-fill" id="bar-fill-bitbucket" data-module="bitbucket"></div>
+            <span class="bar-label">Bitbucket</span>
+          </div>
+          <div class="bar-group" id="bar-compass">
+            <div class="bar-fill" id="bar-fill-compass" data-module="compass"></div>
+            <span class="bar-label">Compass</span>
+          </div>
+          <div class="bar-group" id="bar-rovo">
+            <div class="bar-fill" id="bar-fill-rovo" data-module="rovo"></div>
+            <span class="bar-label">Rovo</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="viz-power-meter" class="viz-panel">
+        <h3 class="viz-title">POWER METER</h3>
+        <div id="power-meter-container">
+          <div id="power-meter-track">
+            <div id="power-meter-fill"></div>
+          </div>
+          <span id="power-meter-label">0 / 5 módulos activos</span>
+        </div>
+      </div>
+
+      <div id="viz-activity-log" class="viz-panel">
+        <h3 class="viz-title">LOG DE ACTIVIDAD</h3>
+        <ul id="activity-log-list">
+          <li class="log-entry log-entry-system" id="log-entry-init">Sistema iniciado. Esperando activación de módulos.</li>
         </ul>
-      </nav>
-
-    </div>
-  </header>
-
-  <main id="main-content" class="site-main">
-
-    <section id="saludos" class="greetings-section" aria-labelledby="greetings-title">
-      <h1 id="greetings-title" class="greetings-section__title">Saludos Internacionales</h1>
-      <p class="greetings-section__subtitle">Conoce cómo saludamos en cada país donde Tsoft tiene presencia.</p>
-
-      <div class="cards-grid">
-
-        <article class="greeting-card">
-          <div class="greeting-card__flag" aria-hidden="true">🇦🇷</div>
-          <h2 class="greeting-card__country">Argentina</h2>
-          <p class="greeting-card__greeting">¡Hola!</p>
-          <p class="greeting-card__language">Español</p>
-        </article>
-
-        <article class="greeting-card">
-          <div class="greeting-card__flag" aria-hidden="true">🇧🇷</div>
-          <h2 class="greeting-card__country">Brasil</h2>
-          <p class="greeting-card__greeting">Olá!</p>
-          <p class="greeting-card__language">Portugués</p>
-        </article>
-
-        <article class="greeting-card">
-          <div class="greeting-card__flag" aria-hidden="true">🇺🇸</div>
-          <h2 class="greeting-card__country">Estados Unidos</h2>
-          <p class="greeting-card__greeting">Hello!</p>
-          <p class="greeting-card__language">Inglés</p>
-        </article>
-
-        <article class="greeting-card">
-          <div class="greeting-card__flag" aria-hidden="true">🇲🇽</div>
-          <h2 class="greeting-card__country">México</h2>
-          <p class="greeting-card__greeting">¡Buenas!</p>
-          <p class="greeting-card__language">Español</p>
-        </article>
-
-        <article class="greeting-card">
-          <div class="greeting-card__flag" aria-hidden="true">🇨🇴</div>
-          <h2 class="greeting-card__country">Colombia</h2>
-          <p class="greeting-card__greeting">¡Quiubo!</p>
-          <p class="greeting-card__language">Español</p>
-        </article>
-
-        <article class="greeting-card">
-          <div class="greeting-card__flag" aria-hidden="true">🇪🇸</div>
-          <h2 class="greeting-card__country">España</h2>
-          <p class="greeting-card__greeting">¡Buenas!</p>
-          <p class="greeting-card__language">Español</p>
-        </article>
-
       </div>
+
     </section>
 
-    <section id="sobre-tsoft" class="about-section" aria-labelledby="about-title">
-      <h2 id="about-title" class="about-section__title">Sobre Tsoft</h2>
-      <p class="about-section__body">
-        Tsoft es una empresa de tecnología con presencia en múltiples países de América y Europa.
-        Nuestro equipo multicultural trabaja de forma colaborativa para construir soluciones digitales
-        de alto impacto para clientes de todo el mundo.
-      </p>
-    </section>
+    <!-- BLOQUE E: Footer de estado -->
+    <footer id="footer">
+      <div id="footer-left">
+        <span id="footer-version">v1.0.0</span>
+        <span id="footer-separator">·</span>
+        <span id="footer-build">Build: POWER-GRID-ALPHA</span>
+      </div>
+      <div id="footer-center">
+        <span id="footer-tagline">Atlassian · Fábrica de Software Aumentada</span>
+      </div>
+      <div id="footer-right">
+        <span id="footer-timestamp">—</span>
+      </div>
+    </footer>
 
-  </main>
+  </div>
 
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <p class="site-footer__copy">&copy; 2025 Tsoft. Todos los derechos reservados.</p>
-    </div>
-  </footer>
-
-  <script src="js/main.js" defer></script>
+  <script src="./main.js"></script>
 </body>
 </html>
