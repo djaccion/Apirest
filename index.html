@@ -3,154 +3,209 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>The Power Grid — Atlassian Integration Control</title>
-  <link rel="stylesheet" href="./style.css">
+  <meta name="description" content="Saludos internacionales de las oficinas Tsoft">
+  <title>Saludos Internacionales · Tsoft</title>
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <div id="app-root">
 
-    <div id="canvas-container" aria-hidden="true">
-      <canvas id="canvas-particles"></canvas>
-      <canvas id="canvas-connections"></canvas>
+  <header class="site-header">
+
+    <div class="header-inner">
+
+      <a href="#" class="logo-link" aria-label="Tsoft inicio">
+        <img
+          src="https://placehold.co/150x50/1A3C6E/FFFFFF?text=TSOFT"
+          alt="Logo Tsoft"
+          width="150"
+          height="50"
+          class="logo-img"
+        >
+      </a>
+
+      <nav class="nav-desktop" aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="#saludos" class="nav-link">Saludos</a></li>
+          <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
+          <li><a href="#contacto" class="nav-link">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        aria-expanded="false"
+        aria-controls="navMobile"
+        aria-label="Abrir menú"
+      >
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+
     </div>
 
-    <header id="dashboard-header">
-      <div id="header-left">
-        <span id="system-status-indicator" class="status-dot"></span>
-        <h1 id="dashboard-title">THE POWER GRID</h1>
-      </div>
-      <div id="header-center">
-        <span class="header-subtitle">ATLASSIAN INTEGRATION CONTROL — MISSION ACTIVE</span>
-      </div>
-      <div id="header-right">
-        <span id="live-clock" aria-live="polite">--:--:--</span>
-      </div>
-    </header>
+    <nav class="nav-mobile" id="navMobile" aria-label="Menú móvil" hidden>
+      <ul class="nav-list">
+        <li><a href="#saludos" class="nav-link">Saludos</a></li>
+        <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
+        <li><a href="#contacto" class="nav-link">Contacto</a></li>
+      </ul>
+    </nav>
 
-    <section id="kpi-bar" aria-label="Indicadores clave de rendimiento">
-      <div class="kpi-card" id="kpi-deployment-freq">
-        <span class="kpi-label">DEPLOY FREQ</span>
-        <span class="kpi-value" id="kpi-val-deployment-freq">0</span>
-        <span class="kpi-unit">/ día</span>
-      </div>
-      <div class="kpi-card" id="kpi-lead-time">
-        <span class="kpi-label">LEAD TIME</span>
-        <span class="kpi-value" id="kpi-val-lead-time">0</span>
-        <span class="kpi-unit">hrs</span>
-      </div>
-      <div class="kpi-card" id="kpi-mttr">
-        <span class="kpi-label">MTTR</span>
-        <span class="kpi-value" id="kpi-val-mttr">0</span>
-        <span class="kpi-unit">min</span>
-      </div>
-      <div class="kpi-card" id="kpi-change-fail">
-        <span class="kpi-label">CHANGE FAIL</span>
-        <span class="kpi-value" id="kpi-val-change-fail">0</span>
-        <span class="kpi-unit">%</span>
-      </div>
-      <div class="kpi-card" id="kpi-open-incidents">
-        <span class="kpi-label">OPEN INC</span>
-        <span class="kpi-value" id="kpi-val-open-incidents">0</span>
-        <span class="kpi-unit">activos</span>
-      </div>
-      <div class="kpi-card" id="kpi-pipeline-health">
-        <span class="kpi-label">PIPELINE</span>
-        <span class="kpi-value" id="kpi-val-pipeline-health">0</span>
-        <span class="kpi-unit">% ok</span>
+  </header>
+
+  <main>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <h1 id="hero-title" class="hero-title">
+          El mundo nos saluda,<br>nosotros te saludamos.
+        </h1>
+        <p class="hero-subtitle">
+          Tsoft tiene presencia en 9 países. Conoce cómo nos dicen
+          "hola" en cada una de nuestras oficinas.
+        </p>
+        <a href="#saludos" class="btn-primary">Ver saludos</a>
       </div>
     </section>
 
-    <main id="dashboard-main">
+    <section id="saludos" class="greetings-section" aria-labelledby="saludos-title">
+      <div class="section-inner">
+        <h2 id="saludos-title" class="section-title">Saludos desde el mundo</h2>
+        <p class="section-subtitle">
+          Cada oficina, una cultura. Cada cultura, una forma de saludar.
+        </p>
+        <div class="greetings-grid" id="greetingsGrid">
+          <!-- Las tarjetas son inyectadas por main.js -->
+        </div>
+      </div>
+    </section>
 
-      <section id="panel-pipelines" class="dashboard-panel" aria-label="Estado de pipelines">
-        <div class="panel-header">
-          <h2 class="panel-title">PIPELINES</h2>
-          <span class="panel-badge" id="badge-pipelines">0 activos</span>
-        </div>
-        <div class="panel-body" id="pipelines-list">
-        </div>
-      </section>
+    <section id="nosotros" class="about-section" aria-labelledby="nosotros-title">
+      <div class="section-inner">
+        <h2 id="nosotros-title" class="section-title">Nosotros</h2>
+        <p class="about-text">
+          Tsoft es una empresa tecnológica con presencia en 9 países de América Latina y Europa.
+          Creemos que la diversidad cultural es nuestra mayor fortaleza. Desde Buenos Aires hasta
+          Madrid, cada equipo aporta su visión única para construir soluciones que trascienden fronteras.
+        </p>
+      </div>
+    </section>
 
-      <section id="panel-incidents" class="dashboard-panel" aria-label="Incidentes activos">
-        <div class="panel-header">
-          <h2 class="panel-title">INCIDENTS</h2>
-          <span class="panel-badge" id="badge-incidents">0 abiertos</span>
-        </div>
-        <div class="panel-body" id="incidents-list">
-        </div>
-      </section>
+  </main>
 
-      <section id="panel-deployments" class="dashboard-panel" aria-label="Historial de despliegues">
-        <div class="panel-header">
-          <h2 class="panel-title">DEPLOYMENTS</h2>
-          <span class="panel-badge" id="badge-deployments">últimas 24h</span>
-        </div>
-        <div class="panel-body" id="deployments-list">
-        </div>
-      </section>
-
-      <section id="panel-jira" class="dashboard-panel" aria-label="Estado de Jira">
-        <div class="panel-header">
-          <h2 class="panel-title">JIRA BOARD</h2>
-          <span class="panel-badge" id="badge-jira">0 issues</span>
-        </div>
-        <div class="panel-body" id="jira-board">
-          <div class="jira-column" id="jira-col-todo">
-            <h3 class="jira-col-title">TO DO</h3>
-            <div class="jira-col-body" id="jira-todo-list"></div>
-          </div>
-          <div class="jira-column" id="jira-col-inprogress">
-            <h3 class="jira-col-title">IN PROGRESS</h3>
-            <div class="jira-col-body" id="jira-inprogress-list"></div>
-          </div>
-          <div class="jira-column" id="jira-col-done">
-            <h3 class="jira-col-title">DONE</h3>
-            <div class="jira-col-body" id="jira-done-list"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="panel-confluence" class="dashboard-panel" aria-label="Actividad de Confluence">
-        <div class="panel-header">
-          <h2 class="panel-title">CONFLUENCE</h2>
-          <span class="panel-badge" id="badge-confluence">actividad reciente</span>
-        </div>
-        <div class="panel-body" id="confluence-list">
-        </div>
-      </section>
-
-      <section id="panel-activity" class="dashboard-panel" aria-label="Feed de actividad global">
-        <div class="panel-header">
-          <h2 class="panel-title">ACTIVITY FEED</h2>
-          <span class="panel-badge" id="badge-activity">live</span>
-        </div>
-        <div class="panel-body" id="activity-feed">
-        </div>
-      </section>
-
-    </main>
-
-    <footer id="dashboard-footer">
-      <span id="footer-sync-status">SYNC: <span id="footer-sync-time">--</span></span>
-      <span id="footer-env">ENV: PRODUCTION</span>
-      <span id="footer-version">v1.0.0</span>
-    </footer>
-
-    <div id="modal-overlay" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div id="modal-box" class="modal-box">
-        <div class="modal-header">
-          <h2 id="modal-title" class="modal-title">Detalle</h2>
-          <button id="modal-close" class="modal-close-btn" aria-label="Cerrar modal">&times;</button>
-        </div>
-        <div id="modal-content" class="modal-content"></div>
+  <footer id="contacto" class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img
+          src="https://placehold.co/120x40/FFFFFF/1A3C6E?text=TSOFT"
+          alt="Logo Tsoft"
+          width="120"
+          height="40"
+          class="footer-logo"
+        >
+        <p class="footer-tagline">Conectando culturas a través de la tecnología.</p>
+      </div>
+      <div class="footer-contact">
+        <h3 class="footer-heading">Contacto</h3>
+        <address class="footer-address">
+          <p>contacto@tsoft.com</p>
+          <p>+54 11 0000-0000</p>
+          <p>Buenos Aires, Argentina</p>
+        </address>
+      </div>
+      <div class="footer-nav">
+        <h3 class="footer-heading">Navegación</h3>
+        <ul class="footer-nav-list">
+          <li><a href="#saludos" class="footer-link">Saludos</a></li>
+          <li><a href="#nosotros" class="footer-link">Nosotros</a></li>
+          <li><a href="#contacto" class="footer-link">Contacto</a></li>
+        </ul>
       </div>
     </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2025 Tsoft. Todos los derechos reservados.</p>
+    </div>
+  </footer>
 
-    <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
-
-  </div>
-
+  <script>
+    var GREETINGS_DATA = [
+      {
+        country: "Argentina",
+        flag: "\uD83C\uDDE6\uD83C\uDDF7",
+        greeting: "¡Hola!",
+        language: "Español",
+        phonetic: "O-la",
+        office: "Buenos Aires"
+      },
+      {
+        country: "Brasil",
+        flag: "\uD83C\uDDE7\uD83C\uDDF7",
+        greeting: "Olá!",
+        language: "Portugués",
+        phonetic: "O-lá",
+        office: "São Paulo"
+      },
+      {
+        country: "México",
+        flag: "\uD83C\uDDF2\uD83C\uDDFD",
+        greeting: "¡Hola!",
+        language: "Español",
+        phonetic: "O-la",
+        office: "Ciudad de México"
+      },
+      {
+        country: "Colombia",
+        flag: "\uD83C\uDDE8\uD83C\uDDF4",
+        greeting: "¡Hola!",
+        language: "Español",
+        phonetic: "O-la",
+        office: "Bogotá"
+      },
+      {
+        country: "España",
+        flag: "\uD83C\uDDEA\uD83C\uDDF8",
+        greeting: "¡Hola!",
+        language: "Español",
+        phonetic: "O-la",
+        office: "Madrid"
+      },
+      {
+        country: "Francia",
+        flag: "\uD83C\uDDEB\uD83C\uDDF7",
+        greeting: "Bonjour!",
+        language: "Francés",
+        phonetic: "Bon-zhur",
+        office: "París"
+      },
+      {
+        country: "Alemania",
+        flag: "\uD83C\uDDE9\uD83C\uDDEA",
+        greeting: "Hallo!",
+        language: "Alemán",
+        phonetic: "Ha-lo",
+        office: "Berlín"
+      },
+      {
+        country: "Japón",
+        flag: "\uD83C\uDDEF\uD83C\uDDF5",
+        greeting: "こんにちは",
+        language: "Japonés",
+        phonetic: "Kon-ni-chi-wa",
+        office: "Tokio"
+      },
+      {
+        country: "Estados Unidos",
+        flag: "\uD83C\uDDFA\uD83C\uDDF8",
+        greeting: "Hello!",
+        language: "Inglés",
+        phonetic: "He-lou",
+        office: "Nueva York"
+      }
+    ];
+  </script>
   <script src="./main.js"></script>
+
 </body>
 </html>
