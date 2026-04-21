@@ -3,209 +3,347 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://placehold.co; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
+  <!-- DEPLOY NOTE: Configurar HSTS, X-Frame-Options y X-Content-Type-Options en el servidor al desplegar. Estas cabeceras no aplican en file:/// -->
   <meta name="description" content="Saludos internacionales de las oficinas Tsoft">
-  <title>Saludos Internacionales · Tsoft</title>
-  <link rel="stylesheet" href="./styles.css">
+  <title>Saludos Internacionales — Tsoft</title>
+  <style>
+    :root {
+      --color-primary: #1A3C5E;
+      --color-primary-light: #2A5C8E;
+      --color-accent: #E8A020;
+      --color-bg: #F4F6F9;
+      --color-surface: #FFFFFF;
+      --color-text-primary: #1A1A2E;
+      --color-text-secondary: #4A5568;
+      --color-text-on-dark: #FFFFFF;
+      --color-border: #D1D9E6;
+      --font-stack: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --radius-card: 12px;
+      --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
+      --transition-card: transform 0.2s ease, box-shadow 0.2s ease;
+      --grid-min-col: 280px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-stack); background: var(--color-bg); color: var(--color-text-primary); line-height: 1.5; }
+    img { display: block; max-width: 100%; }
+
+    header.site-header {
+      background: var(--color-primary);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    header.site-header .site-logo { height: 48px; width: auto; }
+    header.site-header .site-title {
+      color: var(--color-text-on-dark);
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    main.site-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    .section-heading {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 0.375rem;
+    }
+    .section-subheading {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(var(--grid-min-col), 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: var(--transition-card);
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .card-flag {
+      font-size: 2rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .card-country {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .card-office {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      margin-top: 0.1rem;
+    }
+
+    .card-divider {
+      border: none;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .card-greeting-native {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    .card-greeting-es {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      font-style: italic;
+    }
+
+    .card-footer {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card-lang-badge {
+      display: inline-block;
+      background: var(--color-primary-light);
+      color: var(--color-text-on-dark);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .card-timezone {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      margin-left: auto;
+    }
+
+    footer.site-footer {
+      background: var(--color-primary);
+      color: var(--color-text-on-dark);
+      text-align: center;
+      padding: 1.25rem 2rem;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+    footer.site-footer a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+    footer.site-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      header.site-header { padding: 1rem 1.25rem; gap: 1rem; }
+      header.site-header .site-title { font-size: 1rem; }
+      main.site-main { padding: 1.5rem 1rem 2.5rem; }
+      .section-heading { font-size: 1.25rem; }
+    }
+  </style>
 </head>
 <body>
 
   <header class="site-header">
-
-    <div class="header-inner">
-
-      <a href="#" class="logo-link" aria-label="Tsoft inicio">
-        <img
-          src="https://placehold.co/150x50/1A3C6E/FFFFFF?text=TSOFT"
-          alt="Logo Tsoft"
-          width="150"
-          height="50"
-          class="logo-img"
-        >
-      </a>
-
-      <nav class="nav-desktop" aria-label="Navegación principal">
-        <ul class="nav-list">
-          <li><a href="#saludos" class="nav-link">Saludos</a></li>
-          <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
-          <li><a href="#contacto" class="nav-link">Contacto</a></li>
-        </ul>
-      </nav>
-
-      <button
-        class="nav-toggle"
-        id="navToggle"
-        aria-expanded="false"
-        aria-controls="navMobile"
-        aria-label="Abrir menú"
-      >
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-      </button>
-
-    </div>
-
-    <nav class="nav-mobile" id="navMobile" aria-label="Menú móvil" hidden>
-      <ul class="nav-list">
-        <li><a href="#saludos" class="nav-link">Saludos</a></li>
-        <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
-        <li><a href="#contacto" class="nav-link">Contacto</a></li>
-      </ul>
-    </nav>
-
+    <img
+      class="site-logo"
+      src="https://placehold.co/160x48?text=Tsoft"
+      alt="Logotipo de Tsoft"
+      width="160"
+      height="48"
+    >
+    <span class="site-title">Saludos Internacionales</span>
   </header>
 
-  <main>
-
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-inner">
-        <h1 id="hero-title" class="hero-title">
-          El mundo nos saluda,<br>nosotros te saludamos.
-        </h1>
-        <p class="hero-subtitle">
-          Tsoft tiene presencia en 9 países. Conoce cómo nos dicen
-          "hola" en cada una de nuestras oficinas.
-        </p>
-        <a href="#saludos" class="btn-primary">Ver saludos</a>
-      </div>
-    </section>
-
-    <section id="saludos" class="greetings-section" aria-labelledby="saludos-title">
-      <div class="section-inner">
-        <h2 id="saludos-title" class="section-title">Saludos desde el mundo</h2>
-        <p class="section-subtitle">
-          Cada oficina, una cultura. Cada cultura, una forma de saludar.
-        </p>
-        <div class="greetings-grid" id="greetingsGrid">
-          <!-- Las tarjetas son inyectadas por main.js -->
-        </div>
-      </div>
-    </section>
-
-    <section id="nosotros" class="about-section" aria-labelledby="nosotros-title">
-      <div class="section-inner">
-        <h2 id="nosotros-title" class="section-title">Nosotros</h2>
-        <p class="about-text">
-          Tsoft es una empresa tecnológica con presencia en 9 países de América Latina y Europa.
-          Creemos que la diversidad cultural es nuestra mayor fortaleza. Desde Buenos Aires hasta
-          Madrid, cada equipo aporta su visión única para construir soluciones que trascienden fronteras.
-        </p>
-      </div>
-    </section>
-
+  <main class="site-main">
+    <h1 class="section-heading">Oficinas Tsoft en el mundo</h1>
+    <p class="section-subheading">Un saludo desde cada una de nuestras sedes globales.</p>
+    <div class="cards-grid" id="cards-container"></div>
   </main>
 
-  <footer id="contacto" class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <img
-          src="https://placehold.co/120x40/FFFFFF/1A3C6E?text=TSOFT"
-          alt="Logo Tsoft"
-          width="120"
-          height="40"
-          class="footer-logo"
-        >
-        <p class="footer-tagline">Conectando culturas a través de la tecnología.</p>
-      </div>
-      <div class="footer-contact">
-        <h3 class="footer-heading">Contacto</h3>
-        <address class="footer-address">
-          <p>contacto@tsoft.com</p>
-          <p>+54 11 0000-0000</p>
-          <p>Buenos Aires, Argentina</p>
-        </address>
-      </div>
-      <div class="footer-nav">
-        <h3 class="footer-heading">Navegación</h3>
-        <ul class="footer-nav-list">
-          <li><a href="#saludos" class="footer-link">Saludos</a></li>
-          <li><a href="#nosotros" class="footer-link">Nosotros</a></li>
-          <li><a href="#contacto" class="footer-link">Contacto</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p class="footer-copy">&copy; 2025 Tsoft. Todos los derechos reservados.</p>
-    </div>
+  <footer class="site-footer">
+    <p>&copy; <span id="footer-year"></span> Tsoft. Todos los derechos reservados.</p>
   </footer>
 
   <script>
-    var GREETINGS_DATA = [
-      {
-        country: "Argentina",
-        flag: "\uD83C\uDDE6\uD83C\uDDF7",
-        greeting: "¡Hola!",
-        language: "Español",
-        phonetic: "O-la",
-        office: "Buenos Aires"
-      },
-      {
-        country: "Brasil",
-        flag: "\uD83C\uDDE7\uD83C\uDDF7",
-        greeting: "Olá!",
-        language: "Portugués",
-        phonetic: "O-lá",
-        office: "São Paulo"
-      },
-      {
-        country: "México",
-        flag: "\uD83C\uDDF2\uD83C\uDDFD",
-        greeting: "¡Hola!",
-        language: "Español",
-        phonetic: "O-la",
-        office: "Ciudad de México"
-      },
-      {
-        country: "Colombia",
-        flag: "\uD83C\uDDE8\uD83C\uDDF4",
-        greeting: "¡Hola!",
-        language: "Español",
-        phonetic: "O-la",
-        office: "Bogotá"
-      },
+    var offices = [
       {
         country: "España",
-        flag: "\uD83C\uDDEA\uD83C\uDDF8",
-        greeting: "¡Hola!",
-        language: "Español",
-        phonetic: "O-la",
-        office: "Madrid"
-      },
-      {
-        country: "Francia",
-        flag: "\uD83C\uDDEB\uD83C\uDDF7",
-        greeting: "Bonjour!",
-        language: "Francés",
-        phonetic: "Bon-zhur",
-        office: "París"
-      },
-      {
-        country: "Alemania",
-        flag: "\uD83C\uDDE9\uD83C\uDDEA",
-        greeting: "Hallo!",
-        language: "Alemán",
-        phonetic: "Ha-lo",
-        office: "Berlín"
-      },
-      {
-        country: "Japón",
-        flag: "\uD83C\uDDEF\uD83C\uDDF5",
-        greeting: "こんにちは",
-        language: "Japonés",
-        phonetic: "Kon-ni-chi-wa",
-        office: "Tokio"
+        office: "Sede Central — Madrid",
+        flag: "🇪🇸",
+        greetingNative: "¡Hola!",
+        greetingEs: "¡Hola!",
+        lang: "ES",
+        timezone: "UTC+1 / UTC+2"
       },
       {
         country: "Estados Unidos",
-        flag: "\uD83C\uDDFA\uD83C\uDDF8",
-        greeting: "Hello!",
-        language: "Inglés",
-        phonetic: "He-lou",
-        office: "Nueva York"
+        office: "Oficina — Nueva York",
+        flag: "🇺🇸",
+        greetingNative: "Hello!",
+        greetingEs: "¡Hola!",
+        lang: "EN",
+        timezone: "UTC−5 / UTC−4"
+      },
+      {
+        country: "Francia",
+        office: "Oficina — París",
+        flag: "🇫🇷",
+        greetingNative: "Bonjour !",
+        greetingEs: "¡Buenos días!",
+        lang: "FR",
+        timezone: "UTC+1 / UTC+2"
+      },
+      {
+        country: "Alemania",
+        office: "Oficina — Berlín",
+        flag: "🇩🇪",
+        greetingNative: "Hallo!",
+        greetingEs: "¡Hola!",
+        lang: "DE",
+        timezone: "UTC+1 / UTC+2"
+      },
+      {
+        country: "Japón",
+        office: "Oficina — Tokio",
+        flag: "🇯🇵",
+        greetingNative: "こんにちは！",
+        greetingEs: "¡Buenas tardes!",
+        lang: "JA",
+        timezone: "UTC+9"
+      },
+      {
+        country: "Brasil",
+        office: "Oficina — São Paulo",
+        flag: "🇧🇷",
+        greetingNative: "Olá!",
+        greetingEs: "¡Hola!",
+        lang: "PT",
+        timezone: "UTC−3"
+      },
+      {
+        country: "México",
+        office: "Oficina — Ciudad de México",
+        flag: "🇲🇽",
+        greetingNative: "¡Hola!",
+        greetingEs: "¡Hola!",
+        lang: "ES",
+        timezone: "UTC−6 / UTC−5"
+      },
+      {
+        country: "India",
+        office: "Oficina — Bangalore",
+        flag: "🇮🇳",
+        greetingNative: "नमस्ते!",
+        greetingEs: "¡Namaste!",
+        lang: "HI",
+        timezone: "UTC+5:30"
+      },
+      {
+        country: "Australia",
+        office: "Oficina — Sídney",
+        flag: "🇦🇺",
+        greetingNative: "G'day!",
+        greetingEs: "¡Buen día!",
+        lang: "EN",
+        timezone: "UTC+10 / UTC+11"
+      },
+      {
+        country: "Corea del Sur",
+        office: "Oficina — Seúl",
+        flag: "🇰🇷",
+        greetingNative: "안녕하세요!",
+        greetingEs: "¡Bienvenido!",
+        lang: "KO",
+        timezone: "UTC+9"
+      },
+      {
+        country: "Países Bajos",
+        office: "Oficina — Ámsterdam",
+        flag: "🇳🇱",
+        greetingNative: "Hallo!",
+        greetingEs: "¡Hola!",
+        lang: "NL",
+        timezone: "UTC+1 / UTC+2"
+      },
+      {
+        country: "Emiratos Árabes",
+        office: "Oficina — Dubái",
+        flag: "🇦🇪",
+        greetingNative: "مرحبا!",
+        greetingEs: "¡Bienvenido!",
+        lang: "AR",
+        timezone: "UTC+4"
       }
     ];
+
+    function buildCard(office) {
+      var card = document.createElement('article');
+      card.className = 'card';
+
+      card.innerHTML =
+        '<div class="card-header">' +
+          '<span class="card-flag" aria-hidden="true">' + office.flag + '</span>' +
+          '<div>' +
+            '<div class="card-country">' + office.country + '</div>' +
+            '<div class="card-office">' + office.office + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<hr class="card-divider">' +
+        '<p class="card-greeting-native">' + office.greetingNative + '</p>' +
+        '<p class="card-greeting-es">' + office.greetingEs + '</p>' +
+        '<div class="card-footer">' +
+          '<span class="card-lang-badge">' + office.lang + '</span>' +
+          '<span class="card-timezone">' + office.timezone + '</span>' +
+        '</div>';
+
+      return card;
+    }
+
+    function renderCards() {
+      var container = document.getElementById('cards-container');
+      for (var i = 0; i < offices.length; i++) {
+        container.appendChild(buildCard(offices[i]));
+      }
+    }
+
+    function setFooterYear() {
+      var yearEl = document.getElementById('footer-year');
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
+    }
+
+    renderCards();
+    setFooterYear();
   </script>
-  <script src="./main.js"></script>
 
 </body>
 </html>

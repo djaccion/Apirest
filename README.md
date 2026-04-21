@@ -1,74 +1,45 @@
 # Tsoft — Página de Saludos Internacionales
+Página web estática que muestra saludos coloquiales de los países donde Tsoft tiene oficinas.
+Archivo único · Sin dependencias · Sin build · Sin servidor requerido.
 
-Página estática que muestra saludos coloquiales de los países donde Tsoft tiene oficinas.
+## Cómo abrir
 
-## Requisitos
-
-- Navegador web moderno (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
-- No requiere servidor, Node.js, ni dependencias externas
-
-## Cómo ejecutar
-
-### Opción A — Apertura local directa
-
-Abre el archivo directamente en tu navegador:
-
-```bash
-# En sistemas Unix/macOS
-open index.html
-
-# En Windows
-start index.html
-```
-
-### Opción B — Servidor local simple (recomendado)
-
-```bash
-# Con Python 3
-python -m http.server 8080
-
-# Luego abre: http://localhost:8080
-```
-
-*"La Opción B evita restricciones de seguridad del protocolo `file:///` en algunos navegadores."*
-
-## Estructura de archivos
+1. Abre el archivo directamente haciendo doble clic sobre `index.html`. Se cargará en tu navegador bajo el protocolo `file:///`.
+2. Opcionalmente, sirve el archivo con un servidor estático local:
 
 ```
-index.html   — Estructura HTML y contenido de la página
-styles.css   — Estilos visuales y variables de marca Tsoft
-main.js      — Datos de saludos y lógica de renderizado
-README.md    — Este archivo
+python3 -m http.server 8080
 ```
 
-## Cómo agregar o modificar un saludo
+URL resultante: `http://localhost:8080`
 
-Los datos de saludos están centralizados en `main.js`, en el array `GREETINGS_DATA` al inicio del archivo.
+## Estructura del proyecto
 
-```javascript
-// Estructura de cada entrada en GREETINGS_DATA
-{
-  pais: "Argentina",
-  bandera_emoji: "🇦🇷",
-  saludo_coloquial: "¡Buenas!",
-  idioma: "Español (Rioplatense)"
-}
-```
-
-Para agregar un país, copia el bloque anterior, pégalo en el array y completa los cuatro campos.
+- `index.html` — Aplicación completa: estructura, estilos y datos de saludos.
+- `README.md` — Este archivo.
 
 ## Países incluidos
 
-- 🇦🇷 Argentina
-- 🇧🇷 Brasil
-- 🇨🇱 Chile
-- 🇨🇴 Colombia
-- 🇪🇸 España
-- 🇲🇽 México
-- 🇵🇪 Perú
-- 🇺🇸 Estados Unidos
-- 🇺🇾 Uruguay
+| País | Saludo coloquial |
+|---|---|
+| Argentina | ¡Buenas! |
+| Brasil | Oi! |
+| Chile | ¡Buenas! |
+| Colombia | ¡Quiubo! |
+| España | ¡Buenas! |
+| Estados Unidos | Hey! |
+| México | ¡Qué onda! |
+| Perú | ¡Habla! |
+| Uruguay | ¡Hola! |
 
-## Despliegue en producción
+> ⚠️ **ADVERTENCIA AL DESARROLLADOR:** Los saludos de esta tabla son referencia de documentación. Los saludos que se renderizan en pantalla viven en el array de datos dentro de `index.html`. Ambas fuentes deben coincidir. Si el Arquitecto modifica un saludo, actualiza las dos fuentes.
 
-Esta página es compatible con cualquier servidor de archivos estáticos. Sube los cuatro archivos del proyecto a GitHub Pages, Netlify o un bucket S3 con hosting estático habilitado. En producción, asegúrate de servir el sitio bajo HTTPS.
+## Configuración al desplegar en servidor
+
+Al servir la aplicación desde HTTPS, configura las siguientes cabeceras HTTP en el servidor (Nginx, Apache o CDN):
+
+- `Content-Security-Policy: default-src 'self'`
+- `X-Frame-Options: DENY`
+- `Strict-Transport-Security: max-age=31536000`
+
+*Estas cabeceras no aplican en protocolo `file:///`.*
