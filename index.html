@@ -1,71 +1,183 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Saludos internacionales de las oficinas Tsoft">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Saludos Internacionales — Tsoft</title>
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header>
-      <span class="logo-placeholder">[TSOFT]</span>
-      <h1>Saludos Internacionales — Tsoft</h1>
-      <p>Así saludamos en cada una de nuestras oficinas</p>
+      <div class="header-inner">
+        <span class="logo-text">Tsoft</span>
+        <nav aria-label="Navegación principal">
+          <a href="#greetings-section">Saludos</a>
+        </nav>
+      </div>
     </header>
+
     <main>
-      <div id="greetings-grid" role="list" aria-label="Saludos por país"></div>
+      <section id="greetings-section" aria-labelledby="section-title">
+        <h1 id="section-title">Saludos desde nuestras oficinas</h1>
+        <p class="section-subtitle">
+          Así nos saludan nuestros equipos alrededor del mundo.
+        </p>
+        <div id="greetings-grid" role="list">
+        </div>
+      </section>
     </main>
-    <footer class="site-footer">
-      <p>© Tsoft — Todos los derechos reservados</p>
+
+    <footer>
+      <div class="footer-inner">
+        <p>&copy; <span id="current-year"></span> Tsoft. Todos los derechos reservados.</p>
+      </div>
     </footer>
+
     <script>
-      const greetings = [
-        { country: "Argentina", greeting: "¡Buenas!",             context: "Saludo informal rioplatense, válido a cualquier hora" },
-        { country: "Chile",     greeting: "¡Buenas!",             context: "Saludo coloquial chileno, abreviación de 'buenas tardes/noches'" },
-        { country: "Uruguay",   greeting: "¡Hola, ¿cómo andás?", context: "Saludo cotidiano con tuteo rioplatense" },
-        { country: "Colombia",  greeting: "¡Quiubo!",             context: "Contracción de '¿Qué hubo?', saludo informal bogotano" },
-        { country: "Perú",      greeting: "¡Habla, causa!",       context: "Saludo entre amigos, 'causa' significa 'pata' o amigo cercano" },
-        { country: "México",    greeting: "¡Qué onda!",           context: "Saludo informal juvenil de uso extendido en todo el país" },
-        { country: "Brasil",    greeting: "E aí!",                context: "Saludo informal brasileño equivalente a '¿Qué hay?'" },
-        { country: "España",    greeting: "¡Buenas!",             context: "Saludo coloquial peninsular, válido a cualquier hora del día" },
-        { country: "EE.UU.",    greeting: "Hey!",                 context: "Saludo informal anglosajón de uso universal entre colegas" }
+      var greetingsData = [
+        {
+          country: "Argentina",
+          flag: "🇦🇷",
+          greeting: "¡Buenas!",
+          language: "Español rioplatense",
+          city: "Buenos Aires"
+        },
+        {
+          country: "Brasil",
+          flag: "🇧🇷",
+          greeting: "Olá!",
+          language: "Portugués brasileño",
+          city: "São Paulo"
+        },
+        {
+          country: "México",
+          flag: "🇲🇽",
+          greeting: "¡Qué onda!",
+          language: "Español mexicano",
+          city: "Ciudad de México"
+        },
+        {
+          country: "España",
+          flag: "🇪🇸",
+          greeting: "¡Hola!",
+          language: "Español castellano",
+          city: "Madrid"
+        },
+        {
+          country: "Francia",
+          flag: "🇫🇷",
+          greeting: "Bonjour!",
+          language: "Francés",
+          city: "París"
+        },
+        {
+          country: "Alemania",
+          flag: "🇩🇪",
+          greeting: "Hallo!",
+          language: "Alemán",
+          city: "Berlín"
+        },
+        {
+          country: "Japón",
+          flag: "🇯🇵",
+          greeting: "こんにちは",
+          language: "Japonés",
+          city: "Tokio"
+        },
+        {
+          country: "China",
+          flag: "🇨🇳",
+          greeting: "你好",
+          language: "Mandarín",
+          city: "Shanghái"
+        },
+        {
+          country: "India",
+          flag: "🇮🇳",
+          greeting: "नमस्ते",
+          language: "Hindi",
+          city: "Mumbai"
+        },
+        {
+          country: "Estados Unidos",
+          flag: "🇺🇸",
+          greeting: "Hey there!",
+          language: "Inglés americano",
+          city: "Nueva York"
+        },
+        {
+          country: "Reino Unido",
+          flag: "🇬🇧",
+          greeting: "Cheerio!",
+          language: "Inglés británico",
+          city: "Londres"
+        },
+        {
+          country: "Italia",
+          flag: "🇮🇹",
+          greeting: "Ciao!",
+          language: "Italiano",
+          city: "Roma"
+        }
       ];
 
+      function escapeHtml(text) {
+        var map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+        return String(text).replace(/[&<>"']/g, function(char) { return map[char]; });
+      }
+
       function buildCard(item) {
-        const article = document.createElement("article");
+        var article = document.createElement("article");
         article.setAttribute("role", "listitem");
         article.className = "greeting-card";
 
-        const countryEl = document.createElement("h2");
-        countryEl.className = "greeting-card__country";
-        countryEl.textContent = item.country;
+        var flag = document.createElement("span");
+        flag.className = "card-flag";
+        flag.setAttribute("aria-hidden", "true");
+        flag.textContent = item.flag;
 
-        const greetingEl = document.createElement("p");
-        greetingEl.className = "greeting-card__greeting";
-        greetingEl.textContent = item.greeting;
+        var greeting = document.createElement("h2");
+        greeting.className = "card-greeting";
+        greeting.textContent = item.greeting;
 
-        const contextEl = document.createElement("p");
-        contextEl.className = "greeting-card__context";
-        contextEl.textContent = item.context;
+        var country = document.createElement("p");
+        country.className = "card-country";
+        country.textContent = escapeHtml(item.country);
 
-        article.appendChild(countryEl);
-        article.appendChild(greetingEl);
-        article.appendChild(contextEl);
+        var city = document.createElement("p");
+        city.className = "card-city";
+        city.textContent = escapeHtml(item.city);
+
+        var language = document.createElement("span");
+        language.className = "card-language";
+        language.textContent = escapeHtml(item.language);
+
+        article.appendChild(flag);
+        article.appendChild(greeting);
+        article.appendChild(country);
+        article.appendChild(city);
+        article.appendChild(language);
 
         return article;
       }
 
-      function renderGreetings(data, container) {
-        const fragment = document.createDocumentFragment();
-        for (let i = 0; i < data.length; i++) {
+      function renderGreetings(data, containerId) {
+        var container = document.getElementById(containerId);
+        if (!container) { return; }
+        var fragment = document.createDocumentFragment();
+        for (var i = 0; i < data.length; i++) {
           fragment.appendChild(buildCard(data[i]));
         }
         container.appendChild(fragment);
       }
 
-      const grid = document.getElementById("greetings-grid");
-      renderGreetings(greetings, grid);
+      function setCurrentYear(spanId) {
+        var el = document.getElementById(spanId);
+        if (el) { el.textContent = new Date().getFullYear(); }
+      }
+
+      renderGreetings(greetingsData, "greetings-grid");
+      setCurrentYear("current-year");
     </script>
   </body>
 </html>

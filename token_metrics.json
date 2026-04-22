@@ -1,37 +1,37 @@
 {
-  "tokens_input": 34573,
-  "tokens_output": 9314,
-  "tokens_total": 43887,
-  "estimated_hours": 12.5,
-  "squad_days_equivalent": 1.6,
+  "tokens_input": 20646,
+  "tokens_output": 7189,
+  "tokens_total": 27835,
+  "estimated_hours": 6.4,
+  "squad_days_equivalent": 0.8,
   "hours_by_agent": {
     "arquitecto": {
       "hours": 1.7,
       "calls": 1,
       "hoursPerCall": 1.5,
-      "volumeMultiplier": 1.12,
-      "tokens": 3673
+      "volumeMultiplier": 1.11,
+      "tokens": 3563
     },
     "tech_lead": {
-      "hours": 5.2,
-      "calls": 4,
+      "hours": 2.2,
+      "calls": 2,
       "hoursPerCall": 0.8,
-      "volumeMultiplier": 1.63,
-      "tokens": 14922
+      "volumeMultiplier": 1.39,
+      "tokens": 7792
     },
     "desarrollador": {
-      "hours": 3.1,
-      "calls": 4,
+      "hours": 1.4,
+      "calls": 2,
       "hoursPerCall": 0.5,
-      "volumeMultiplier": 1.55,
-      "tokens": 11924
+      "volumeMultiplier": 1.4,
+      "tokens": 7853
     },
     "qa": {
-      "hours": 2.5,
-      "calls": 4,
+      "hours": 1.1,
+      "calls": 2,
       "hoursPerCall": 0.4,
-      "volumeMultiplier": 1.59,
-      "tokens": 13368
+      "volumeMultiplier": 1.43,
+      "tokens": 8627
     }
   },
   "modelo": "claude-sonnet-4-6",
@@ -59,30 +59,30 @@
       "skill_name": "QA-VALIDACION"
     }
   ],
-  "timestamp": "2026-04-22T00:03:37.400Z",
+  "timestamp": "2026-04-22T00:17:18.790Z",
   "by_agent": {
     "arquitecto": {
       "input": 2343,
-      "output": 1330,
+      "output": 1220,
       "calls": 1,
       "skill_name": "DISEÑO-ARQUITECTURA"
     },
     "tech_lead": {
-      "input": 9804,
-      "output": 5118,
-      "calls": 4,
+      "input": 4792,
+      "output": 3000,
+      "calls": 2,
       "skill_name": "MICROPLANIFICACION-DISEÑO"
     },
     "desarrollador": {
-      "input": 9206,
-      "output": 2718,
-      "calls": 4,
+      "input": 4958,
+      "output": 2895,
+      "calls": 2,
       "skill_name": "FRONTEND-DESARROLLO"
     },
     "qa": {
-      "input": 13220,
-      "output": 148,
-      "calls": 4,
+      "input": 8553,
+      "output": 74,
+      "calls": 2,
       "skill_name": "QA-VALIDACION"
     }
   }
