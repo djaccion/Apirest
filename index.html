@@ -3,75 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self';
-             style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-             font-src https://fonts.gstatic.com;
-             script-src 'self';
-             img-src 'self' data:;">
-  <meta name="description" content="Hola TSOFT — Saludos personalizados por país para las oficinas de TSOFT en Latinoamérica y USA.">
-  <meta name="author" content="TSOFT">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
   <title>Hola TSOFT</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
+  <main id="app">
+    <header>
+      <h1>Hola, TSOFT</h1>
+    </header>
 
-  <header class="site-header">
-    <div class="header-brand">
-      <span class="brand-logo">TSOFT</span>
-      <span class="brand-tagline">Conectando talento en Latinoamérica</span>
-    </div>
-  </header>
+    <nav id="country-selector" role="navigation" aria-label="Selector de país"></nav>
 
-  <main class="site-main">
-
-    <section class="selector-section" aria-label="Selector de país">
-      <h1 class="selector-title">Selecciona tu país</h1>
-      <div class="selector-grid">
-        <button class="country-btn" data-country="argentina">🇦🇷 Argentina</button>
-        <button class="country-btn" data-country="bolivia">🇧🇴 Bolivia</button>
-        <button class="country-btn" data-country="brasil">🇧🇷 Brasil</button>
-        <button class="country-btn" data-country="chile">🇨🇱 Chile</button>
-        <button class="country-btn" data-country="colombia">🇨🇴 Colombia</button>
-        <button class="country-btn" data-country="costa-rica">🇨🇷 Costa Rica</button>
-        <button class="country-btn" data-country="ecuador">🇪🇨 Ecuador</button>
-        <button class="country-btn" data-country="el-salvador">🇸🇻 El Salvador</button>
-        <button class="country-btn" data-country="guatemala">🇬🇹 Guatemala</button>
-        <button class="country-btn" data-country="honduras">🇭🇳 Honduras</button>
-        <button class="country-btn" data-country="mexico">🇲🇽 México</button>
-        <button class="country-btn" data-country="nicaragua">🇳🇮 Nicaragua</button>
-        <button class="country-btn" data-country="panama">🇵🇦 Panamá</button>
-        <button class="country-btn" data-country="paraguay">🇵🇾 Paraguay</button>
-        <button class="country-btn" data-country="peru">🇵🇪 Perú</button>
-        <button class="country-btn" data-country="republica-dominicana">🇩🇴 Rep. Dominicana</button>
-        <button class="country-btn" data-country="uruguay">🇺🇾 Uruguay</button>
-        <button class="country-btn" data-country="usa">🇺🇸 USA</button>
-        <button class="country-btn" data-country="venezuela">🇻🇪 Venezuela</button>
-      </div>
+    <section id="greeting-display" aria-live="polite">
+      <p id="greeting-flag"></p>
+      <p id="greeting-text"></p>
+      <p id="greeting-country"></p>
     </section>
 
-    <section class="greeting-section" aria-label="Saludo personalizado" aria-live="polite">
-      <div class="greeting-card" id="greeting-card" hidden>
-        <p class="greeting-flag" id="greeting-flag"></p>
-        <h2 class="greeting-text" id="greeting-text"></h2>
-        <p class="greeting-sub" id="greeting-sub"></p>
-      </div>
-      <div class="greeting-placeholder" id="greeting-placeholder">
-        <p class="placeholder-text">👆 Elige un país para ver tu saludo</p>
-      </div>
-    </section>
-
+    <footer>
+      <p>© TSOFT — Todos los derechos reservados</p>
+    </footer>
   </main>
 
-  <footer class="site-footer">
-    <p class="footer-copy">&copy; <span id="footer-year"></span> TSOFT. Todos los derechos reservados.</p>
-  </footer>
+  <script>
+    const GREETINGS_DATA = {
+      argentina: {
+        flag:     '🇦🇷',
+        greeting: '¡Hola, equipo!',
+        country:  'Argentina'
+      },
+      mexico: {
+        flag:     '🇲🇽',
+        greeting: '¡Hola, equipo!',
+        country:  'México'
+      },
+      colombia: {
+        flag:     '🇨🇴',
+        greeting: '¡Hola, equipo!',
+        country:  'Colombia'
+      },
+      chile: {
+        flag:     '🇨🇱',
+        greeting: '¡Hola, equipo!',
+        country:  'Chile'
+      },
+      peru: {
+        flag:     '🇵🇪',
+        greeting: '¡Hola, equipo!',
+        country:  'Perú'
+      },
+      uruguay: {
+        flag:     '🇺🇾',
+        greeting: '¡Hola, equipo!',
+        country:  'Uruguay'
+      }
+    };
 
-  <script src="./js/main.js"></script>
+    function renderSelector() {
+      var nav = document.getElementById('country-selector');
+      Object.keys(GREETINGS_DATA).forEach(function(key) {
+        var data = GREETINGS_DATA[key];
+        var btn = document.createElement('button');
+        btn.setAttribute('data-country', key);
+        btn.setAttribute('aria-label', 'Ver saludo de ' + data.country);
+        btn.textContent = data.flag + ' ' + data.country;
+        btn.onclick = function() { showGreeting(key); };
+        nav.appendChild(btn);
+      });
+    }
 
+    function showGreeting(key) {
+      var data = GREETINGS_DATA[key];
+      document.getElementById('greeting-flag').textContent    = data.flag;
+      document.getElementById('greeting-text').textContent    = data.greeting;
+      document.getElementById('greeting-country').textContent = data.country;
+
+      // Marca el botón activo y limpia los demás
+      var buttons = document.querySelectorAll('#country-selector button');
+      buttons.forEach(function(btn) {
+        if (btn.getAttribute('data-country') === key) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    renderSelector();
+  </script>
 </body>
 </html>
