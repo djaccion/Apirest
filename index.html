@@ -1,89 +1,222 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Hola TSOFT — Saludos personalizados por oficina">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self';
-                 style-src 'self' 'unsafe-inline';
-                 script-src 'self' 'unsafe-inline';
-                 img-src 'none';
-                 object-src 'none'">
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'" />
   <title>Hola TSOFT</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <span class="brand-logo" aria-label="TSOFT">TSOFT</span>
-      <button
-        id="lang-toggle"
-        class="lang-btn"
-        aria-pressed="false"
-        aria-label="Cambiar idioma a inglés">
-        ES / EN
+  <div id="app">
+
+    <header id="site-header" class="site-header">
+      <h1 class="site-header__title">Saludos desde TSOFT</h1>
+    </header>
+
+    <div id="country-dropdown" class="dropdown">
+
+      <button class="dropdown__trigger" aria-haspopup="listbox" aria-expanded="false">
+        <span class="dropdown-option__flag">🇦🇷</span>
+        <span class="dropdown-option__label">Argentina</span>
       </button>
+
+      <ul class="dropdown__menu" role="listbox">
+
+        <li class="dropdown-option dropdown-option--selected"
+            data-country="ar"
+            role="option"
+            aria-selected="true">
+          <span class="dropdown-option__flag">🇦🇷</span>
+          <span class="dropdown-option__label">Argentina</span>
+        </li>
+
+        <li class="dropdown-option"
+            data-country="co"
+            role="option"
+            aria-selected="false">
+          <span class="dropdown-option__flag">🇨🇴</span>
+          <span class="dropdown-option__label">Colombia</span>
+        </li>
+
+        <li class="dropdown-option"
+            data-country="pe"
+            role="option"
+            aria-selected="false">
+          <span class="dropdown-option__flag">🇵🇪</span>
+          <span class="dropdown-option__label">Perú</span>
+        </li>
+
+        <li class="dropdown-option"
+            data-country="mx"
+            role="option"
+            aria-selected="false">
+          <span class="dropdown-option__flag">🇲🇽</span>
+          <span class="dropdown-option__label">México</span>
+        </li>
+
+        <li class="dropdown-option"
+            data-country="us"
+            role="option"
+            aria-selected="false">
+          <span class="dropdown-option__flag">🇺🇸</span>
+          <span class="dropdown-option__label">Estados Unidos</span>
+        </li>
+
+        <li class="dropdown-option"
+            data-country="es"
+            role="option"
+            aria-selected="false">
+          <span class="dropdown-option__flag">🇪🇸</span>
+          <span class="dropdown-option__label">España</span>
+        </li>
+
+      </ul>
     </div>
-  </header>
 
-  <main class="main-content">
+    <main id="greetings-container">
 
-    <section class="selector-section" aria-labelledby="selector-title">
-      <h1 id="selector-title" class="section-title">
-        Selecciona tu oficina
-      </h1>
+      <article class="greeting-card greeting-card--active" id="card-ar">
+        <p class="greeting-card__phrase">¡Che, bienvenidos a la familia TSOFT!</p>
+        <span class="greeting-card__country">Argentina 🇦🇷</span>
+      </article>
 
-      <div class="dropdown-wrapper">
-        <button
-          id="dropdown-trigger"
-          class="dropdown-trigger"
-          aria-haspopup="listbox"
-          aria-expanded="false"
-          aria-controls="country-listbox">
-          <span id="selected-flag" class="flag-display" aria-hidden="true">🌎</span>
-          <span id="selected-country-name" class="country-name-display">Elige un país</span>
-          <span class="dropdown-arrow" aria-hidden="true">▾</span>
-        </button>
+      <article class="greeting-card" id="card-co" hidden>
+        <p class="greeting-card__phrase">¡Quiubo parce, esto es TSOFT!</p>
+        <span class="greeting-card__country">Colombia 🇨🇴</span>
+      </article>
 
-        <ul
-          id="country-listbox"
-          class="country-list"
-          role="listbox"
-          aria-label="Lista de oficinas TSOFT"
-          hidden>
-        </ul>
-      </div>
-    </section>
+      <article class="greeting-card" id="card-pe" hidden>
+        <p class="greeting-card__phrase">¡Causa, bienvenido al equipo TSOFT!</p>
+        <span class="greeting-card__country">Perú 🇵🇪</span>
+      </article>
 
-    <section class="greeting-section" aria-labelledby="greeting-label" aria-live="polite">
-      <div id="greeting-card" class="greeting-card" hidden>
+      <article class="greeting-card" id="card-mx" hidden>
+        <p class="greeting-card__phrase">¡Órale cuate, bienvenido a TSOFT!</p>
+        <span class="greeting-card__country">México 🇲🇽</span>
+      </article>
 
-        <div class="greeting-flag-display" aria-hidden="true">
-          <span id="greeting-flag" class="greeting-flag-emoji"></span>
-        </div>
+      <article class="greeting-card" id="card-us" hidden>
+        <p class="greeting-card__phrase">Hey buddy, welcome to the TSOFT crew!</p>
+        <span class="greeting-card__country">Estados Unidos 🇺🇸</span>
+      </article>
 
-        <p id="greeting-label" class="greeting-country-name"></p>
+      <article class="greeting-card" id="card-es" hidden>
+        <p class="greeting-card__phrase">¡Tío, bienvenido al equipo TSOFT!</p>
+        <span class="greeting-card__country">España 🇪🇸</span>
+      </article>
 
-        <blockquote id="greeting-text" class="greeting-phrase" lang="es"></blockquote>
+    </main>
 
-        <p id="greeting-translation" class="greeting-translation" lang="en"></p>
+  </div>
 
-      </div>
+  <script>
+    (function () {
+      var countryData = {
+        ar: { flag: '🇦🇷', label: 'Argentina' },
+        co: { flag: '🇨🇴', label: 'Colombia' },
+        pe: { flag: '🇵🇪', label: 'Perú' },
+        mx: { flag: '🇲🇽', label: 'México' },
+        us: { flag: '🇺🇸', label: 'Estados Unidos' },
+        es: { flag: '🇪🇸', label: 'España' }
+      };
 
-      <div id="greeting-placeholder" class="greeting-placeholder">
-        <p class="placeholder-text">👆 Selecciona una oficina para ver el saludo</p>
-      </div>
-    </section>
+      var dropdown        = document.getElementById('country-dropdown');
+      var trigger         = dropdown.querySelector('.dropdown__trigger');
+      var menu            = dropdown.querySelector('.dropdown__menu');
+      var options         = dropdown.querySelectorAll('.dropdown-option');
+      var greetingsContainer = document.getElementById('greetings-container');
 
-  </main>
+      var triggerFlag  = trigger.querySelector('.dropdown-option__flag');
+      var triggerLabel = trigger.querySelector('.dropdown-option__label');
 
-  <footer class="site-footer">
-    <p class="footer-text">
-      © <span id="footer-year"></span> TSOFT — Todos los derechos reservados
-    </p>
-  </footer>
+      var currentCountry = 'ar';
 
-  <script src="js/main.js" defer></script>
+      function openDropdown() {
+        menu.classList.add('dropdown--open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+
+      function closeDropdown() {
+        menu.classList.remove('dropdown--open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+
+      function selectCountry(newCountry) {
+        if (newCountry === currentCountry) {
+          closeDropdown();
+          return;
+        }
+
+        var prevCard = document.getElementById('card-' + currentCountry);
+        var nextCard = document.getElementById('card-' + newCountry);
+
+        if (!prevCard || !nextCard) {
+          closeDropdown();
+          return;
+        }
+
+        prevCard.hidden = true;
+        prevCard.classList.remove('greeting-card--active');
+
+        nextCard.hidden = false;
+        nextCard.classList.add('greeting-card--active');
+
+        var prevOption = dropdown.querySelector('.dropdown-option--selected');
+        if (prevOption) {
+          prevOption.classList.remove('dropdown-option--selected');
+          prevOption.setAttribute('aria-selected', 'false');
+        }
+
+        var nextOption = dropdown.querySelector('[data-country="' + newCountry + '"]');
+        if (nextOption) {
+          nextOption.classList.add('dropdown-option--selected');
+          nextOption.setAttribute('aria-selected', 'true');
+        }
+
+        var data = countryData[newCountry];
+        if (data) {
+          triggerFlag.textContent  = data.flag;
+          triggerLabel.textContent = data.label;
+        }
+
+        currentCountry = newCountry;
+        closeDropdown();
+      }
+
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (menu.classList.contains('dropdown--open')) {
+          closeDropdown();
+        } else {
+          openDropdown();
+        }
+      });
+
+      for (var i = 0; i < options.length; i++) {
+        options[i].addEventListener('click', function (e) {
+          e.stopPropagation();
+          var country = this.getAttribute('data-country');
+          if (country) {
+            selectCountry(country);
+          }
+        });
+      }
+
+      document.addEventListener('click', function () {
+        if (menu.classList.contains('dropdown--open')) {
+          closeDropdown();
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && menu.classList.contains('dropdown--open')) {
+          closeDropdown();
+          trigger.focus();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
