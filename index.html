@@ -3,54 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hola TSOFT — Saludos personalizados por oficina">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self'; script-src 'self';">
-  <meta name="description" content="Saludos TSOFT por país">
+        content="default-src 'self';
+                 style-src 'self' 'unsafe-inline';
+                 script-src 'self' 'unsafe-inline';
+                 img-src 'none';
+                 object-src 'none'">
   <title>Hola TSOFT</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-
-  <header>
-    <div id="header-brand">
-      <span id="brand-name">TSOFT</span>
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="brand-logo" aria-label="TSOFT">TSOFT</span>
+      <button
+        id="lang-toggle"
+        class="lang-btn"
+        aria-pressed="false"
+        aria-label="Cambiar idioma a inglés">
+        ES / EN
+      </button>
     </div>
-    <p id="brand-tagline">Conectando Latinoamérica con tecnología</p>
   </header>
 
-  <main>
-    <h1 id="page-title">Selecciona tu país</h1>
+  <main class="main-content">
 
-    <div id="country-selector-wrapper">
+    <section class="selector-section" aria-labelledby="selector-title">
+      <h1 id="selector-title" class="section-title">
+        Selecciona tu oficina
+      </h1>
 
-      <label for="country-select" id="country-label">
-        Elige una oficina TSOFT:
-      </label>
+      <div class="dropdown-wrapper">
+        <button
+          id="dropdown-trigger"
+          class="dropdown-trigger"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="country-listbox">
+          <span id="selected-flag" class="flag-display" aria-hidden="true">🌎</span>
+          <span id="selected-country-name" class="country-name-display">Elige un país</span>
+          <span class="dropdown-arrow" aria-hidden="true">▾</span>
+        </button>
 
-      <select id="country-select" name="country" aria-labelledby="country-label">
-        <option value="" disabled selected>— Seleccionar país —</option>
-        <option value="pe" data-flag="🇵🇪">🇵🇪 Perú</option>
-        <option value="cl" data-flag="🇨🇱">🇨🇱 Chile</option>
-        <option value="co" data-flag="🇨🇴">🇨🇴 Colombia</option>
-        <option value="mx" data-flag="🇲🇽">🇲🇽 México</option>
-        <option value="ar" data-flag="🇦🇷">🇦🇷 Argentina</option>
-        <option value="es" data-flag="🇪🇸">🇪🇸 España</option>
-      </select>
+        <ul
+          id="country-listbox"
+          class="country-list"
+          role="listbox"
+          aria-label="Lista de oficinas TSOFT"
+          hidden>
+        </ul>
+      </div>
+    </section>
 
-    </div>
+    <section class="greeting-section" aria-labelledby="greeting-label" aria-live="polite">
+      <div id="greeting-card" class="greeting-card" hidden>
 
-    <section id="greeting-display" aria-live="polite" aria-atomic="true">
-      <div id="greeting-flag"></div>
-      <h2 id="greeting-text"></h2>
-      <p id="greeting-subtext"></p>
+        <div class="greeting-flag-display" aria-hidden="true">
+          <span id="greeting-flag" class="greeting-flag-emoji"></span>
+        </div>
+
+        <p id="greeting-label" class="greeting-country-name"></p>
+
+        <blockquote id="greeting-text" class="greeting-phrase" lang="es"></blockquote>
+
+        <p id="greeting-translation" class="greeting-translation" lang="en"></p>
+
+      </div>
+
+      <div id="greeting-placeholder" class="greeting-placeholder">
+        <p class="placeholder-text">👆 Selecciona una oficina para ver el saludo</p>
+      </div>
     </section>
 
   </main>
 
-  <footer>
-    <p id="footer-legal">&copy; 2025 TSOFT. Todos los derechos reservados.</p>
+  <footer class="site-footer">
+    <p class="footer-text">
+      © <span id="footer-year"></span> TSOFT — Todos los derechos reservados
+    </p>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>
