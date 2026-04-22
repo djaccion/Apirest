@@ -4,93 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self'; script-src 'self';">
-  <meta name="description" content="Saludos desde las oficinas TSOFT alrededor del mundo.">
+        content="default-src 'self';
+                 script-src 'self';
+                 style-src 'self';
+                 img-src 'self' https://flagcdn.com;
+                 object-src 'none'">
   <title>Hola TSOFT</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header id="site-header">
-    <div class="container">
-      <h1 id="main-title">Saludos desde TSOFT</h1>
-    </div>
-  </header>
+  <div id="app">
 
-  <main>
-    <div class="container">
+    <header class="header">
+      <h1 class="header__title">Saludos desde TSOFT</h1>
+    </header>
 
-      <!-- SELECTOR DE PAÍS -->
-      <div id="country-selector">
-        <button id="dropdown-trigger" class="tsoft-btn" aria-haspopup="listbox" aria-expanded="false">
-          <span id="greeting-flag">🇦🇷</span>
-          <span id="greeting-country">Argentina</span>
-          <span class="trigger-arrow" aria-hidden="true">▾</span>
+    <main>
+
+      <div id="country-dropdown" class="dropdown">
+
+        <button class="dropdown__toggle" aria-haspopup="listbox" aria-expanded="false">
+          <span class="dropdown__toggle-flag" aria-hidden="true"></span>
+          <span class="dropdown__toggle-label">Selecciona un país</span>
         </button>
 
-        <ul id="dropdown-panel" role="listbox" aria-label="Seleccionar país">
-          <li class="dropdown-option"
+        <ul class="dropdown__menu" role="listbox" aria-label="Selecciona el país de tu oficina">
+
+          <li class="dropdown__item"
               role="option"
-              data-country-id="ar"
-              data-lang="es-AR"
-              data-greeting="¡Hola desde Argentina!">
-            <span class="flag-emoji" aria-hidden="true">🇦🇷</span>
-            <span class="country-name">Argentina</span>
+              data-country-id="mexico"
+              data-lang="es-MX">
+            <span class="dropdown__item-flag" aria-hidden="true"></span>
+            <span class="dropdown__item-name">México</span>
           </li>
-          <li class="dropdown-option"
+
+          <li class="dropdown__item"
               role="option"
-              data-country-id="co"
-              data-lang="es-CO"
-              data-greeting="¡Hola desde Colombia!">
-            <span class="flag-emoji" aria-hidden="true">🇨🇴</span>
-            <span class="country-name">Colombia</span>
+              data-country-id="colombia"
+              data-lang="es-CO">
+            <span class="dropdown__item-flag" aria-hidden="true"></span>
+            <span class="dropdown__item-name">Colombia</span>
           </li>
-          <li class="dropdown-option"
+
+          <li class="dropdown__item"
               role="option"
-              data-country-id="pe"
-              data-lang="es-PE"
-              data-greeting="¡Hola desde Perú!">
-            <span class="flag-emoji" aria-hidden="true">🇵🇪</span>
-            <span class="country-name">Perú</span>
+              data-country-id="argentina"
+              data-lang="es-AR">
+            <span class="dropdown__item-flag" aria-hidden="true"></span>
+            <span class="dropdown__item-name">Argentina</span>
           </li>
-          <li class="dropdown-option"
+
+          <li class="dropdown__item"
               role="option"
-              data-country-id="mx"
-              data-lang="es-MX"
-              data-greeting="¡Hola desde México!">
-            <span class="flag-emoji" aria-hidden="true">🇲🇽</span>
-            <span class="country-name">México</span>
+              data-country-id="chile"
+              data-lang="es-CL">
+            <span class="dropdown__item-flag" aria-hidden="true"></span>
+            <span class="dropdown__item-name">Chile</span>
           </li>
-          <li class="dropdown-option"
+
+          <li class="dropdown__item"
               role="option"
-              data-country-id="us"
-              data-lang="en-US"
-              data-greeting="Hello from the United States!">
-            <span class="flag-emoji" aria-hidden="true">🇺🇸</span>
-            <span class="country-name">United States</span>
+              data-country-id="peru"
+              data-lang="es-PE">
+            <span class="dropdown__item-flag" aria-hidden="true"></span>
+            <span class="dropdown__item-name">Perú</span>
           </li>
-          <li class="dropdown-option"
+
+          <li class="dropdown__item"
               role="option"
-              data-country-id="es"
-              data-lang="es-ES"
-              data-greeting="¡Hola desde España!">
-            <span class="flag-emoji" aria-hidden="true">🇪🇸</span>
-            <span class="country-name">España</span>
+              data-country-id="españa"
+              data-lang="es-ES">
+            <span class="dropdown__item-flag" aria-hidden="true"></span>
+            <span class="dropdown__item-name">España</span>
           </li>
+
+          <li class="dropdown__item"
+              role="option"
+              data-country-id="usa"
+              data-lang="en-US">
+            <span class="dropdown__item-flag" aria-hidden="true"></span>
+            <span class="dropdown__item-name">USA</span>
+          </li>
+
         </ul>
       </div>
-      <!-- FIN SELECTOR DE PAÍS -->
 
-      <!-- TARJETA DE SALUDO -->
-      <div class="card-greeting">
-        <div id="greeting-display" class="is-active">
-          <p id="greeting-text">¡Hola desde Argentina!</p>
-        </div>
-      </div>
-      <!-- FIN TARJETA DE SALUDO -->
+      <section id="greeting-display" class="greeting">
+        <p class="greeting__flag" aria-hidden="true"></p>
+        <p class="greeting__phrase"></p>
+        <p class="greeting__country"></p>
+      </section>
 
-    </div>
-  </main>
+    </main>
 
-  <script defer src="js/main.js"></script>
+    <footer class="footer">
+      <p>© TSOFT — Todos los derechos reservados</p>
+    </footer>
+
+  </div>
+  <script src="js/main.js"></script>
 </body>
 </html>

@@ -1,105 +1,114 @@
-// ─── DATA LAYER ──────────────────────────────────────────────────────────────
-var GREETINGS_DATA = {
-  "ar": {
-    countryName : "Argentina",
-    flag        : "🇦🇷",
-    greeting    : "¡Hola desde Argentina!",
-    lang        : "es-AR"
-  },
-  "co": {
-    countryName : "Colombia",
-    flag        : "🇨🇴",
-    greeting    : "¡Hola desde Colombia!",
-    lang        : "es-CO"
-  },
-  "pe": {
-    countryName : "Perú",
-    flag        : "🇵🇪",
-    greeting    : "¡Hola desde Perú!",
-    lang        : "es-PE"
-  },
-  "mx": {
-    countryName : "México",
-    flag        : "🇲🇽",
-    greeting    : "¡Hola desde México!",
-    lang        : "es-MX"
-  },
-  "us": {
-    countryName : "USA",
-    flag        : "🇺🇸",
-    greeting    : "Hello from the USA!",
-    lang        : "en-US"
-  },
-  "es": {
-    countryName : "España",
-    flag        : "🇪🇸",
-    greeting    : "¡Hola desde España!",
-    lang        : "es-ES"
+(function () {
+  'use strict';
+
+  const COUNTRIES = [
+    {
+      id: 'mexico',
+      lang: 'es-MX',
+      flag: '🇲🇽',
+      name: 'México',
+      greeting: '¡Qué onda wey, bienvenido al equipo!'
+    },
+    {
+      id: 'colombia',
+      lang: 'es-CO',
+      flag: '🇨🇴',
+      name: 'Colombia',
+      greeting: '¡Quiubo parce, todo bien con vos!'
+    },
+    {
+      id: 'argentina',
+      lang: 'es-AR',
+      flag: '🇦🇷',
+      name: 'Argentina',
+      greeting: '¡Che boludo, re copado laburar acá!'
+    },
+    {
+      id: 'chile',
+      lang: 'es-CL',
+      flag: '🇨🇱',
+      name: 'Chile',
+      greeting: '¡Cachai po, bienvenido a la wea!'
+    },
+    {
+      id: 'peru',
+      lang: 'es-PE',
+      flag: '🇵🇪',
+      name: 'Perú',
+      greeting: '¡Causa, qué bacán estar con ustedes!'
+    },
+    {
+      id: 'usa',
+      lang: 'en-US',
+      flag: '🇺🇸',
+      name: 'USA',
+      greeting: "Hey y'all, mighty glad you're here!"
+    },
+    {
+      id: 'españa',
+      lang: 'es-ES',
+      flag: '🇪🇸',
+      name: 'España',
+      greeting: '¡Tío, qué guay molar en este equipo!'
+    }
+  ];
+
+  const toggleBtn       = document.querySelector('#country-dropdown .dropdown__toggle');
+  const toggleFlag      = document.querySelector('#country-dropdown .dropdown__toggle-flag');
+  const toggleLabel     = document.querySelector('#country-dropdown .dropdown__toggle-label');
+  const dropdownMenu    = document.querySelector('#country-dropdown .dropdown__menu');
+  const greetingDisplay = document.querySelector('#greeting-display');
+  const greetingFlag    = document.querySelector('#greeting-display .greeting__flag');
+  const greetingPhrase  = document.querySelector('#greeting-display .greeting__phrase');
+  const greetingCountry = document.querySelector('#greeting-display .greeting__country');
+
+  function updateGreeting(country) {
+    greetingFlag.textContent    = country.flag;
+    greetingPhrase.textContent  = country.greeting;
+    greetingCountry.textContent = country.name;
+    document.documentElement.setAttribute('lang', country.lang);
+    greetingDisplay.classList.add('is-active');
   }
-};
 
-// ─── DOM REFERENCES ───────────────────────────────────────────────────────────
-var dropdownTrigger  = document.getElementById('dropdown-trigger');
-var dropdownPanel    = document.getElementById('dropdown-panel');
-var greetingDisplay  = document.getElementById('greeting-display');
-var greetingText     = document.getElementById('greeting-text');
-var greetingCountry  = document.getElementById('greeting-country');
-var greetingFlag     = document.getElementById('greeting-flag');
-var dropdownOptions  = document.querySelectorAll('.dropdown-option');
-
-// ─── FUNCTIONS ────────────────────────────────────────────────────────────────
-function updateGreeting(countryId) {
-  var data = GREETINGS_DATA[countryId];
-  if (!data) { return; }
-  greetingText.textContent    = data.greeting;
-  greetingCountry.textContent = data.countryName;
-  greetingFlag.textContent    = data.flag;
-  greetingDisplay.setAttribute('lang', data.lang);
-}
-
-function closeDropdown() {
-  dropdownPanel.classList.remove('is-active');
-  dropdownTrigger.classList.remove('is-active');
-  dropdownTrigger.setAttribute('aria-expanded', 'false');
-}
-
-function toggleDropdown() {
-  dropdownPanel.classList.toggle('is-active');
-  dropdownTrigger.classList.toggle('is-active');
-  var isOpen = dropdownPanel.classList.contains('is-active');
-  dropdownTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-}
-
-function handleOptionClick(event) {
-  var clickedOption = event.currentTarget;
-  var countryId     = clickedOption.getAttribute('data-country-id');
-  updateGreeting(countryId);
-  closeDropdown();
-  for (var i = 0; i < dropdownOptions.length; i++) {
-    dropdownOptions[i].classList.remove('is-active');
+  function closeDropdown() {
+    dropdownMenu.classList.remove('is-active');
+    toggleBtn.classList.remove('is-active');
   }
-  clickedOption.classList.add('is-active');
-}
 
-function handleOutsideClick(event) {
-  var countrySelector = document.getElementById('country-selector');
-  if (countrySelector.contains(event.target)) { return; }
-  if (dropdownPanel.classList.contains('is-active')) {
+  function handleItemClick(event) {
+    var item      = event.currentTarget;
+    var countryId = item.dataset.countryId;
+    var country   = COUNTRIES.find(function (c) { return c.id === countryId; });
+    if (!country) { return; }
+    toggleFlag.textContent  = country.flag;
+    toggleLabel.textContent = country.name;
+    updateGreeting(country);
     closeDropdown();
   }
-}
 
-function init() {
-  dropdownTrigger.addEventListener('click', toggleDropdown);
-
-  for (var i = 0; i < dropdownOptions.length; i++) {
-    dropdownOptions[i].addEventListener('click', handleOptionClick);
+  function handleToggleClick() {
+    dropdownMenu.classList.toggle('is-active');
+    toggleBtn.classList.toggle('is-active');
   }
 
-  document.addEventListener('click', handleOutsideClick);
+  function handleDocumentClick(event) {
+    var dropdown = document.querySelector('#country-dropdown');
+    if (!dropdown.contains(event.target)) {
+      closeDropdown();
+    }
+  }
 
-  updateGreeting('ar');
-}
+  function init() {
+    toggleBtn.addEventListener('click', handleToggleClick);
 
-// ─── ENTRY POINT ──────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', init);
+    var items = dropdownMenu.querySelectorAll('.dropdown__item');
+    items.forEach(function (item) {
+      item.addEventListener('click', handleItemClick);
+    });
+
+    document.addEventListener('click', handleDocumentClick);
+  }
+
+  init();
+
+})();
