@@ -1,101 +1,50 @@
-/*
- * css/_mixins.scss
- * ============================================================
- * STUB DE REFERENCIA FUTURA — NO COMPILADO EN EL MVP ACTUAL
- * ============================================================
- *
- * Este archivo es un artefacto de documentación técnica.
- * NO es importado por ningún archivo funcional del proyecto.
- * NO se compila durante el ciclo de vida actual del MVP XP-13.
- *
- * ACTIVACIÓN FUTURA:
- *   1. Instalar sass-cli:  npm install -g sass
- *   2. Crear css/styles.scss que importe _variables.scss y _mixins.scss
- *   3. Compilar:           sass css/styles.scss css/styles.css --style=compressed
- *   4. El archivo css/styles.css generado reemplaza al actual archivo manual.
- *
- * Los mixins aquí definidos corresponden a patrones de layout y visibilidad
- * ya presentes y aplicados manualmente en css/styles.css. Su propósito es
- * eliminar duplicación cuando el pipeline SASS sea activado.
- * ============================================================
- */
+// =============================================================================
+// _mixins.scss — XP-13 "Hola TSOFT"
+// ARCHIVO DE REFERENCIA — NO FUNCIONAL EN RUNTIME (entorno file:///)
+// Los patrones aquí documentados están implementados como CSS nativo en styles.css
+// Para activar estos mixins: compilar con SASS y reemplazar styles.css con el output.
+// =============================================================================
 
-
-// ------------------------------------------------------------
-// MIXIN 1: flex-center
-// Aplicación futura en styles.css: .dropdown-item, .greeting-card
-// ------------------------------------------------------------
-@mixin flex-center($direction: row) {
+// Uso documentado en styles.css:
+//   .greeting-card.is-active { display: flex; ... }
+//   #app { display: flex; flex-direction: column; align-items: center; }
+@mixin flex-center($direction: column) {
   display: flex;
+  flex-direction: $direction;
   align-items: center;
   justify-content: center;
-  flex-direction: $direction;
 }
 
-
-// ------------------------------------------------------------
-// MIXIN 2: visually-hidden-toggle
-// Aplicación futura en styles.css: #dropdown-list, #greeting-display
-// Documenta el patrón de visibilidad del contrato de integración XP-13:
-//   - Estado base (oculto):   display: none
-//   - Estado activo (.is-active): display: $display-value
-// El selector de activación sería "&.is-active" en el contexto del consumidor.
-// ------------------------------------------------------------
-@mixin visually-hidden-toggle($display-value: block) {
-  // Estado base — elemento oculto por defecto
-  display: none;
-
-  // Estado activo — el selector "&.is-active" activaría esta regla:
-  // display: $display-value;
-}
-
-
-// ------------------------------------------------------------
-// MIXIN 3: responsive-breakpoint
-// Breakpoints deben sincronizarse con las variables declaradas
-// en css/_variables.scss cuando ese archivo sea activado.
-// Uso: @include responsive-breakpoint(mobile) { ... reglas ... }
-// ------------------------------------------------------------
-@mixin responsive-breakpoint($breakpoint) {
+// Breakpoint único del proyecto — mapea al media query de styles.css
+// Uso: @include respond-to(mobile) { ... }
+@mixin respond-to($breakpoint) {
   @if $breakpoint == mobile {
-    @media (max-width: 480px) {
-      @content;
-    }
-  } @else if $breakpoint == tablet {
     @media (max-width: 768px) {
       @content;
     }
   }
 }
 
+// Patrón de visibilidad del dropdown — controlado por .is-open en JS
+// Uso: aplicado sobre el selector padre .country-dropdown
+@mixin dropdown-state() {
+  #dropdown-menu {
+    display: none;
+  }
 
-/*
- * ============================================================
- * EJEMPLO DE USO — COMPLETAMENTE COMENTADO
- * Para el desarrollador que active SASS en el futuro.
- * ============================================================
- *
- * Hipotético archivo css/styles.scss (consumidor de este archivo):
- *
- *   @use 'mixins' as m;
- *
- *   .dropdown-item {
- *     @include m.flex-center(row);
- *   }
- *
- *   #greeting-display {
- *     @include m.visually-hidden-toggle(block);
- *
- *     &.is-active {
- *       display: block;
- *     }
- *   }
- *
- *   .greeting-card {
- *     @include m.responsive-breakpoint(mobile) {
- *       flex-direction: column;
- *     }
- *   }
- *
- * ============================================================
- */
+  &.is-open {
+    #dropdown-menu {
+      display: block;
+    }
+  }
+}
+
+// Patrón de visibilidad de tarjetas — controlado por .is-active en JS
+// Uso: aplicado sobre el selector .greeting-card
+@mixin card-visibility() {
+  display: none;
+
+  &.is-active {
+    display: flex;
+  }
+}

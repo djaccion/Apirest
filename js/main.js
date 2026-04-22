@@ -1,99 +1,128 @@
-// ─── 1. DATOS ──────────────────────────────────────────────────────────────
+(function () {
+  'use strict';
 
-const COUNTRIES = [
-  { id: 'argentina', flag: '🇦🇷', name: 'Argentina', greeting: '¡Che, bienvenidos a la familia TSOFT!' },
-  { id: 'mexico',    flag: '🇲🇽', name: 'México',    greeting: '¡Órale, qué bueno verlos, TSOFT!' },
-  { id: 'colombia',  flag: '🇨🇴', name: 'Colombia',  greeting: '¡Quiubo parce, bienvenido a TSOFT!' },
-  { id: 'chile',     flag: '🇨🇱', name: 'Chile',     greeting: '¡Cachai, estamos todos en TSOFT!' },
-  { id: 'peru',      flag: '🇵🇪', name: 'Perú',      greeting: '¡Causa, qué gusto estar en TSOFT!' },
-  { id: 'uruguay',   flag: '🇺🇾', name: 'Uruguay',   greeting: '¡Ta bárbaro, bienvenidos a TSOFT!' }
-];
+  // ─── BLOQUE A: Datos ────────────────────────────────────────────────────────
+  const COUNTRIES = [
+    { id: 'ar', flag: '🇦🇷', name: 'Argentina', phrase: '¡Che, bienvenidos a TSOFT!' },
+    { id: 'cl', flag: '🇨🇱', name: 'Chile',     phrase: '¡Bienvenidos po, esto es TSOFT!' },
+    { id: 'pe', flag: '🇵🇪', name: 'Perú',      phrase: '¡Causa, bienvenidos a TSOFT!' },
+    { id: 'co', flag: '🇨🇴', name: 'Colombia',  phrase: '¡Quiubo parce, bienvenidos a TSOFT!' },
+    { id: 'mx', flag: '🇲🇽', name: 'México',    phrase: '¡Órale, bienvenidos a TSOFT!' },
+    { id: 'uy', flag: '🇺🇾', name: 'Uruguay',   phrase: '¡Bienvenidos gurises, esto es TSOFT!' },
+    { id: 'br', flag: '🇧🇷', name: 'Brasil',    phrase: 'Bem-vindos ao TSOFT, mano!' },
+    { id: 'es', flag: '🇪🇸', name: 'España',    phrase: '¡Tío, bienvenidos a TSOFT!' }
+  ];
 
-// ─── 2. REFERENCIAS AL DOM ─────────────────────────────────────────────────
+  // ─── BLOQUE B: Referencias DOM ──────────────────────────────────────────────
+  const dropdown        = document.getElementById('country-dropdown');
+  const trigger         = document.getElementById('dropdown-trigger');
+  const menu            = document.getElementById('dropdown-menu');
+  const greetingDisplay = document.getElementById('greeting-display');
 
-const dropdown        = document.querySelector('#country-dropdown');
-const dropdownTrigger = document.querySelector('#dropdown-trigger');
-const dropdownList    = document.querySelector('#dropdown-list');
-const greetingDisplay = document.querySelector('#greeting-display');
-const greetingFlag    = document.querySelector('#greeting-flag');
-const greetingText    = document.querySelector('#greeting-text');
-const greetingCountry = document.querySelector('#greeting-country');
+  // ─── BLOQUE C: Funciones privadas auxiliares ────────────────────────────────
 
-// ─── 3. FUNCIONES PRIVADAS ─────────────────────────────────────────────────
+  function buildMenu() {
+    COUNTRIES.forEach(function (country) {
+      // Construye el <li> del dropdown
+      const li = document.createElement('li');
+      li.className = 'dropdown-option';
+      li.dataset.country = country.id;
 
-function renderDropdownItems() {
-  COUNTRIES.forEach(function(country) {
-    var li = document.createElement('li');
-    li.classList.add('dropdown-item');
-    li.setAttribute('data-country', country.id);
+      const flagSpan = document.createElement('span');
+      flagSpan.className = 'dropdown-flag';
+      flagSpan.textContent = country.flag;
 
-    var spanFlag = document.createElement('span');
-    spanFlag.classList.add('dropdown-item__flag');
-    spanFlag.textContent = country.flag;
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'dropdown-label';
+      labelSpan.textContent = country.name;
 
-    var spanName = document.createElement('span');
-    spanName.classList.add('dropdown-item__name');
-    spanName.textContent = country.name;
+      li.appendChild(flagSpan);
+      li.appendChild(labelSpan);
+      menu.appendChild(li);
 
-    li.appendChild(spanFlag);
-    li.appendChild(spanName);
-    dropdownList.appendChild(li);
-  });
-}
+      // Construye el <article> de saludo
+      const article = document.createElement('article');
+      article.className = 'greeting-card';
+      article.dataset.country = country.id;
 
-function selectCountry(countryId) {
-  var country = COUNTRIES.find(function(c) { return c.id === countryId; });
-  if (!country) return;
+      const flagP = document.createElement('p');
+      flagP.className = 'greeting-flag';
+      flagP.textContent = country.flag;
 
-  greetingFlag.textContent    = country.flag;
-  greetingText.textContent    = country.greeting;
-  greetingCountry.textContent = country.name;
+      const phraseP = document.createElement('p');
+      phraseP.className = 'greeting-phrase';
+      phraseP.textContent = country.phrase;
 
-  greetingDisplay.classList.add('is-active');
+      const countryP = document.createElement('p');
+      countryP.className = 'greeting-country';
+      countryP.textContent = country.name;
 
-  dropdownList.querySelectorAll('.dropdown-item').forEach(function(item) {
-    item.classList.remove('is-selected');
-  });
-
-  var selectedItem = dropdownList.querySelector('[data-country="' + countryId + '"]');
-  if (selectedItem) {
-    selectedItem.classList.add('is-selected');
+      article.appendChild(flagP);
+      article.appendChild(phraseP);
+      article.appendChild(countryP);
+      greetingDisplay.appendChild(article);
+    });
   }
 
-  closeDropdown();
+  function selectCountry(countryId) {
+    // Paso 1: Cierra el dropdown
+    dropdown.classList.remove('is-open');
 
-  dropdownTrigger.textContent = country.flag + ' ' + country.name;
-}
+    // Paso 2: Quita .is-selected de todas las opciones
+    menu.querySelectorAll('.dropdown-option').forEach(function (el) {
+      el.classList.remove('is-selected');
+    });
 
-function closeDropdown() {
-  dropdown.classList.remove('is-open');
-}
-
-// ─── 4. INICIALIZACIÓN Y EVENTOS ───────────────────────────────────────────
-
-document.addEventListener('DOMContentLoaded', function() {
-
-  // Bloque A — Renderizado inicial
-  renderDropdownItems();
-
-  // Bloque B — Listener del trigger (abrir/cerrar dropdown)
-  dropdownTrigger.addEventListener('click', function(event) {
-    event.stopPropagation();
-    dropdown.classList.toggle('is-open');
-  });
-
-  // Bloque C — Listener de selección de país (delegación de eventos)
-  dropdownList.addEventListener('click', function(event) {
-    var item = event.target.closest('.dropdown-item');
-    if (!item) return;
-    selectCountry(item.dataset.country);
-  });
-
-  // Bloque D — Listener de cierre al hacer clic fuera
-  document.addEventListener('click', function(event) {
-    if (!dropdown.contains(event.target)) {
-      closeDropdown();
+    // Paso 3: Marca como seleccionada la opción del país elegido
+    const selectedOption = menu.querySelector('[data-country="' + countryId + '"]');
+    if (selectedOption) {
+      selectedOption.classList.add('is-selected');
     }
+
+    // Paso 4: Quita .is-active de todas las tarjetas de saludo
+    greetingDisplay.querySelectorAll('.greeting-card').forEach(function (el) {
+      el.classList.remove('is-active');
+    });
+
+    // Paso 5: Activa la tarjeta del país elegido
+    const activeCard = greetingDisplay.querySelector('[data-country="' + countryId + '"]');
+    if (activeCard) {
+      activeCard.classList.add('is-active');
+    }
+
+    // Paso 6: Actualiza el texto del botón trigger
+    const country = COUNTRIES.find(function (c) { return c.id === countryId; });
+    if (country) {
+      trigger.textContent = country.flag + ' ' + country.name;
+    }
+  }
+
+  function toggleDropdown() {
+    dropdown.classList.toggle('is-open');
+  }
+
+  // ─── BLOQUE D: Handlers de eventos ─────────────────────────────────────────
+
+  // Handler 1: Clic en el botón trigger
+  trigger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    toggleDropdown();
   });
 
-});
+  // Handler 2: Clic en una opción del menú (delegación de eventos)
+  menu.addEventListener('click', function (e) {
+    const option = e.target.closest('.dropdown-option');
+    if (!option) return;
+    selectCountry(option.dataset.country);
+  });
+
+  // Handler 3: Clic fuera del dropdown (cierre automático)
+  document.addEventListener('click', function () {
+    dropdown.classList.remove('is-open');
+  });
+
+  // ─── BLOQUE E: Inicialización ───────────────────────────────────────────────
+  buildMenu();
+  selectCountry('ar');
+
+})();

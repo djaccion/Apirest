@@ -4,68 +4,124 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self'; script-src 'self';">
-  <meta name="description" content="Saludos desde las oficinas TSOFT en Latinoamérica">
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
   <title>Hola TSOFT</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-  <header id="site-header" class="site-header">
-    <h1 id="main-title">Saludos desde TSOFT</h1>
+  <header class="site-header">
+    <h1 class="site-title">Saludos desde TSOFT</h1>
   </header>
 
-  <main>
+  <main id="app">
 
-    <div id="country-dropdown">
+    <div id="country-dropdown" class="country-dropdown">
 
-      <button id="dropdown-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+      <button id="dropdown-trigger" class="dropdown-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
         Selecciona un país
       </button>
 
-      <ul id="dropdown-list" role="listbox" aria-label="Países TSOFT">
+      <ul id="dropdown-menu" class="dropdown-menu" role="listbox">
 
-        <li class="dropdown-item" role="option" data-country="argentina" aria-selected="false">
-          <span class="dropdown-item__flag" aria-hidden="true">🇦🇷</span>
-          <span class="dropdown-item__name">Argentina</span>
+        <li class="dropdown-option" role="option" data-country="argentina">
+          <span class="dropdown-flag">🇦🇷</span>
+          <span class="dropdown-label">Argentina</span>
         </li>
 
-        <li class="dropdown-item" role="option" data-country="mexico" aria-selected="false">
-          <span class="dropdown-item__flag" aria-hidden="true">🇲🇽</span>
-          <span class="dropdown-item__name">México</span>
+        <li class="dropdown-option" role="option" data-country="chile">
+          <span class="dropdown-flag">🇨🇱</span>
+          <span class="dropdown-label">Chile</span>
         </li>
 
-        <li class="dropdown-item" role="option" data-country="colombia" aria-selected="false">
-          <span class="dropdown-item__flag" aria-hidden="true">🇨🇴</span>
-          <span class="dropdown-item__name">Colombia</span>
+        <li class="dropdown-option" role="option" data-country="peru">
+          <span class="dropdown-flag">🇵🇪</span>
+          <span class="dropdown-label">Perú</span>
         </li>
 
-        <li class="dropdown-item" role="option" data-country="chile" aria-selected="false">
-          <span class="dropdown-item__flag" aria-hidden="true">🇨🇱</span>
-          <span class="dropdown-item__name">Chile</span>
+        <li class="dropdown-option" role="option" data-country="colombia">
+          <span class="dropdown-flag">🇨🇴</span>
+          <span class="dropdown-label">Colombia</span>
         </li>
 
-        <li class="dropdown-item" role="option" data-country="peru" aria-selected="false">
-          <span class="dropdown-item__flag" aria-hidden="true">🇵🇪</span>
-          <span class="dropdown-item__name">Perú</span>
+        <li class="dropdown-option" role="option" data-country="mexico">
+          <span class="dropdown-flag">🇲🇽</span>
+          <span class="dropdown-label">México</span>
         </li>
 
-        <li class="dropdown-item" role="option" data-country="uruguay" aria-selected="false">
-          <span class="dropdown-item__flag" aria-hidden="true">🇺🇾</span>
-          <span class="dropdown-item__name">Uruguay</span>
+        <li class="dropdown-option" role="option" data-country="uruguay">
+          <span class="dropdown-flag">🇺🇾</span>
+          <span class="dropdown-label">Uruguay</span>
+        </li>
+
+        <li class="dropdown-option" role="option" data-country="brasil">
+          <span class="dropdown-flag">🇧🇷</span>
+          <span class="dropdown-label">Brasil</span>
+        </li>
+
+        <li class="dropdown-option" role="option" data-country="espana">
+          <span class="dropdown-flag">🇪🇸</span>
+          <span class="dropdown-label">España</span>
         </li>
 
       </ul>
     </div>
 
-    <section id="greeting-display" class="greeting-card">
-      <span id="greeting-flag" aria-hidden="true"></span>
-      <p id="greeting-text"></p>
-      <span id="greeting-country"></span>
+    <section id="greeting-display">
+
+      <article class="greeting-card" data-country="argentina">
+        <span class="greeting-flag">🇦🇷</span>
+        <p class="greeting-phrase">¡Buenas, che! ¿Cómo andás?</p>
+        <p class="greeting-country">Argentina</p>
+      </article>
+
+      <article class="greeting-card" data-country="chile">
+        <span class="greeting-flag">🇨🇱</span>
+        <p class="greeting-phrase">¡Hola po! ¿Cómo estái?</p>
+        <p class="greeting-country">Chile</p>
+      </article>
+
+      <article class="greeting-card" data-country="peru">
+        <span class="greeting-flag">🇵🇪</span>
+        <p class="greeting-phrase">¡Habla, causa! ¿Qué es de tu vida?</p>
+        <p class="greeting-country">Perú</p>
+      </article>
+
+      <article class="greeting-card" data-country="colombia">
+        <span class="greeting-flag">🇨🇴</span>
+        <p class="greeting-phrase">¡Quiubo, parce! ¿Todo bien o qué?</p>
+        <p class="greeting-country">Colombia</p>
+      </article>
+
+      <article class="greeting-card" data-country="mexico">
+        <span class="greeting-flag">🇲🇽</span>
+        <p class="greeting-phrase">¡Qué onda, güey! ¿Cómo estás?</p>
+        <p class="greeting-country">México</p>
+      </article>
+
+      <article class="greeting-card" data-country="uruguay">
+        <span class="greeting-flag">🇺🇾</span>
+        <p class="greeting-phrase">¡Hola, mano! ¿Cómo te va?</p>
+        <p class="greeting-country">Uruguay</p>
+      </article>
+
+      <article class="greeting-card" data-country="brasil">
+        <span class="greeting-flag">🇧🇷</span>
+        <p class="greeting-phrase">Oi, mano! Tudo bem?</p>
+        <p class="greeting-country">Brasil</p>
+      </article>
+
+      <article class="greeting-card" data-country="espana">
+        <span class="greeting-flag">🇪🇸</span>
+        <p class="greeting-phrase">¡Hola, tío! ¿Qué tal estás?</p>
+        <p class="greeting-country">España</p>
+      </article>
+
     </section>
 
   </main>
 
   <script src="js/main.js"></script>
+
 </body>
 </html>
