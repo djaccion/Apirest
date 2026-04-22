@@ -1,0 +1,101 @@
+/*
+ * css/_mixins.scss
+ * ============================================================
+ * STUB DE REFERENCIA FUTURA — NO COMPILADO EN EL MVP ACTUAL
+ * ============================================================
+ *
+ * Este archivo es un artefacto de documentación técnica.
+ * NO es importado por ningún archivo funcional del proyecto.
+ * NO se compila durante el ciclo de vida actual del MVP XP-13.
+ *
+ * ACTIVACIÓN FUTURA:
+ *   1. Instalar sass-cli:  npm install -g sass
+ *   2. Crear css/styles.scss que importe _variables.scss y _mixins.scss
+ *   3. Compilar:           sass css/styles.scss css/styles.css --style=compressed
+ *   4. El archivo css/styles.css generado reemplaza al actual archivo manual.
+ *
+ * Los mixins aquí definidos corresponden a patrones de layout y visibilidad
+ * ya presentes y aplicados manualmente en css/styles.css. Su propósito es
+ * eliminar duplicación cuando el pipeline SASS sea activado.
+ * ============================================================
+ */
+
+
+// ------------------------------------------------------------
+// MIXIN 1: flex-center
+// Aplicación futura en styles.css: .dropdown-item, .greeting-card
+// ------------------------------------------------------------
+@mixin flex-center($direction: row) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: $direction;
+}
+
+
+// ------------------------------------------------------------
+// MIXIN 2: visually-hidden-toggle
+// Aplicación futura en styles.css: #dropdown-list, #greeting-display
+// Documenta el patrón de visibilidad del contrato de integración XP-13:
+//   - Estado base (oculto):   display: none
+//   - Estado activo (.is-active): display: $display-value
+// El selector de activación sería "&.is-active" en el contexto del consumidor.
+// ------------------------------------------------------------
+@mixin visually-hidden-toggle($display-value: block) {
+  // Estado base — elemento oculto por defecto
+  display: none;
+
+  // Estado activo — el selector "&.is-active" activaría esta regla:
+  // display: $display-value;
+}
+
+
+// ------------------------------------------------------------
+// MIXIN 3: responsive-breakpoint
+// Breakpoints deben sincronizarse con las variables declaradas
+// en css/_variables.scss cuando ese archivo sea activado.
+// Uso: @include responsive-breakpoint(mobile) { ... reglas ... }
+// ------------------------------------------------------------
+@mixin responsive-breakpoint($breakpoint) {
+  @if $breakpoint == mobile {
+    @media (max-width: 480px) {
+      @content;
+    }
+  } @else if $breakpoint == tablet {
+    @media (max-width: 768px) {
+      @content;
+    }
+  }
+}
+
+
+/*
+ * ============================================================
+ * EJEMPLO DE USO — COMPLETAMENTE COMENTADO
+ * Para el desarrollador que active SASS en el futuro.
+ * ============================================================
+ *
+ * Hipotético archivo css/styles.scss (consumidor de este archivo):
+ *
+ *   @use 'mixins' as m;
+ *
+ *   .dropdown-item {
+ *     @include m.flex-center(row);
+ *   }
+ *
+ *   #greeting-display {
+ *     @include m.visually-hidden-toggle(block);
+ *
+ *     &.is-active {
+ *       display: block;
+ *     }
+ *   }
+ *
+ *   .greeting-card {
+ *     @include m.responsive-breakpoint(mobile) {
+ *       flex-direction: column;
+ *     }
+ *   }
+ *
+ * ============================================================
+ */

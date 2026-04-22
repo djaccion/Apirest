@@ -4,104 +4,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self';
-                 script-src 'self';
-                 style-src 'self';
-                 img-src 'self' https://flagcdn.com;
-                 object-src 'none'">
+        content="default-src 'self'; style-src 'self'; script-src 'self';">
+  <meta name="description" content="Saludos desde las oficinas TSOFT en Latinoamérica">
   <title>Hola TSOFT</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div id="app">
 
-    <header class="header">
-      <h1 class="header__title">Saludos desde TSOFT</h1>
-    </header>
+  <header id="site-header" class="site-header">
+    <h1 id="main-title">Saludos desde TSOFT</h1>
+  </header>
 
-    <main>
+  <main>
 
-      <div id="country-dropdown" class="dropdown">
+    <div id="country-dropdown">
 
-        <button class="dropdown__toggle" aria-haspopup="listbox" aria-expanded="false">
-          <span class="dropdown__toggle-flag" aria-hidden="true"></span>
-          <span class="dropdown__toggle-label">Selecciona un país</span>
-        </button>
+      <button id="dropdown-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+        Selecciona un país
+      </button>
 
-        <ul class="dropdown__menu" role="listbox" aria-label="Selecciona el país de tu oficina">
+      <ul id="dropdown-list" role="listbox" aria-label="Países TSOFT">
 
-          <li class="dropdown__item"
-              role="option"
-              data-country-id="mexico"
-              data-lang="es-MX">
-            <span class="dropdown__item-flag" aria-hidden="true"></span>
-            <span class="dropdown__item-name">México</span>
-          </li>
+        <li class="dropdown-item" role="option" data-country="argentina" aria-selected="false">
+          <span class="dropdown-item__flag" aria-hidden="true">🇦🇷</span>
+          <span class="dropdown-item__name">Argentina</span>
+        </li>
 
-          <li class="dropdown__item"
-              role="option"
-              data-country-id="colombia"
-              data-lang="es-CO">
-            <span class="dropdown__item-flag" aria-hidden="true"></span>
-            <span class="dropdown__item-name">Colombia</span>
-          </li>
+        <li class="dropdown-item" role="option" data-country="mexico" aria-selected="false">
+          <span class="dropdown-item__flag" aria-hidden="true">🇲🇽</span>
+          <span class="dropdown-item__name">México</span>
+        </li>
 
-          <li class="dropdown__item"
-              role="option"
-              data-country-id="argentina"
-              data-lang="es-AR">
-            <span class="dropdown__item-flag" aria-hidden="true"></span>
-            <span class="dropdown__item-name">Argentina</span>
-          </li>
+        <li class="dropdown-item" role="option" data-country="colombia" aria-selected="false">
+          <span class="dropdown-item__flag" aria-hidden="true">🇨🇴</span>
+          <span class="dropdown-item__name">Colombia</span>
+        </li>
 
-          <li class="dropdown__item"
-              role="option"
-              data-country-id="chile"
-              data-lang="es-CL">
-            <span class="dropdown__item-flag" aria-hidden="true"></span>
-            <span class="dropdown__item-name">Chile</span>
-          </li>
+        <li class="dropdown-item" role="option" data-country="chile" aria-selected="false">
+          <span class="dropdown-item__flag" aria-hidden="true">🇨🇱</span>
+          <span class="dropdown-item__name">Chile</span>
+        </li>
 
-          <li class="dropdown__item"
-              role="option"
-              data-country-id="peru"
-              data-lang="es-PE">
-            <span class="dropdown__item-flag" aria-hidden="true"></span>
-            <span class="dropdown__item-name">Perú</span>
-          </li>
+        <li class="dropdown-item" role="option" data-country="peru" aria-selected="false">
+          <span class="dropdown-item__flag" aria-hidden="true">🇵🇪</span>
+          <span class="dropdown-item__name">Perú</span>
+        </li>
 
-          <li class="dropdown__item"
-              role="option"
-              data-country-id="españa"
-              data-lang="es-ES">
-            <span class="dropdown__item-flag" aria-hidden="true"></span>
-            <span class="dropdown__item-name">España</span>
-          </li>
+        <li class="dropdown-item" role="option" data-country="uruguay" aria-selected="false">
+          <span class="dropdown-item__flag" aria-hidden="true">🇺🇾</span>
+          <span class="dropdown-item__name">Uruguay</span>
+        </li>
 
-          <li class="dropdown__item"
-              role="option"
-              data-country-id="usa"
-              data-lang="en-US">
-            <span class="dropdown__item-flag" aria-hidden="true"></span>
-            <span class="dropdown__item-name">USA</span>
-          </li>
+      </ul>
+    </div>
 
-        </ul>
-      </div>
+    <section id="greeting-display" class="greeting-card">
+      <span id="greeting-flag" aria-hidden="true"></span>
+      <p id="greeting-text"></p>
+      <span id="greeting-country"></span>
+    </section>
 
-      <section id="greeting-display" class="greeting">
-        <p class="greeting__flag" aria-hidden="true"></p>
-        <p class="greeting__phrase"></p>
-        <p class="greeting__country"></p>
-      </section>
+  </main>
 
-    </main>
-
-    <footer class="footer">
-      <p>© TSOFT — Todos los derechos reservados</p>
-    </footer>
-
-  </div>
   <script src="js/main.js"></script>
 </body>
 </html>
