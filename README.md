@@ -1,24 +1,38 @@
-# Tsoft — Saludos Internacionales
+# Saludos Internacionales Tsoft
 Página estática que muestra saludos coloquiales de los países donde Tsoft tiene oficinas.
 
 ## Estructura del proyecto
 
-- `index.html` — Estructura y contenido de la página. Incluye los estilos embebidos mínimos.
-- `styles.css` — Estilos principales de la página (layout, tipografía, responsividad).
-- `README.md`  — Este archivo.
+- `index.html` — Página principal. Contiene el HTML, el CSS embebido de base y el bloque de datos JS.
+- `styles.css` — Hoja de estilos externa con los estilos visuales del proyecto.
+- `assets/logo-placeholder.txt` — Placeholder del logo corporativo. Reemplazar con el asset real cuando esté disponible.
+- `README.md` — Este archivo.
 
 ## Cómo abrir el proyecto
 
-1. Descarga o clona los archivos del proyecto en una carpeta local.
+1. Descarga o clona este repositorio en tu máquina local.
 2. Abre el archivo `index.html` directamente en tu navegador (doble clic o arrastrar al navegador).
+3. No se requiere servidor, instalación de dependencias ni proceso de build.
 
-> **Opcional:** También puede servirse con cualquier servidor HTTP estático apuntando al directorio raíz.
+> ⚠️ El archivo debe abrirse desde el sistema de archivos local (protocolo `file:///`).
+> No uses `Live Server` con configuración de módulos ES6 activa, ya que este proyecto
+> no utiliza módulos. Cualquier navegador moderno (Chrome, Firefox, Edge) es compatible.
 
 ## Países incluidos
 
-Argentina, México, Colombia, Chile, Perú, Uruguay, Brasil, España, Estados Unidos.
+- Argentina
+- Chile
+- Uruguay
+- Colombia
+- Perú
+- México
+- Brasil
+- España
+- Estados Unidos
 
-## Notas de producción
+## Notas para infraestructura
 
-- El logo de Tsoft es un placeholder. Reemplazar antes del despliegue con el asset real aprobado por diseño.
-- Para despliegue en servidor, configurar HTTPS a nivel de infraestructura (Nginx/Apache). No requiere cambios en el código.
+Este proyecto está diseñado para entorno local. Si se despliega en un servidor web,
+asegurarse de servirlo bajo HTTPS para cumplir con las políticas de seguridad de contenido.
+No hay recursos externos ni mixed-content en el código. No se requiere configuración
+adicional de servidor (no hay rutas dinámicas, no hay API, no hay base de datos).

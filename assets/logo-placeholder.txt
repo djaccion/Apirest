@@ -1,0 +1,20 @@
+TSOFT — LOGO PLACEHOLDER
+========================
+
+Este archivo es un marcador de posición para el logo oficial de Tsoft.
+
+ESPECIFICACIONES ESPERADAS DEL ASSET REAL:
+- Nombre de archivo sugerido : logo-tsoft.[svg|png|webp]
+- Ubicación destino          : assets/
+- Formato preferido          : SVG (vectorial, escalable)
+- Formato alternativo        : PNG con fondo transparente
+- Dimensiones recomendadas   : 200px × 60px (relación aprox. 3.3:1)
+- Uso en proyecto            : Elemento <img> en el header de index.html
+
+INSTRUCCIONES PARA EL EQUIPO DE DISEÑO / INFRAESTRUCTURA:
+1. Reemplazar este archivo con el asset real aprobado por el área de marca.
+2. Actualizar el atributo src del tag <img> en index.html con el nombre
+   de archivo definitivo.
+3. Eliminar este archivo .txt una vez el asset real esté en su lugar.
+
+ESTADO ACTUAL: PENDIENTE DE ENTREGA POR EQUIPO DE DISEÑO

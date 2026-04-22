@@ -1,231 +1,71 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://placehold.co; style-src 'self'; img-src 'self' https://placehold.co;">
-  <meta name="description" content="Saludos internacionales de las oficinas Tsoft alrededor del mundo.">
-  <title>Saludos Internacionales — Tsoft</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Saludos internacionales de las oficinas Tsoft">
+    <title>Saludos Internacionales — Tsoft</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header>
+      <span class="logo-placeholder">[TSOFT]</span>
+      <h1>Saludos Internacionales — Tsoft</h1>
+      <p>Así saludamos en cada una de nuestras oficinas</p>
+    </header>
+    <main>
+      <div id="greetings-grid" role="list" aria-label="Saludos por país"></div>
+    </main>
+    <footer class="site-footer">
+      <p>© Tsoft — Todos los derechos reservados</p>
+    </footer>
+    <script>
+      const greetings = [
+        { country: "Argentina", greeting: "¡Buenas!",             context: "Saludo informal rioplatense, válido a cualquier hora" },
+        { country: "Chile",     greeting: "¡Buenas!",             context: "Saludo coloquial chileno, abreviación de 'buenas tardes/noches'" },
+        { country: "Uruguay",   greeting: "¡Hola, ¿cómo andás?", context: "Saludo cotidiano con tuteo rioplatense" },
+        { country: "Colombia",  greeting: "¡Quiubo!",             context: "Contracción de '¿Qué hubo?', saludo informal bogotano" },
+        { country: "Perú",      greeting: "¡Habla, causa!",       context: "Saludo entre amigos, 'causa' significa 'pata' o amigo cercano" },
+        { country: "México",    greeting: "¡Qué onda!",           context: "Saludo informal juvenil de uso extendido en todo el país" },
+        { country: "Brasil",    greeting: "E aí!",                context: "Saludo informal brasileño equivalente a '¿Qué hay?'" },
+        { country: "España",    greeting: "¡Buenas!",             context: "Saludo coloquial peninsular, válido a cualquier hora del día" },
+        { country: "EE.UU.",    greeting: "Hey!",                 context: "Saludo informal anglosajón de uso universal entre colegas" }
+      ];
 
-  <header id="site-header">
-    <div class="header-inner">
+      function buildCard(item) {
+        const article = document.createElement("article");
+        article.setAttribute("role", "listitem");
+        article.className = "greeting-card";
 
-      <div class="logo-wrapper">
-        <img
-          src="https://placehold.co/160x48/1A1A2E/FFFFFF?text=Tsoft"
-          alt="Logo Tsoft"
-          width="160"
-          height="48"
-        >
-      </div>
+        const countryEl = document.createElement("h2");
+        countryEl.className = "greeting-card__country";
+        countryEl.textContent = item.country;
 
-      <nav id="main-nav" aria-label="Navegación principal">
-        <ul class="nav-list">
-          <li><a href="#greetings-grid" class="nav-link">Oficinas</a></li>
-          <li><a href="#about-tsoft" class="nav-link">Sobre Tsoft</a></li>
-        </ul>
-      </nav>
+        const greetingEl = document.createElement("p");
+        greetingEl.className = "greeting-card__greeting";
+        greetingEl.textContent = item.greeting;
 
-    </div>
-  </header>
+        const contextEl = document.createElement("p");
+        contextEl.className = "greeting-card__context";
+        contextEl.textContent = item.context;
 
-  <main id="main-content">
+        article.appendChild(countryEl);
+        article.appendChild(greetingEl);
+        article.appendChild(contextEl);
 
-    <section id="hero" aria-labelledby="hero-title">
-      <h1 id="hero-title">El mundo nos saluda</h1>
-      <p class="hero-subtitle">
-        Conoce cómo se dice "hola" en cada país donde Tsoft tiene presencia.
-      </p>
-    </section>
+        return article;
+      }
 
-    <section id="greetings-grid" aria-labelledby="grid-title">
-      <h2 id="grid-title" class="section-title">Nuestras Oficinas</h2>
-      <div class="cards-grid">
+      function renderGreetings(data, container) {
+        const fragment = document.createDocumentFragment();
+        for (let i = 0; i < data.length; i++) {
+          fragment.appendChild(buildCard(data[i]));
+        }
+        container.appendChild(fragment);
+      }
 
-        <article class="card">
-          <div class="card-flag-wrapper">
-            <img
-              src="https://placehold.co/320x180/003087/FFFFFF?text=🇦🇷+Argentina"
-              alt="Bandera de Argentina"
-              width="320"
-              height="180"
-            >
-          </div>
-          <div class="card-body">
-            <h3 class="card-country">Argentina</h3>
-            <p class="card-greeting-word">¡Hola!</p>
-            <p class="card-greeting-context">El saludo más común en toda la región rioplatense.</p>
-            <span class="card-language">Español</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-flag-wrapper">
-            <img
-              src="https://placehold.co/320x180/002868/FFFFFF?text=🇧🇷+Brasil"
-              alt="Bandera de Brasil"
-              width="320"
-              height="180"
-            >
-          </div>
-          <div class="card-body">
-            <h3 class="card-country">Brasil</h3>
-            <p class="card-greeting-word">Olá!</p>
-            <p class="card-greeting-context">Saludo informal y cálido usado en todo el país.</p>
-            <span class="card-language">Portugués</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-flag-wrapper">
-            <img
-              src="https://placehold.co/320x180/D52B1E/FFFFFF?text=🇨🇱+Chile"
-              alt="Bandera de Chile"
-              width="320"
-              height="180"
-            >
-          </div>
-          <div class="card-body">
-            <h3 class="card-country">Chile</h3>
-            <p class="card-greeting-word">¡Hola!</p>
-            <p class="card-greeting-context">Saludo cotidiano con acento y modismos propios.</p>
-            <span class="card-language">Español</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-flag-wrapper">
-            <img
-              src="https://placehold.co/320x180/003580/FFFFFF?text=🇩🇪+Alemania"
-              alt="Bandera de Alemania"
-              width="320"
-              height="180"
-            >
-          </div>
-          <div class="card-body">
-            <h3 class="card-country">Alemania</h3>
-            <p class="card-greeting-word">Hallo!</p>
-            <p class="card-greeting-context">Saludo neutro y universal en el idioma alemán.</p>
-            <span class="card-language">Alemán</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-flag-wrapper">
-            <img
-              src="https://placehold.co/320x180/003399/FFFFFF?text=🇫🇷+Francia"
-              alt="Bandera de Francia"
-              width="320"
-              height="180"
-            >
-          </div>
-          <div class="card-body">
-            <h3 class="card-country">Francia</h3>
-            <p class="card-greeting-word">Bonjour!</p>
-            <p class="card-greeting-context">Saludo formal e informal usado a toda hora del día.</p>
-            <span class="card-language">Francés</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-flag-wrapper">
-            <img
-              src="https://placehold.co/320x180/012169/FFFFFF?text=🇬🇧+Reino+Unido"
-              alt="Bandera del Reino Unido"
-              width="320"
-              height="180"
-            >
-          </div>
-          <div class="card-body">
-            <h3 class="card-country">Reino Unido</h3>
-            <p class="card-greeting-word">Hello!</p>
-            <p class="card-greeting-context">El saludo más reconocido del idioma inglés.</p>
-            <span class="card-language">Inglés</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-flag-wrapper">
-            <img
-              src="https://placehold.co/320x180/BC002D/FFFFFF?text=🇯🇵+Japón"
-              alt="Bandera de Japón"
-              width="320"
-              height="180"
-            >
-          </div>
-          <div class="card-body">
-            <h3 class="card-country">Japón</h3>
-            <p class="card-greeting-word">こんにちは</p>
-            <p class="card-greeting-context">Konnichiwa: saludo estándar durante el día.</p>
-            <span class="card-language">Japonés</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-flag-wrapper">
-            <img
-              src="https://placehold.co/320x180/FF9933/FFFFFF?text=🇮🇳+India"
-              alt="Bandera de India"
-              width="320"
-              height="180"
-            >
-          </div>
-          <div class="card-body">
-            <h3 class="card-country">India</h3>
-            <p class="card-greeting-word">नमस्ते</p>
-            <p class="card-greeting-context">Namaste: saludo respetuoso con las manos juntas.</p>
-            <span class="card-language">Hindi</span>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-flag-wrapper">
-            <img
-              src="https://placehold.co/320x180/DE2910/FFFFFF?text=🇨🇳+China"
-              alt="Bandera de China"
-              width="320"
-              height="180"
-            >
-          </div>
-          <div class="card-body">
-            <h3 class="card-country">China</h3>
-            <p class="card-greeting-word">你好</p>
-            <p class="card-greeting-context">Nǐ hǎo: saludo universal en mandarín estándar.</p>
-            <span class="card-language">Mandarín</span>
-          </div>
-        </article>
-
-      </div>
-    </section>
-
-  </main>
-
-  <footer id="about-tsoft">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <img
-          src="https://placehold.co/120x36/1A1A2E/FFFFFF?text=Tsoft"
-          alt="Logo Tsoft"
-          width="120"
-          height="36"
-        >
-        <p class="footer-tagline">Conectando el mundo a través de la tecnología.</p>
-      </div>
-      <div class="footer-info">
-        <h2 class="footer-section-title">Sobre Tsoft</h2>
-        <p class="footer-description">
-          Tsoft es una empresa global de desarrollo de software con oficinas en nueve países.
-          Nuestra diversidad cultural es nuestra mayor fortaleza.
-        </p>
-      </div>
-      <div class="footer-copy">
-        <p class="footer-legal">&copy; 2025 Tsoft. Todos los derechos reservados.</p>
-      </div>
-    </div>
-  </footer>
-
-</body>
+      const grid = document.getElementById("greetings-grid");
+      renderGreetings(greetings, grid);
+    </script>
+  </body>
 </html>
