@@ -3,125 +3,733 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
-  <title>Hola TSOFT</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <title>The Power Grid — Mission Control</title>
+  <style>
+    /* === [RESET & BASE] === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      background-color: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      font-family: var(--font-mono);
+    }
+
+    /* === [VARIABLES CSS] === */
+    :root {
+      --color-bg-primary: #0a0a1a;
+      --color-bg-secondary: #0d1117;
+      --color-accent-cyan: #00f5ff;
+      --color-accent-magenta: #ff00ff;
+      --color-accent-yellow: #ffd700;
+      --color-node-active: #00f5ff;
+      --color-node-inactive: #1a2a3a;
+      --color-text-primary: #e0e0e0;
+      --color-text-dim: #4a6a7a;
+      --font-mono: 'Courier New', 'Lucida Console', monospace;
+      --glow-cyan: 0 0 10px #00f5ff, 0 0 20px #00f5ff40;
+      --glow-magenta: 0 0 10px #ff00ff, 0 0 20px #ff00ff40;
+      --transition-node: all 0.3s ease;
+    }
+
+    /* === [LAYOUT PRINCIPAL] === */
+    .main-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      grid-template-columns: 1fr 300px;
+      grid-template-areas:
+        "header  header"
+        "center  kpi"
+        "pipeline pipeline";
+      gap: 12px;
+      padding: 12px;
+    }
+
+    .dashboard-header {
+      grid-area: header;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0 6px;
+      border-bottom: 1px solid var(--color-text-dim);
+    }
+    .dashboard-title {
+      font-size: 2rem;
+      letter-spacing: 0.3em;
+      color: var(--color-accent-cyan);
+      text-shadow: var(--glow-cyan);
+    }
+    .dashboard-subtitle {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--color-text-dim);
+      margin-top: 4px;
+    }
+
+    /* === [CANVAS LAYERS] === */
+    #particle-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+    #connection-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* === [NODE CARDS] === */
+    .nodes-area {
+      grid-area: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+    .nodes-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+    .node-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background-color: var(--color-node-inactive);
+      border: 1px solid var(--color-text-dim);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition-node);
+      user-select: none;
+    }
+    .node-card:hover {
+      border-color: var(--color-accent-cyan);
+      background-color: #0a1520;
+    }
+    .node-card.is-active {
+      border-color: var(--color-node-active);
+      box-shadow: var(--glow-cyan);
+      background-color: #0a1f2f;
+    }
+    .node-icon {
+      font-size: 1.6rem;
+      color: var(--color-text-dim);
+      transition: var(--transition-node);
+    }
+    .node-card.is-active .node-icon {
+      color: var(--color-accent-cyan);
+      text-shadow: var(--glow-cyan);
+    }
+    .node-label {
+      flex: 1;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      color: var(--color-text-primary);
+    }
+    .node-status-text {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--color-text-dim);
+      transition: var(--transition-node);
+    }
+    .node-card.is-active .node-status-text {
+      color: var(--color-accent-cyan);
+    }
+
+    /* === [KPI PANEL] === */
+    .kpi-panel {
+      grid-area: kpi;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px;
+      background-color: var(--color-bg-secondary);
+      border: 1px solid var(--color-text-dim);
+      border-radius: 6px;
+      overflow-y: auto;
+    }
+    .panel-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--color-accent-cyan);
+      text-shadow: var(--glow-cyan);
+      margin-bottom: 4px;
+    }
+    .kpi-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .kpi-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--color-text-dim);
+    }
+    .kpi-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .kpi-value {
+      font-size: 1.2rem;
+      color: var(--color-accent-cyan);
+      text-shadow: var(--glow-cyan);
+      min-width: 48px;
+    }
+    .kpi-unit {
+      font-size: 0.65rem;
+      color: var(--color-text-dim);
+    }
+    .kpi-bar-track {
+      width: 100%;
+      height: 4px;
+      background-color: #1a2a3a;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .kpi-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--color-accent-cyan), var(--color-accent-magenta));
+      border-radius: 2px;
+      transition: width 0.05s linear;
+    }
+
+    /* === [CHARTS PANEL] === */
+    .charts-panel {
+      grid-area: kpi;
+      display: none;
+    }
+
+    /* === [PIPELINE CARD] === */
+    .pipeline-card {
+      grid-area: pipeline;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 18px;
+      background-color: var(--color-bg-secondary);
+      border: 1px solid var(--color-text-dim);
+      border-radius: 6px;
+    }
+    .pipeline-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--color-text-dim);
+      white-space: nowrap;
+    }
+    .pipeline-stages {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+    }
+    .pipeline-stage {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border: 1px solid var(--color-text-dim);
+      border-radius: 3px;
+      color: var(--color-text-dim);
+      transition: var(--transition-node);
+      white-space: nowrap;
+    }
+    .pipeline-stage.is-active {
+      border-color: var(--color-accent-cyan);
+      color: var(--color-accent-cyan);
+      box-shadow: var(--glow-cyan);
+    }
+    .pipeline-arrow {
+      color: var(--color-text-dim);
+      font-size: 0.7rem;
+    }
+    .pipeline-badge {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      padding: 3px 10px;
+      border-radius: 3px;
+      background-color: #1a2a3a;
+      color: var(--color-text-dim);
+      border: 1px solid var(--color-text-dim);
+      transition: var(--transition-node);
+    }
+    .pipeline-badge.is-active {
+      background-color: #003322;
+      color: #00ff88;
+      border-color: #00ff88;
+      box-shadow: 0 0 8px #00ff8860;
+    }
+
+    /* === [OVERDRIVE OVERLAY] === */
+    #overdrive-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at center, #1a003380 0%, #0a0a1acc 70%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    #overdrive-overlay.is-active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .overdrive-content {
+      text-align: center;
+    }
+    .overdrive-title {
+      font-size: 2.2rem;
+      letter-spacing: 0.25em;
+      color: var(--color-accent-magenta);
+      text-shadow: var(--glow-magenta);
+      animation: flicker 0.15s infinite alternate;
+    }
+    .overdrive-subtitle {
+      font-size: 0.9rem;
+      letter-spacing: 0.3em;
+      color: var(--color-accent-cyan);
+      margin-top: 12px;
+      text-shadow: var(--glow-cyan);
+    }
+
+    /* === [ESTADO: .is-active / .is-hidden / .is-overdrive] === */
+    .is-hidden { display: none !important; }
+
+    body.is-overdrive {
+      animation: overdrive-pulse 1.5s ease-in-out infinite alternate;
+    }
+
+    /* === [ANIMACIONES KEYFRAMES] === */
+    @keyframes overdrive-pulse {
+      from { background-color: var(--color-bg-primary); }
+      to   { background-color: #0a001a; }
+    }
+    @keyframes flicker {
+      from { opacity: 1; }
+      to   { opacity: 0.85; }
+    }
+    @keyframes node-ping {
+      0%   { box-shadow: var(--glow-cyan); }
+      50%  { box-shadow: 0 0 20px #00f5ff, 0 0 40px #00f5ff60; }
+      100% { box-shadow: var(--glow-cyan); }
+    }
+    .node-card.is-active {
+      animation: node-ping 2s ease-in-out infinite;
+    }
+  </style>
 </head>
 <body>
 
-  <header class="site-header">
-    <h1 class="site-title">Saludos desde TSOFT</h1>
-  </header>
+  <!-- Canvas de fondo: partículas -->
+  <canvas id="particle-canvas"></canvas>
 
-  <main id="app">
+  <!-- Canvas de conexiones entre nodos -->
+  <canvas id="connection-canvas"></canvas>
 
-    <div id="country-dropdown" class="country-dropdown">
+  <!-- Overlay Overdrive Mode -->
+  <div id="overdrive-overlay">
+    <div class="overdrive-content">
+      <h2 class="overdrive-title">⚡ OVERDRIVE MODE ACTIVATED ⚡</h2>
+      <p class="overdrive-subtitle">ALL SYSTEMS NOMINAL</p>
+    </div>
+  </div>
 
-      <button id="dropdown-trigger" class="dropdown-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
-        Selecciona un país
-      </button>
+  <!-- Layout principal -->
+  <div class="main-layout">
 
-      <ul id="dropdown-menu" class="dropdown-menu" role="listbox">
+    <header class="dashboard-header">
+      <h1 class="dashboard-title">THE POWER GRID</h1>
+      <span class="dashboard-subtitle">MISSION CONTROL — DEVOPS SIMULATOR</span>
+    </header>
 
-        <li class="dropdown-option" role="option" data-country="argentina">
-          <span class="dropdown-flag">🇦🇷</span>
-          <span class="dropdown-label">Argentina</span>
-        </li>
-
-        <li class="dropdown-option" role="option" data-country="chile">
-          <span class="dropdown-flag">🇨🇱</span>
-          <span class="dropdown-label">Chile</span>
-        </li>
-
-        <li class="dropdown-option" role="option" data-country="peru">
-          <span class="dropdown-flag">🇵🇪</span>
-          <span class="dropdown-label">Perú</span>
-        </li>
-
-        <li class="dropdown-option" role="option" data-country="colombia">
-          <span class="dropdown-flag">🇨🇴</span>
-          <span class="dropdown-label">Colombia</span>
-        </li>
-
-        <li class="dropdown-option" role="option" data-country="mexico">
-          <span class="dropdown-flag">🇲🇽</span>
-          <span class="dropdown-label">México</span>
-        </li>
-
-        <li class="dropdown-option" role="option" data-country="uruguay">
-          <span class="dropdown-flag">🇺🇾</span>
-          <span class="dropdown-label">Uruguay</span>
-        </li>
-
-        <li class="dropdown-option" role="option" data-country="brasil">
-          <span class="dropdown-flag">🇧🇷</span>
-          <span class="dropdown-label">Brasil</span>
-        </li>
-
-        <li class="dropdown-option" role="option" data-country="espana">
-          <span class="dropdown-flag">🇪🇸</span>
-          <span class="dropdown-label">España</span>
-        </li>
-
-      </ul>
+    <div class="nodes-area">
+      <section class="nodes-grid">
+        <div class="node-card" id="node-gitlab-repo" data-node="gitlab-repo">
+          <span class="node-icon">⬡</span>
+          <span class="node-label">GitLab Repo</span>
+          <span class="node-status-text">OFFLINE</span>
+        </div>
+        <div class="node-card" id="node-ci-pipeline" data-node="ci-pipeline">
+          <span class="node-icon">⬡</span>
+          <span class="node-label">CI Pipeline</span>
+          <span class="node-status-text">OFFLINE</span>
+        </div>
+        <div class="node-card" id="node-security-scan" data-node="security-scan">
+          <span class="node-icon">⬡</span>
+          <span class="node-label">Security Scan</span>
+          <span class="node-status-text">OFFLINE</span>
+        </div>
+        <div class="node-card" id="node-artifact-registry" data-node="artifact-registry">
+          <span class="node-icon">⬡</span>
+          <span class="node-label">Artifact Registry</span>
+          <span class="node-status-text">OFFLINE</span>
+        </div>
+        <div class="node-card" id="node-k8s-deploy" data-node="k8s-deploy">
+          <span class="node-icon">⬡</span>
+          <span class="node-label">K8s Deploy</span>
+          <span class="node-status-text">OFFLINE</span>
+        </div>
+      </section>
     </div>
 
-    <section id="greeting-display">
+    <aside class="kpi-panel">
+      <h3 class="panel-title">KPI METRICS</h3>
 
-      <article class="greeting-card" data-country="argentina">
-        <span class="greeting-flag">🇦🇷</span>
-        <p class="greeting-phrase">¡Buenas, che! ¿Cómo andás?</p>
-        <p class="greeting-country">Argentina</p>
-      </article>
+      <div class="kpi-item">
+        <span class="kpi-label">Deploy Frequency</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-deploy-freq">0</span>
+          <span class="kpi-unit">/day</span>
+        </div>
+        <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-deploy-freq"></div></div>
+      </div>
 
-      <article class="greeting-card" data-country="chile">
-        <span class="greeting-flag">🇨🇱</span>
-        <p class="greeting-phrase">¡Hola po! ¿Cómo estái?</p>
-        <p class="greeting-country">Chile</p>
-      </article>
+      <div class="kpi-item">
+        <span class="kpi-label">Lead Time (min)</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-lead-time">0</span>
+          <span class="kpi-unit">min</span>
+        </div>
+        <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-lead-time"></div></div>
+      </div>
 
-      <article class="greeting-card" data-country="peru">
-        <span class="greeting-flag">🇵🇪</span>
-        <p class="greeting-phrase">¡Habla, causa! ¿Qué es de tu vida?</p>
-        <p class="greeting-country">Perú</p>
-      </article>
+      <div class="kpi-item">
+        <span class="kpi-label">MTTR (min)</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-mttr">0</span>
+          <span class="kpi-unit">min</span>
+        </div>
+        <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-mttr"></div></div>
+      </div>
 
-      <article class="greeting-card" data-country="colombia">
-        <span class="greeting-flag">🇨🇴</span>
-        <p class="greeting-phrase">¡Quiubo, parce! ¿Todo bien o qué?</p>
-        <p class="greeting-country">Colombia</p>
-      </article>
+      <div class="kpi-item">
+        <span class="kpi-label">Change Failure Rate</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-cfr">0</span>
+          <span class="kpi-unit">%</span>
+        </div>
+        <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-cfr"></div></div>
+      </div>
 
-      <article class="greeting-card" data-country="mexico">
-        <span class="greeting-flag">🇲🇽</span>
-        <p class="greeting-phrase">¡Qué onda, güey! ¿Cómo estás?</p>
-        <p class="greeting-country">México</p>
-      </article>
+      <div class="kpi-item">
+        <span class="kpi-label">Pipeline Success</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-pipeline-success">0</span>
+          <span class="kpi-unit">%</span>
+        </div>
+        <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-pipeline-success"></div></div>
+      </div>
 
-      <article class="greeting-card" data-country="uruguay">
-        <span class="greeting-flag">🇺🇾</span>
-        <p class="greeting-phrase">¡Hola, mano! ¿Cómo te va?</p>
-        <p class="greeting-country">Uruguay</p>
-      </article>
+      <div class="kpi-item">
+        <span class="kpi-label">Security Score</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-security-score">0</span>
+          <span class="kpi-unit">pts</span>
+        </div>
+        <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-security-score"></div></div>
+      </div>
 
-      <article class="greeting-card" data-country="brasil">
-        <span class="greeting-flag">🇧🇷</span>
-        <p class="greeting-phrase">Oi, mano! Tudo bem?</p>
-        <p class="greeting-country">Brasil</p>
-      </article>
+      <div class="kpi-item">
+        <span class="kpi-label">Artifact Cache Hit</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-cache-hit">0</span>
+          <span class="kpi-unit">%</span>
+        </div>
+        <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-cache-hit"></div></div>
+      </div>
 
-      <article class="greeting-card" data-country="espana">
-        <span class="greeting-flag">🇪🇸</span>
-        <p class="greeting-phrase">¡Hola, tío! ¿Qué tal estás?</p>
-        <p class="greeting-country">España</p>
-      </article>
+      <div class="kpi-item">
+        <span class="kpi-label">Uptime</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-uptime">0</span>
+          <span class="kpi-unit">%</span>
+        </div>
+        <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-uptime"></div></div>
+      </div>
+    </aside>
 
-    </section>
+    <div class="pipeline-card" id="pipeline-card">
+      <span class="pipeline-label">PIPELINE</span>
+      <div class="pipeline-stages">
+        <span class="pipeline-stage" id="stage-source">SOURCE</span>
+        <span class="pipeline-arrow">→</span>
+        <span class="pipeline-stage" id="stage-build">BUILD</span>
+        <span class="pipeline-arrow">→</span>
+        <span class="pipeline-stage" id="stage-test">TEST</span>
+        <span class="pipeline-arrow">→</span>
+        <span class="pipeline-stage" id="stage-security">SECURITY</span>
+        <span class="pipeline-arrow">→</span>
+        <span class="pipeline-stage" id="stage-package">PACKAGE</span>
+        <span class="pipeline-arrow">→</span>
+        <span class="pipeline-stage" id="stage-deploy">DEPLOY</span>
+      </div>
+      <span class="pipeline-badge" id="pipeline-badge">IDLE</span>
+    </div>
 
-  </main>
+  </div>
 
-  <script src="js/main.js"></script>
+  <script>
+    // === [STATE] ===
+    const globalState = {
+      nodes: {
+        'gitlab-repo':       false,
+        'ci-pipeline':       false,
+        'security-scan':     false,
+        'artifact-registry': false,
+        'k8s-deploy':        false
+      },
+      overdrive: false
+    };
 
-</body>
-</html>
+    // === [CONFIG] ===
+    const KPI_CONFIG = {
+      'deploy-freq': {
+        valueId: 'kpi-deploy-freq', barId: 'bar-deploy-freq',
+        base: 0, max: 24, min: 0,
+        boosts: { 'gitlab-repo': 4, 'ci-pipeline': 8, 'security-scan': 2, 'artifact-registry': 4, 'k8s-deploy': 6 },
+        current: 0, target: 0, decimals: 1
+      },
+      'lead-time': {
+        valueId: 'kpi-lead-time', barId: 'bar-lead-time',
+        base: 0, max: 120, min: 0,
+        boosts: { 'gitlab-repo': 15, 'ci-pipeline': 40, 'security-scan': 20, 'artifact-registry': 20, 'k8s-deploy': 25 },
+        current: 0, target: 0, decimals: 0
+      },
+      'mttr': {
+        valueId: 'kpi-mttr', barId: 'bar-mttr',
+        base: 0, max: 60, min: 0,
+        boosts: { 'gitlab-repo': 5, 'ci-pipeline': 10, 'security-scan': 15, 'artifact-registry': 10, 'k8s-deploy': 20 },
+        current: 0, target: 0, decimals: 0
+      },
+      'cfr': {
+        valueId: 'kpi-cfr', barId: 'bar-cfr',
+        base: 0, max: 100, min: 0,
+        boosts: { 'gitlab-repo': 10, 'ci-pipeline': 20, 'security-scan': 30, 'artifact-registry': 15, 'k8s-deploy': 25 },
+        current: 0, target: 0, decimals: 0
+      },
+      'pipeline-success': {
+        valueId: 'kpi-pipeline-success', barId: 'bar-pipeline-success',
+        base: 0, max: 100, min: 0,
+        boosts: { 'gitlab-repo': 15, 'ci-pipeline': 30, 'security-scan': 20, 'artifact-registry': 15, 'k8s-deploy': 20 },
+        current: 0, target: 0, decimals: 0
+      },
+      'security-score': {
+        valueId: 'kpi-security-score', barId: 'bar-security-score',
+        base: 0, max: 100, min: 0,
+        boosts: { 'gitlab-repo': 10, 'ci-pipeline': 10, 'security-scan': 50, 'artifact-registry': 15, 'k8s-deploy': 15 },
+        current: 0, target: 0, decimals: 0
+      },
+      'cache-hit': {
+        valueId: 'kpi-cache-hit', barId: 'bar-cache-hit',
+        base: 0, max: 100, min: 0,
+        boosts: { 'gitlab-repo': 10, 'ci-pipeline': 20, 'security-scan': 5, 'artifact-registry': 50, 'k8s-deploy': 15 },
+        current: 0, target: 0, decimals: 0
+      },
+      'uptime': {
+        valueId: 'kpi-uptime', barId: 'bar-uptime',
+        base: 0, max: 100, min: 0,
+        boosts: { 'gitlab-repo': 10, 'ci-pipeline': 15, 'security-scan': 15, 'artifact-registry': 20, 'k8s-deploy': 40 },
+        current: 0, target: 0, decimals: 1
+      }
+    };
+
+    // Pipeline stage mapping
+    const PIPELINE_STAGE_MAP = {
+      'gitlab-repo':       'stage-source',
+      'ci-pipeline':       'stage-build',
+      'security-scan':     'stage-security',
+      'artifact-registry': 'stage-package',
+      'k8s-deploy':        'stage-deploy'
+    };
+
+    // === [CANVAS-PARTICLES] ===
+    class ParticleSystem {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.resize();
+        this.init();
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      resize() {
+        this.canvas.width  = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+
+      init() {
+        this.particles = [];
+        const count = Math.floor((window.innerWidth * window.innerHeight) / 12000);
+        for (let i = 0; i < count; i++) {
+          this.particles.push(this.createParticle());
+        }
+      }
+
+      createParticle() {
+        return {
+          x:     Math.random() * this.canvas.width,
+          y:     Math.random() * this.canvas.height,
+          vx:    (Math.random() - 0.5) * 0.4,
+          vy:    (Math.random() - 0.5) * 0.4,
+          size:  Math.random() * 1.5 + 0.5,
+          alpha: Math.random() * 0.5 + 0.1
+        };
+      }
+
+      update() {
+        for (const p of this.particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0) p.x = this.canvas.width;
+          if (p.x > this.canvas.width)  p.x = 0;
+          if (p.y < 0) p.y = this.canvas.height;
+          if (p.y > this.canvas.height) p.y = 0;
+        }
+      }
+
+      draw() {
+        const ctx = this.ctx;
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (const p of this.particles) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0, 245, 255, ${p.alpha})`;
+          ctx.fill();
+        }
+      }
+    }
+
+    // === [CANVAS-CONNECTIONS] ===
+    const connCanvas = document.getElementById('connection-canvas');
+    const connCtx    = connCanvas.getContext('2d');
+
+    function resizeConnCanvas() {
+      connCanvas.width  = window.innerWidth;
+      connCanvas.height = window.innerHeight;
+    }
+    resizeConnCanvas();
+    window.addEventListener('resize', resizeConnCanvas);
+
+    // Pulse state per connection
+    const pulses = {};
+
+    function getNodeCenter(nodeId) {
+      const el = document.getElementById(nodeId);
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    }
+
+    const NODE_IDS = [
+      'node-gitlab-repo',
+      'node-ci-pipeline',
+      'node-security-scan',
+      'node-artifact-registry',
+      'node-k8s-deploy'
+    ];
+
+    function drawConnections(timestamp) {
+      const ctx = connCtx;
+      ctx.clearRect(0, 0, connCanvas.width, connCanvas.height);
+
+      const activeNodes = NODE_IDS.filter(id => {
+        const key = id.replace('node-', '');
+        return globalState.nodes[key];
+      });
+
+      if (activeNodes.length < 2) return;
+
+      for (let i = 0; i < activeNodes.length - 1; i++) {
+        const fromId = activeNodes[i];
+        const toId   = activeNodes[i + 1];
+        const from   = getNodeCenter(fromId);
+        const to     = getNodeCenter(toId);
+        if (!from || !to) continue;
+
+        const pairKey = fromId + '->' + toId;
+
+        // Draw base line
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        const cpx = (from.x + to.x) / 2;
+        const cpy = (from.y + to.y) / 2 - 30;
+        ctx.quadraticCurveTo(cpx, cpy, to.x, to.y);
+        ctx.strokeStyle = 'rgba(0, 245, 255, 0.15)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Pulse
+        if (!pulses[pairKey]) {
+          pulses[pairKey] = { t: Math.random() };
+        }
+        pulses[pairKey].t += 0.004;
+        if (pulses[pairKey].t > 1) pulses[pairKey].t = 0;
+
+        const t = pulses[pairKey].t;
+        const px = quadBezierPoint(from.x, cpx, to.x, t);
+        const py = quadBezierPoint(from.y, cpy, to.y, t);
+
+        const grad = ctx.createRadialGradient(px, py, 0, px, py, 8);
+        grad.addColorStop(0, 'rgba(0, 245, 255, 0.9)');
+        grad.addColorStop(1, 'rgba(0, 245, 255, 0)');
+        ctx.beginPath();
+        ctx.arc(px, py, 8, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+    }
+
+    function quadBezierPoint(p0, p1, p2, t) {
+      return (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+    }
+
+    // === [KPI-ENGINE] ===
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    const kpiAnimations = {};
+
+    function recalculateKPIs() {
+      for (const key in KPI_CONFIG) {
+        const cfg = KPI_CONFIG[key];
+        let target = cfg.base;
+        for (const nodeKey in cfg.boosts) {
+          if (globalState.nodes[nodeKey]) {
+            target += cfg.boosts[nodeKey];
+          }
+        }
+        target = Math.min(cfg.max, Math.max(cfg.min, target));
+        cfg.target = target;
+
+        // Start animation
+        kpiAnimations[key] = {
+          from:      cfg.current,
+          to:        target,
+          startTime: null,
+          duration:  600
+        };
+      }
+    }
+
+    function stepKPIAnimations(timestamp) {
+      for (const key in kpiAnimations) {
+        const anim = kpiAnimations[key];
+        const cfg  = KPI_CONFIG[key];
+        if (!anim) continue;
+
+        if (anim.startTime === null) anim.startTime = timestamp;
+        const elapsed  = timestamp - anim.startTime
