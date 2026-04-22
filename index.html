@@ -3,94 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self'; script-src 'self';">
+  <meta name="description" content="Saludos TSOFT por país">
   <title>Hola TSOFT</title>
-  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <main id="app">
-    <header>
-      <h1>Hola, TSOFT</h1>
-    </header>
 
-    <nav id="country-selector" role="navigation" aria-label="Selector de país"></nav>
+  <header>
+    <div id="header-brand">
+      <span id="brand-name">TSOFT</span>
+    </div>
+    <p id="brand-tagline">Conectando Latinoamérica con tecnología</p>
+  </header>
 
-    <section id="greeting-display" aria-live="polite">
-      <p id="greeting-flag"></p>
-      <p id="greeting-text"></p>
-      <p id="greeting-country"></p>
+  <main>
+    <h1 id="page-title">Selecciona tu país</h1>
+
+    <div id="country-selector-wrapper">
+
+      <label for="country-select" id="country-label">
+        Elige una oficina TSOFT:
+      </label>
+
+      <select id="country-select" name="country" aria-labelledby="country-label">
+        <option value="" disabled selected>— Seleccionar país —</option>
+        <option value="pe" data-flag="🇵🇪">🇵🇪 Perú</option>
+        <option value="cl" data-flag="🇨🇱">🇨🇱 Chile</option>
+        <option value="co" data-flag="🇨🇴">🇨🇴 Colombia</option>
+        <option value="mx" data-flag="🇲🇽">🇲🇽 México</option>
+        <option value="ar" data-flag="🇦🇷">🇦🇷 Argentina</option>
+        <option value="es" data-flag="🇪🇸">🇪🇸 España</option>
+      </select>
+
+    </div>
+
+    <section id="greeting-display" aria-live="polite" aria-atomic="true">
+      <div id="greeting-flag"></div>
+      <h2 id="greeting-text"></h2>
+      <p id="greeting-subtext"></p>
     </section>
 
-    <footer>
-      <p>© TSOFT — Todos los derechos reservados</p>
-    </footer>
   </main>
 
-  <script>
-    const GREETINGS_DATA = {
-      argentina: {
-        flag:     '🇦🇷',
-        greeting: '¡Hola, equipo!',
-        country:  'Argentina'
-      },
-      mexico: {
-        flag:     '🇲🇽',
-        greeting: '¡Hola, equipo!',
-        country:  'México'
-      },
-      colombia: {
-        flag:     '🇨🇴',
-        greeting: '¡Hola, equipo!',
-        country:  'Colombia'
-      },
-      chile: {
-        flag:     '🇨🇱',
-        greeting: '¡Hola, equipo!',
-        country:  'Chile'
-      },
-      peru: {
-        flag:     '🇵🇪',
-        greeting: '¡Hola, equipo!',
-        country:  'Perú'
-      },
-      uruguay: {
-        flag:     '🇺🇾',
-        greeting: '¡Hola, equipo!',
-        country:  'Uruguay'
-      }
-    };
+  <footer>
+    <p id="footer-legal">&copy; 2025 TSOFT. Todos los derechos reservados.</p>
+  </footer>
 
-    function renderSelector() {
-      var nav = document.getElementById('country-selector');
-      Object.keys(GREETINGS_DATA).forEach(function(key) {
-        var data = GREETINGS_DATA[key];
-        var btn = document.createElement('button');
-        btn.setAttribute('data-country', key);
-        btn.setAttribute('aria-label', 'Ver saludo de ' + data.country);
-        btn.textContent = data.flag + ' ' + data.country;
-        btn.onclick = function() { showGreeting(key); };
-        nav.appendChild(btn);
-      });
-    }
-
-    function showGreeting(key) {
-      var data = GREETINGS_DATA[key];
-      document.getElementById('greeting-flag').textContent    = data.flag;
-      document.getElementById('greeting-text').textContent    = data.greeting;
-      document.getElementById('greeting-country').textContent = data.country;
-
-      // Marca el botón activo y limpia los demás
-      var buttons = document.querySelectorAll('#country-selector button');
-      buttons.forEach(function(btn) {
-        if (btn.getAttribute('data-country') === key) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-    }
-
-    renderSelector();
-  </script>
+  <script src="js/main.js"></script>
 </body>
 </html>
