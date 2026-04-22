@@ -3,49 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Saludos internacionales de las oficinas globales de Tsoft">
-  <title>Saludos Internacionales — Tsoft</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self';
+             style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+             font-src https://fonts.gstatic.com;
+             script-src 'self';
+             img-src 'self' data:;">
+  <meta name="description" content="Hola TSOFT — Saludos personalizados por país para las oficinas de TSOFT en Latinoamérica y USA.">
+  <meta name="author" content="TSOFT">
+  <title>Hola TSOFT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
 
-  <header id="site-header">
-    <div id="logo-container">
-      <svg width="120" height="40" viewBox="0 0 120 40" aria-label="Tsoft logo">
-        <rect width="120" height="40" rx="6" fill="#0057B8"></rect>
-        <text x="60" y="27" text-anchor="middle" fill="#FFFFFF" font-size="18" font-family="sans-serif" font-weight="bold">Tsoft</text>
-      </svg>
-    </div>
-    <div id="header-text">
-      <h1>Saludos Internacionales</h1>
-      <p id="header-subtitle">Conoce cómo saludan nuestros equipos alrededor del mundo</p>
+  <header class="site-header">
+    <div class="header-brand">
+      <span class="brand-logo">TSOFT</span>
+      <span class="brand-tagline">Conectando talento en Latinoamérica</span>
     </div>
   </header>
 
-  <main id="main-content">
-    <section id="search-section" aria-label="Filtro de búsqueda por país">
-      <label for="search-input">Buscar por país o saludo:</label>
-      <input
-        type="search"
-        id="search-input"
-        name="search"
-        placeholder="Ej: México, Hola, Ciao..."
-        autocomplete="off"
-        maxlength="50"
-        aria-controls="greetings-grid"
-      >
+  <main class="site-main">
+
+    <section class="selector-section" aria-label="Selector de país">
+      <h1 class="selector-title">Selecciona tu país</h1>
+      <div class="selector-grid">
+        <button class="country-btn" data-country="argentina">🇦🇷 Argentina</button>
+        <button class="country-btn" data-country="bolivia">🇧🇴 Bolivia</button>
+        <button class="country-btn" data-country="brasil">🇧🇷 Brasil</button>
+        <button class="country-btn" data-country="chile">🇨🇱 Chile</button>
+        <button class="country-btn" data-country="colombia">🇨🇴 Colombia</button>
+        <button class="country-btn" data-country="costa-rica">🇨🇷 Costa Rica</button>
+        <button class="country-btn" data-country="ecuador">🇪🇨 Ecuador</button>
+        <button class="country-btn" data-country="el-salvador">🇸🇻 El Salvador</button>
+        <button class="country-btn" data-country="guatemala">🇬🇹 Guatemala</button>
+        <button class="country-btn" data-country="honduras">🇭🇳 Honduras</button>
+        <button class="country-btn" data-country="mexico">🇲🇽 México</button>
+        <button class="country-btn" data-country="nicaragua">🇳🇮 Nicaragua</button>
+        <button class="country-btn" data-country="panama">🇵🇦 Panamá</button>
+        <button class="country-btn" data-country="paraguay">🇵🇾 Paraguay</button>
+        <button class="country-btn" data-country="peru">🇵🇪 Perú</button>
+        <button class="country-btn" data-country="republica-dominicana">🇩🇴 Rep. Dominicana</button>
+        <button class="country-btn" data-country="uruguay">🇺🇾 Uruguay</button>
+        <button class="country-btn" data-country="usa">🇺🇸 USA</button>
+        <button class="country-btn" data-country="venezuela">🇻🇪 Venezuela</button>
+      </div>
     </section>
 
-    <section id="greetings-section" aria-label="Listado de saludos por país">
-      <div id="greetings-grid" role="list" aria-live="polite" aria-label="Tarjetas de saludos">
-        <!-- main.js inyecta las tarjetas aquí en tiempo de ejecución -->
+    <section class="greeting-section" aria-label="Saludo personalizado" aria-live="polite">
+      <div class="greeting-card" id="greeting-card" hidden>
+        <p class="greeting-flag" id="greeting-flag"></p>
+        <h2 class="greeting-text" id="greeting-text"></h2>
+        <p class="greeting-sub" id="greeting-sub"></p>
       </div>
-      <p id="no-results-message" hidden aria-live="assertive">
-        No se encontraron resultados para tu búsqueda.
-      </p>
+      <div class="greeting-placeholder" id="greeting-placeholder">
+        <p class="placeholder-text">👆 Elige un país para ver tu saludo</p>
+      </div>
     </section>
+
   </main>
 
-  <script src="main.js"></script>
+  <footer class="site-footer">
+    <p class="footer-copy">&copy; <span id="footer-year"></span> TSOFT. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="./js/main.js"></script>
+
 </body>
 </html>

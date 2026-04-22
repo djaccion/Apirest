@@ -1,94 +1,59 @@
-# Tsoft · Saludos Internacionales
-**Ticket:** XP-12 | **Entorno:** Local (file:///) y servidor estático
+# 🌎 Hola TSOFT
 
-Página estática que muestra saludos coloquiales de los países donde Tsoft tiene oficinas,
-con filtro de búsqueda en tiempo real. Sin dependencias externas. Sin backend.
+Página web estática con saludos personalizados por país para las oficinas TSOFT en Latinoamérica y USA.
 
----
+## 📁 Estructura del proyecto
 
-## Estructura del Proyecto
-
+```text
+hola-tsoft/
+├── index.html
+├── css/
+│   └── styles.css
+├── js/
+│   └── main.js
+└── README.md
 ```
-index.html   → Estructura HTML semántica y datos de saludos embebidos
-styles.css   → Estilos visuales, variables CSS y diseño responsivo
-main.js      → Lógica de filtro de búsqueda (vanilla JS, sin módulos)
-README.md    → Este archivo
-```
 
-> ⚠️ **ADVERTENCIA AL DESARROLLADOR:** No agregues ningún archivo fuera de esta lista. El proyecto es de archivo mínimo por diseño.
+## ▶️ Cómo ejecutar
 
----
+1. Descarga o clona este repositorio en tu equipo local.
+2. Abre el archivo `index.html` directamente en tu navegador (doble clic o arrastrar al navegador).
+3. No se requiere servidor, instalación de dependencias ni conexión a internet.
 
-## Requisitos Previos
+> ⚠️ **Nota de compatibilidad:** Los emojis de banderas pueden no renderizarse correctamente en Windows 10. El nombre del país siempre es visible como texto alternativo.
 
-- Navegador moderno (Chrome 90+, Firefox 88+, Edge 90+, Safari 14+)
-- Sin instalaciones adicionales requeridas
-- Sin Node.js, sin npm, sin servidor local obligatorio
+## 🗺️ Países disponibles
 
----
+| Bandera | País      |
+|---------|-----------|
+| 🇦🇷    | Argentina |
+| 🇲🇽    | México    |
+| 🇨🇴    | Colombia  |
+| 🇨🇱    | Chile     |
+| 🇵🇪    | Perú      |
+| 🇺🇾    | Uruguay   |
+| 🇧🇷    | Brasil    |
+| 🇺🇸    | USA       |
 
-## Cómo Ejecutar
+## ⚙️ Decisiones técnicas
 
-### Opción A: Apertura local directa
-1. Descarga o clona el repositorio.
-2. Abre el archivo `index.html` directamente en tu navegador.
-   - Windows: doble clic sobre `index.html`
-   - macOS/Linux: `open index.html` desde terminal
-3. La página carga sin pasos adicionales.
+- **Sin frameworks JS:** Vanilla JavaScript puro. YAGNI: un framework para 8 saludos estáticos es sobreingeniería.
+- **Sin archivos de imagen:** Las banderas se renderizan con emojis Unicode nativos. No hay dependencia de archivos `.png` o `.webp`.
+- **Sin proceso de build:** No hay npm, no hay webpack, no hay SASS. El proyecto abre directamente en el navegador.
+- **CSS con variables nativas:** Se usan Custom Properties (`--color-primary`, etc.) en lugar de un preprocesador, sin agregar dependencias.
 
-### Opción B: Servidor estático (recomendado)
-Si dispones de Python instalado, ejecuta desde la carpeta del proyecto:
+## 🔒 Seguridad
 
-    # Python 3
-    python -m http.server 8080
+- **XSS:** No hay inputs de usuario. El texto dinámico se inserta con `textContent`, nunca con `innerHTML`.
+- **CSP:** Política de seguridad de contenido declarada en el `<meta>` del `index.html`.
+- **Producción:** Para despliegue en producción, se recomienda servir el proyecto desde un servidor con HTTPS/TLS habilitado.
 
-Luego abre: http://localhost:8080
+## 🎨 Paleta de colores
 
-> **Nota de seguridad:** Para despliegue en servidor corporativo, sirve los archivos bajo HTTPS.
-> El código no requiere modificaciones para funcionar bajo HTTPS.
-
----
-
-## Funcionalidades
-
-- Muestra saludos coloquiales organizados por país de oficina Tsoft
-- Campo de búsqueda con filtro en tiempo real (sin recarga de página)
-- Diseño responsivo adaptado a móvil, tablet y escritorio
-- Funciona completamente offline, sin dependencias de red
-- Compatible con protocolo file:/// y servidores HTTP/HTTPS
-
----
-
-## Notas de Seguridad
-
-- El campo de búsqueda sanitiza el input del usuario vía `textContent`.
-  No se usa `innerHTML` con datos del usuario en ningún punto del código.
-- No hay backend, base de datos ni autenticación. El contenido es público por diseño.
-- Para despliegue en servidor: usar HTTPS y configurar cabeceras
-  `Content-Security-Policy` y `X-Frame-Options` a nivel de servidor web.
-
----
-
-## Mantenimiento de Datos
-
-Los saludos y la información de cada país están definidos directamente en `index.html`,
-dentro del atributo `data-*` de cada tarjeta, o como contenido estático en el marcado HTML.
-
-**Para agregar un nuevo país u oficina:**
-
-1. Abre `index.html` en cualquier editor de texto.
-2. Localiza el elemento `<div id="greetings-grid">`.
-3. Copia el bloque de una tarjeta existente y pégalo al final, dentro del mismo contenedor.
-4. Edita los valores de país, saludo, idioma y pronunciación en el nuevo bloque.
-5. Guarda el archivo. No se requiere compilación ni reinicio de ningún servicio.
-
-**Campos editables por tarjeta:**
-
-- `.card__flag` — Emoji de bandera del país
-- `.card__greeting` — Saludo coloquial en el idioma local
-- `.card__language` — Nombre del idioma
-- `.card__country` — Nombre del país
-- `.card__pronunciation` — Guía de pronunciación aproximada en español
-
-> ⚠️ No modifiques los atributos `id` ni las clases CSS existentes. El filtro de búsqueda
-> en `main.js` depende de la estructura de clases para localizar y comparar el texto de cada tarjeta.
+| Variable CSS        | Valor     |
+|---------------------|-----------|
+| `--color-primary`   | `#0057A8` |
+| `--color-secondary` | `#00AEEF` |
+| `--color-accent`    | `#FF6B00` |
+| `--color-bg`        | `#F5F7FA` |
+| `--color-text`      | `#1A1A2E` |
