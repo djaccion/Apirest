@@ -1,52 +1,94 @@
-# Tsoft — Saludos Internacionales
+# Tsoft · Saludos Internacionales
+**Ticket:** XP-12 | **Entorno:** Local (file:///) y servidor estático
 
-Página estática que muestra saludos coloquiales de los países donde Tsoft tiene oficinas.
-Un único archivo HTML autocontenido, sin dependencias de build ni servidor backend.
+Página estática que muestra saludos coloquiales de los países donde Tsoft tiene oficinas,
+con filtro de búsqueda en tiempo real. Sin dependencias externas. Sin backend.
 
-## Estructura del proyecto
+---
+
+## Estructura del Proyecto
 
 ```
-index.html   → Página principal. Contiene HTML, CSS embebido y datos de saludos en JS.
-styles.css   → Hoja de estilos externa con variables de marca y layout responsivo.
-README.md    → Este archivo.
+index.html   → Estructura HTML semántica y datos de saludos embebidos
+styles.css   → Estilos visuales, variables CSS y diseño responsivo
+main.js      → Lógica de filtro de búsqueda (vanilla JS, sin módulos)
+README.md    → Este archivo
 ```
 
-## Cómo ejecutar
+> ⚠️ **ADVERTENCIA AL DESARROLLADOR:** No agregues ningún archivo fuera de esta lista. El proyecto es de archivo mínimo por diseño.
 
-**Opción A — Abrir directamente en el navegador:**
-1. Descarga o clona este repositorio.
-2. Abre el archivo `index.html` directamente en tu navegador (doble clic o arrastrar).
-3. No se requiere servidor, conexión a internet ni instalación de dependencias.
+---
 
-**Opción B — Servidor estático local (recomendado para desarrollo):**
-1. Asegúrate de tener Python instalado.
-2. Desde la carpeta del proyecto, ejecuta:
-   ```
-   python -m http.server 8080
-   ```
-3. Abre `http://localhost:8080` en tu navegador.
+## Requisitos Previos
 
-## Cómo editar los saludos
+- Navegador moderno (Chrome 90+, Firefox 88+, Edge 90+, Safari 14+)
+- Sin instalaciones adicionales requeridas
+- Sin Node.js, sin npm, sin servidor local obligatorio
 
-Los datos están hardcodeados en `index.html`, dentro de un bloque `<script>`.
-Busca el array llamado `greetingsData` cerca del inicio del script.
+---
 
-Cada entrada tiene este formato:
-```js
-{ country: "Colombia", greeting: "¡Quiubo!", flag: "🇨🇴" }
-```
+## Cómo Ejecutar
 
-Para agregar un nuevo país:
+### Opción A: Apertura local directa
+1. Descarga o clona el repositorio.
+2. Abre el archivo `index.html` directamente en tu navegador.
+   - Windows: doble clic sobre `index.html`
+   - macOS/Linux: `open index.html` desde terminal
+3. La página carga sin pasos adicionales.
+
+### Opción B: Servidor estático (recomendado)
+Si dispones de Python instalado, ejecuta desde la carpeta del proyecto:
+
+    # Python 3
+    python -m http.server 8080
+
+Luego abre: http://localhost:8080
+
+> **Nota de seguridad:** Para despliegue en servidor corporativo, sirve los archivos bajo HTTPS.
+> El código no requiere modificaciones para funcionar bajo HTTPS.
+
+---
+
+## Funcionalidades
+
+- Muestra saludos coloquiales organizados por país de oficina Tsoft
+- Campo de búsqueda con filtro en tiempo real (sin recarga de página)
+- Diseño responsivo adaptado a móvil, tablet y escritorio
+- Funciona completamente offline, sin dependencias de red
+- Compatible con protocolo file:/// y servidores HTTP/HTTPS
+
+---
+
+## Notas de Seguridad
+
+- El campo de búsqueda sanitiza el input del usuario vía `textContent`.
+  No se usa `innerHTML` con datos del usuario en ningún punto del código.
+- No hay backend, base de datos ni autenticación. El contenido es público por diseño.
+- Para despliegue en servidor: usar HTTPS y configurar cabeceras
+  `Content-Security-Policy` y `X-Frame-Options` a nivel de servidor web.
+
+---
+
+## Mantenimiento de Datos
+
+Los saludos y la información de cada país están definidos directamente en `index.html`,
+dentro del atributo `data-*` de cada tarjeta, o como contenido estático en el marcado HTML.
+
+**Para agregar un nuevo país u oficina:**
+
 1. Abre `index.html` en cualquier editor de texto.
-2. Localiza el array `greetingsData`.
-3. Agrega un nuevo objeto al final del array, antes del cierre `]`.
-4. Guarda el archivo y recarga el navegador.
+2. Localiza el elemento `<div id="greetings-grid">`.
+3. Copia el bloque de una tarjeta existente y pégalo al final, dentro del mismo contenedor.
+4. Edita los valores de país, saludo, idioma y pronunciación en el nuevo bloque.
+5. Guarda el archivo. No se requiere compilación ni reinicio de ningún servicio.
 
-Para modificar un saludo existente:
-1. Localiza el objeto correspondiente por el campo `country`.
-2. Edita únicamente el campo `greeting`.
-3. Guarda y recarga.
+**Campos editables por tarjeta:**
 
-## Dependencias externas
+- `.card__flag` — Emoji de bandera del país
+- `.card__greeting` — Saludo coloquial en el idioma local
+- `.card__language` — Nombre del idioma
+- `.card__country` — Nombre del país
+- `.card__pronunciation` — Guía de pronunciación aproximada en español
 
-- `https://placehold.co` — Imagen de placeholder para el logo en el encabezado.
+> ⚠️ No modifiques los atributos `id` ni las clases CSS existentes. El filtro de búsqueda
+> en `main.js` depende de la estructura de clases para localizar y comparar el texto de cada tarjeta.

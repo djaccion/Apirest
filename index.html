@@ -3,103 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Saludos internacionales de las oficinas Tsoft">
+  <meta name="description" content="Saludos internacionales de las oficinas globales de Tsoft">
   <title>Saludos Internacionales — Tsoft</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" rel="stylesheet">
 </head>
 <body>
-  <header class="site-header">
-    <img src="https://placehold.co/160x48?text=Tsoft"
-         alt="Logo Tsoft"
-         class="site-header__logo"
-         width="160"
-         height="48">
-    <h1 class="site-header__title">Saludos Internacionales</h1>
-    <p class="site-header__subtitle">
-      Un saludo desde cada oficina Tsoft en el mundo
-    </p>
+
+  <header id="site-header">
+    <div id="logo-container">
+      <svg width="120" height="40" viewBox="0 0 120 40" aria-label="Tsoft logo">
+        <rect width="120" height="40" rx="6" fill="#0057B8"></rect>
+        <text x="60" y="27" text-anchor="middle" fill="#FFFFFF" font-size="18" font-family="sans-serif" font-weight="bold">Tsoft</text>
+      </svg>
+    </div>
+    <div id="header-text">
+      <h1>Saludos Internacionales</h1>
+      <p id="header-subtitle">Conoce cómo saludan nuestros equipos alrededor del mundo</p>
+    </div>
   </header>
 
-  <main>
-    <section class="greetings-section" aria-label="Tarjetas de saludos por país">
-      <div id="greetings-grid" class="greetings-grid">
+  <main id="main-content">
+    <section id="search-section" aria-label="Filtro de búsqueda por país">
+      <label for="search-input">Buscar por país o saludo:</label>
+      <input
+        type="search"
+        id="search-input"
+        name="search"
+        placeholder="Ej: México, Hola, Ciao..."
+        autocomplete="off"
+        maxlength="50"
+        aria-controls="greetings-grid"
+      >
+    </section>
+
+    <section id="greetings-section" aria-label="Listado de saludos por país">
+      <div id="greetings-grid" role="list" aria-live="polite" aria-label="Tarjetas de saludos">
+        <!-- main.js inyecta las tarjetas aquí en tiempo de ejecución -->
       </div>
+      <p id="no-results-message" hidden aria-live="assertive">
+        No se encontraron resultados para tu búsqueda.
+      </p>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <p class="site-footer__copy">
-      © <span id="current-year"></span> Tsoft. Todos los derechos reservados.
-    </p>
-  </footer>
-
-  <script>
-    const GREETINGS_DATA = [
-      { country: 'España',         greeting: '¡Hola!',       flag: '🇪🇸' },
-      { country: 'México',         greeting: '¡Qué onda!',   flag: '🇲🇽' },
-      { country: 'Argentina',      greeting: '¡Buenas!',     flag: '🇦🇷' },
-      { country: 'Colombia',       greeting: '¡Quiubo!',     flag: '🇨🇴' },
-      { country: 'Chile',          greeting: '¡Cachai!',     flag: '🇨🇱' },
-      { country: 'Perú',           greeting: '¡Habla!',      flag: '🇵🇪' },
-      { country: 'Brasil',         greeting: 'Oi!',          flag: '🇧🇷' },
-      { country: 'Estados Unidos', greeting: 'Hey!',         flag: '🇺🇸' },
-      { country: 'Reino Unido',    greeting: 'Cheers!',      flag: '🇬🇧' },
-      { country: 'Francia',        greeting: 'Salut!',       flag: '🇫🇷' },
-      { country: 'Alemania',       greeting: 'Hallo!',       flag: '🇩🇪' },
-      { country: 'Japón',          greeting: 'こんにちは!',  flag: '🇯🇵' }
-    ];
-
-    var setCurrentYear = function () {
-      var yearSpan = document.getElementById('current-year');
-      if (yearSpan) {
-        yearSpan.textContent = new Date().getFullYear();
-      }
-    };
-
-    var createGreetingCard = function (item) {
-      var article = document.createElement('article');
-      article.className = 'greeting-card';
-
-      var flagEl = document.createElement('span');
-      flagEl.className = 'greeting-card__flag';
-      flagEl.textContent = item.flag;
-
-      var greetingEl = document.createElement('p');
-      greetingEl.className = 'greeting-card__greeting';
-      greetingEl.textContent = item.greeting;
-
-      var countryEl = document.createElement('p');
-      countryEl.className = 'greeting-card__country';
-      countryEl.textContent = item.country;
-
-      article.appendChild(flagEl);
-      article.appendChild(greetingEl);
-      article.appendChild(countryEl);
-
-      return article;
-    };
-
-    var renderGreetings = function () {
-      var grid = document.getElementById('greetings-grid');
-      if (!grid) {
-        return;
-      }
-
-      var fragment = document.createDocumentFragment();
-
-      for (var i = 0; i < GREETINGS_DATA.length; i++) {
-        var card = createGreetingCard(GREETINGS_DATA[i]);
-        fragment.appendChild(card);
-      }
-
-      grid.appendChild(fragment);
-    };
-
-    setCurrentYear();
-    renderGreetings();
-  </script>
+  <script src="main.js"></script>
 </body>
 </html>
