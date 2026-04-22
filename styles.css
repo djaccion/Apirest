@@ -1,165 +1,325 @@
+/* ============================================================
+   TSOFT — SALUDOS INTERNACIONALES
+   styles.css — Hoja de estilos única y completa
+   ============================================================ */
+
+/* ============================================================
+   PASO 1 — RESET Y VARIABLES GLOBALES
+   ============================================================ */
+
 :root {
-  --color-primary: #0A2463;
-  --color-secondary: #3E92CC;
-  --color-accent: #D8315B;
-  --color-bg: #F4F7FB;
-  --color-surface: #FFFFFF;
+  /* PALETA DE MARCA TSOFT */
+  --color-primary:      #0A2463;
+  --color-secondary:    #3E92CC;
+  --color-accent:       #D8315B;
+  --color-bg-page:      #F4F7FB;
+  --color-bg-card:      #FFFFFF;
   --color-text-primary: #1B1B2F;
-  --color-text-secondary: #5A6A7A;
-  --color-border: #DDE3EC;
+  --color-text-muted:   #6B7280;
+  --color-border:       #E2E8F0;
 
-  --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-                Helvetica, Arial, sans-serif;
+  /* TIPOGRAFÍA */
+  --font-family-base:   'Inter', system-ui, sans-serif;
+  --font-size-base:     1rem;
+  --font-size-sm:       0.875rem;
+  --font-size-lg:       1.25rem;
+  --font-size-xl:       1.75rem;
+  --font-size-hero:     2.5rem;
+  --font-weight-normal: 400;
+  --font-weight-bold:   700;
 
-  --radius-card: 12px;
-  --shadow-card: 0 2px 8px rgba(10, 36, 99, 0.10);
-  --shadow-card-hover: 0 6px 20px rgba(10, 36, 99, 0.18);
+  /* ESPACIADO — escala de 4pt */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
 
-  --spacing-section: 48px;
-  --spacing-card-gap: 24px;
+  /* BORDES Y SOMBRAS */
+  --radius-card:       12px;
+  --radius-badge:      6px;
+  --shadow-card:       0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 8px 24px rgba(10, 36, 99, 0.15);
+
+  /* TRANSICIÓN GLOBAL */
+  --transition-base: 150ms ease-in-out;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: var(--font-stack);
-  background-color: var(--color-bg);
-  color: var(--color-text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+html {
+  font-size: 100%;
+  scroll-behavior: smooth;
 }
 
+/* ============================================================
+   PASO 2 — ESTILOS BASE DEL BODY
+   ============================================================ */
+
+body {
+  font-family:      var(--font-family-base);
+  font-size:        var(--font-size-base);
+  color:            var(--color-text-primary);
+  background-color: var(--color-bg-page);
+  line-height:      1.6;
+  min-height:       100vh;
+}
+
+/* ============================================================
+   PASO 3 — HEADER
+   ============================================================ */
+
+header,
 .site-header {
   background-color: var(--color-primary);
-  color: var(--color-surface);
-  padding: 32px var(--spacing-card-gap);
-  text-align: center;
+  color:            #FFFFFF;
+  padding:          var(--space-lg) var(--space-xl);
+  display:          flex;
+  align-items:      center;
+  justify-content:  space-between;
+  gap:              var(--space-md);
 }
 
 .site-header__logo {
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--color-surface);
+  height:  48px;
+  width:   auto;
+  display: block;
 }
 
-.site-header__logo span {
-  color: var(--color-secondary);
+.site-header__title {
+  font-size:      var(--font-size-xl);
+  font-weight:    var(--font-weight-bold);
+  color:          #FFFFFF;
+  letter-spacing: -0.02em;
 }
 
-.site-header__tagline {
-  font-size: 0.95rem;
-  color: var(--color-secondary);
-  margin-top: 4px;
-  font-weight: 400;
+.site-header__subtitle {
+  font-size:  var(--font-size-sm);
+  color:      rgba(255, 255, 255, 0.75);
+  margin-top: var(--space-xs);
 }
 
-.main-content {
-  flex: 1;
-  padding: var(--spacing-section) var(--spacing-card-gap);
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
+/* ============================================================
+   PASO 4 — SECCIÓN HERO / INTRODUCCIÓN
+   ============================================================ */
+
+.hero {
+  text-align:       center;
+  padding:          var(--space-2xl) var(--space-xl);
+  background-color: var(--color-bg-page);
 }
 
-.main-content__title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin-bottom: 8px;
+.hero__heading {
+  font-size:   var(--font-size-hero);
+  font-weight: var(--font-weight-bold);
+  color:       var(--color-primary);
+  line-height: 1.2;
+  margin-bottom: var(--space-md);
 }
 
-.main-content__subtitle {
-  font-size: 0.95rem;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-section);
+.hero__lead {
+  font-size:  var(--font-size-lg);
+  color:      var(--color-text-muted);
+  max-width:  640px;
+  margin:     0 auto;
 }
 
-.cards-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-card-gap);
+/* ============================================================
+   PASO 5 — SECCIÓN DE SALUDOS
+   ============================================================ */
+
+.greetings-section {
+  padding: var(--space-xl) var(--space-xl) var(--space-2xl);
+  max-width: 1280px;
+  margin:    0 auto;
+  width:     100%;
 }
 
-@media (min-width: 768px) {
-  .cards-grid {
-    grid-template-columns: repeat(2, 1fr);
+.greetings-section__heading {
+  font-size:     var(--font-size-xl);
+  font-weight:   var(--font-weight-bold);
+  color:         var(--color-primary);
+  margin-bottom: var(--space-lg);
+  text-align:    center;
+}
+
+/* ============================================================
+   PASO 6 — GRID DE TARJETAS
+   ============================================================ */
+
+.greetings-grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap:                   var(--space-lg);
+  list-style:            none;
+}
+
+/* ============================================================
+   PASO 7 — TARJETA DE PAÍS
+   ============================================================ */
+
+.country-card {
+  background-color: var(--color-bg-card);
+  border:           1px solid var(--color-border);
+  border-radius:    var(--radius-card);
+  box-shadow:       var(--shadow-card);
+  padding:          var(--space-lg);
+  display:          flex;
+  flex-direction:   column;
+  gap:              var(--space-sm);
+  transition:       box-shadow var(--transition-base),
+                    transform  var(--transition-base);
+  cursor:           default;
+}
+
+.country-card:hover,
+.country-card:focus-within {
+  box-shadow: var(--shadow-card-hover);
+  transform:  translateY(-4px);
+}
+
+.country-card__flag {
+  font-size:   2rem;
+  line-height: 1;
+}
+
+.country-card__country {
+  font-size:   var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color:       var(--color-primary);
+}
+
+.country-card__greeting {
+  font-size: var(--font-size-base);
+  color:     var(--color-text-primary);
+}
+
+.country-card__language {
+  font-size:  var(--font-size-sm);
+  color:      var(--color-text-muted);
+  margin-top: auto;
+}
+
+/* ============================================================
+   PASO 8 — BADGE DE IDIOMA
+   ============================================================ */
+
+.language-badge {
+  display:          inline-block;
+  background-color: var(--color-secondary);
+  color:            #FFFFFF;
+  font-size:        var(--font-size-sm);
+  font-weight:      var(--font-weight-bold);
+  padding:          var(--space-xs) var(--space-sm);
+  border-radius:    var(--radius-badge);
+  letter-spacing:   0.03em;
+  text-transform:   uppercase;
+}
+
+/* ============================================================
+   PASO 9 — FOOTER
+   ============================================================ */
+
+.site-footer {
+  background-color: var(--color-primary);
+  color:            rgba(255, 255, 255, 0.75);
+  text-align:       center;
+  padding:          var(--space-lg) var(--space-xl);
+  font-size:        var(--font-size-sm);
+}
+
+.site-footer__copy {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.site-footer__copy a {
+  color:           var(--color-secondary);
+  text-decoration: none;
+  transition:      color var(--transition-base);
+}
+
+.site-footer__copy a:hover,
+.site-footer__copy a:focus {
+  color: #FFFFFF;
+}
+
+/* ============================================================
+   PASO 10 — ESTADO DE CARGA / VACÍO
+   ============================================================ */
+
+.greetings-grid--loading,
+.greetings-grid--empty {
+  display:         flex;
+  justify-content: center;
+  align-items:     center;
+  min-height:      200px;
+  color:           var(--color-text-muted);
+  font-size:       var(--font-size-lg);
+  text-align:      center;
+}
+
+/* ============================================================
+   PASO 11 — MEDIA QUERIES (SECCIÓN ÚNICA AL FINAL)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  header,
+  .site-header {
+    flex-direction: column;
+    align-items:    flex-start;
+    padding:        var(--space-md) var(--space-lg);
+  }
+
+  .site-header__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .hero {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .hero__heading {
+    font-size: var(--font-size-xl);
+  }
+
+  .hero__lead {
+    font-size: var(--font-size-base);
+  }
+
+  .greetings-section {
+    padding: var(--space-lg) var(--space-md) var(--space-xl);
+  }
+
+  .greetings-grid {
+    grid-template-columns: 1fr;
+    gap:                   var(--space-md);
+  }
+
+  .site-footer {
+    padding: var(--space-md) var(--space-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__heading {
+    font-size: var(--font-size-lg);
+  }
+
+  .country-card {
+    padding: var(--space-md);
   }
 }
 
 @media (min-width: 1024px) {
-  .cards-grid {
-    grid-template-columns: repeat(3, 1fr);
+  .greetings-section {
+    padding-left:  var(--space-2xl);
+    padding-right: var(--space-2xl);
   }
-}
-
-.card {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-.card:hover {
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-3px);
-}
-
-.card__flag {
-  font-size: 2.5rem;
-  line-height: 1;
-}
-
-.card__country {
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-secondary);
-}
-
-.card__greeting {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  line-height: 1.2;
-}
-
-.card__translation {
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-}
-
-.card__pronunciation {
-  font-size: 0.82rem;
-  color: var(--color-accent);
-  font-style: italic;
-}
-
-.site-footer {
-  background-color: var(--color-primary);
-  color: var(--color-surface);
-  text-align: center;
-  padding: 20px var(--spacing-card-gap);
-  font-size: 0.85rem;
-}
-
-.site-footer a {
-  color: var(--color-secondary);
-  text-decoration: none;
-}
-
-.site-footer a:hover {
-  text-decoration: underline;
 }

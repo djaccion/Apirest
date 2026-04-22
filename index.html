@@ -1,183 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Saludos Internacionales — Tsoft</title>
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <header>
-      <div class="header-inner">
-        <span class="logo-text">Tsoft</span>
-        <nav aria-label="Navegación principal">
-          <a href="#greetings-section">Saludos</a>
-        </nav>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Saludos internacionales de las oficinas Tsoft">
+  <title>Saludos Internacionales — Tsoft</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <img src="https://placehold.co/160x48?text=Tsoft"
+         alt="Logo Tsoft"
+         class="site-header__logo"
+         width="160"
+         height="48">
+    <h1 class="site-header__title">Saludos Internacionales</h1>
+    <p class="site-header__subtitle">
+      Un saludo desde cada oficina Tsoft en el mundo
+    </p>
+  </header>
+
+  <main>
+    <section class="greetings-section" aria-label="Tarjetas de saludos por país">
+      <div id="greetings-grid" class="greetings-grid">
       </div>
-    </header>
+    </section>
+  </main>
 
-    <main>
-      <section id="greetings-section" aria-labelledby="section-title">
-        <h1 id="section-title">Saludos desde nuestras oficinas</h1>
-        <p class="section-subtitle">
-          Así nos saludan nuestros equipos alrededor del mundo.
-        </p>
-        <div id="greetings-grid" role="list">
-        </div>
-      </section>
-    </main>
+  <footer class="site-footer">
+    <p class="site-footer__copy">
+      © <span id="current-year"></span> Tsoft. Todos los derechos reservados.
+    </p>
+  </footer>
 
-    <footer>
-      <div class="footer-inner">
-        <p>&copy; <span id="current-year"></span> Tsoft. Todos los derechos reservados.</p>
-      </div>
-    </footer>
+  <script>
+    const GREETINGS_DATA = [
+      { country: 'España',         greeting: '¡Hola!',       flag: '🇪🇸' },
+      { country: 'México',         greeting: '¡Qué onda!',   flag: '🇲🇽' },
+      { country: 'Argentina',      greeting: '¡Buenas!',     flag: '🇦🇷' },
+      { country: 'Colombia',       greeting: '¡Quiubo!',     flag: '🇨🇴' },
+      { country: 'Chile',          greeting: '¡Cachai!',     flag: '🇨🇱' },
+      { country: 'Perú',           greeting: '¡Habla!',      flag: '🇵🇪' },
+      { country: 'Brasil',         greeting: 'Oi!',          flag: '🇧🇷' },
+      { country: 'Estados Unidos', greeting: 'Hey!',         flag: '🇺🇸' },
+      { country: 'Reino Unido',    greeting: 'Cheers!',      flag: '🇬🇧' },
+      { country: 'Francia',        greeting: 'Salut!',       flag: '🇫🇷' },
+      { country: 'Alemania',       greeting: 'Hallo!',       flag: '🇩🇪' },
+      { country: 'Japón',          greeting: 'こんにちは!',  flag: '🇯🇵' }
+    ];
 
-    <script>
-      var greetingsData = [
-        {
-          country: "Argentina",
-          flag: "🇦🇷",
-          greeting: "¡Buenas!",
-          language: "Español rioplatense",
-          city: "Buenos Aires"
-        },
-        {
-          country: "Brasil",
-          flag: "🇧🇷",
-          greeting: "Olá!",
-          language: "Portugués brasileño",
-          city: "São Paulo"
-        },
-        {
-          country: "México",
-          flag: "🇲🇽",
-          greeting: "¡Qué onda!",
-          language: "Español mexicano",
-          city: "Ciudad de México"
-        },
-        {
-          country: "España",
-          flag: "🇪🇸",
-          greeting: "¡Hola!",
-          language: "Español castellano",
-          city: "Madrid"
-        },
-        {
-          country: "Francia",
-          flag: "🇫🇷",
-          greeting: "Bonjour!",
-          language: "Francés",
-          city: "París"
-        },
-        {
-          country: "Alemania",
-          flag: "🇩🇪",
-          greeting: "Hallo!",
-          language: "Alemán",
-          city: "Berlín"
-        },
-        {
-          country: "Japón",
-          flag: "🇯🇵",
-          greeting: "こんにちは",
-          language: "Japonés",
-          city: "Tokio"
-        },
-        {
-          country: "China",
-          flag: "🇨🇳",
-          greeting: "你好",
-          language: "Mandarín",
-          city: "Shanghái"
-        },
-        {
-          country: "India",
-          flag: "🇮🇳",
-          greeting: "नमस्ते",
-          language: "Hindi",
-          city: "Mumbai"
-        },
-        {
-          country: "Estados Unidos",
-          flag: "🇺🇸",
-          greeting: "Hey there!",
-          language: "Inglés americano",
-          city: "Nueva York"
-        },
-        {
-          country: "Reino Unido",
-          flag: "🇬🇧",
-          greeting: "Cheerio!",
-          language: "Inglés británico",
-          city: "Londres"
-        },
-        {
-          country: "Italia",
-          flag: "🇮🇹",
-          greeting: "Ciao!",
-          language: "Italiano",
-          city: "Roma"
-        }
-      ];
+    var setCurrentYear = function () {
+      var yearSpan = document.getElementById('current-year');
+      if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+      }
+    };
 
-      function escapeHtml(text) {
-        var map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
-        return String(text).replace(/[&<>"']/g, function(char) { return map[char]; });
+    var createGreetingCard = function (item) {
+      var article = document.createElement('article');
+      article.className = 'greeting-card';
+
+      var flagEl = document.createElement('span');
+      flagEl.className = 'greeting-card__flag';
+      flagEl.textContent = item.flag;
+
+      var greetingEl = document.createElement('p');
+      greetingEl.className = 'greeting-card__greeting';
+      greetingEl.textContent = item.greeting;
+
+      var countryEl = document.createElement('p');
+      countryEl.className = 'greeting-card__country';
+      countryEl.textContent = item.country;
+
+      article.appendChild(flagEl);
+      article.appendChild(greetingEl);
+      article.appendChild(countryEl);
+
+      return article;
+    };
+
+    var renderGreetings = function () {
+      var grid = document.getElementById('greetings-grid');
+      if (!grid) {
+        return;
       }
 
-      function buildCard(item) {
-        var article = document.createElement("article");
-        article.setAttribute("role", "listitem");
-        article.className = "greeting-card";
+      var fragment = document.createDocumentFragment();
 
-        var flag = document.createElement("span");
-        flag.className = "card-flag";
-        flag.setAttribute("aria-hidden", "true");
-        flag.textContent = item.flag;
-
-        var greeting = document.createElement("h2");
-        greeting.className = "card-greeting";
-        greeting.textContent = item.greeting;
-
-        var country = document.createElement("p");
-        country.className = "card-country";
-        country.textContent = escapeHtml(item.country);
-
-        var city = document.createElement("p");
-        city.className = "card-city";
-        city.textContent = escapeHtml(item.city);
-
-        var language = document.createElement("span");
-        language.className = "card-language";
-        language.textContent = escapeHtml(item.language);
-
-        article.appendChild(flag);
-        article.appendChild(greeting);
-        article.appendChild(country);
-        article.appendChild(city);
-        article.appendChild(language);
-
-        return article;
+      for (var i = 0; i < GREETINGS_DATA.length; i++) {
+        var card = createGreetingCard(GREETINGS_DATA[i]);
+        fragment.appendChild(card);
       }
 
-      function renderGreetings(data, containerId) {
-        var container = document.getElementById(containerId);
-        if (!container) { return; }
-        var fragment = document.createDocumentFragment();
-        for (var i = 0; i < data.length; i++) {
-          fragment.appendChild(buildCard(data[i]));
-        }
-        container.appendChild(fragment);
-      }
+      grid.appendChild(fragment);
+    };
 
-      function setCurrentYear(spanId) {
-        var el = document.getElementById(spanId);
-        if (el) { el.textContent = new Date().getFullYear(); }
-      }
-
-      renderGreetings(greetingsData, "greetings-grid");
-      setCurrentYear("current-year");
-    </script>
-  </body>
+    setCurrentYear();
+    renderGreetings();
+  </script>
+</body>
 </html>
