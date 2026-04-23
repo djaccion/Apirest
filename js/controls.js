@@ -1,81 +1,116 @@
-window.GalaxyGame = window.GalaxyGame || {};
+window.SPACE_GAME = window.SPACE_GAME || {};
 
-GalaxyGame.Controls = (function () {
+window.SPACE_GAME.Controls = (function () {
 
-    const _keys = {
-        left:  false,
-        right: false,
-        up:    false,
-        down:  false,
-        pause: false,
-        start: false
-    };
+  const _keys = {
+    up:    false,
+    down:  false,
+    left:  false,
+    right: false,
+    fire:  false,
+    pause: false,
+  };
 
-    const _keyMap = {
-        'ArrowLeft':  'left',
-        'ArrowRight': 'right',
-        'ArrowUp':    'up',
-        'ArrowDown':  'down',
-        'Escape':     'pause',
-        'KeyP':       'pause',
-        'Enter':      'start',
-        'Space':      'start'
-    };
+  const _keyMap = {
+    'ArrowUp':    'up',
+    'ArrowDown':  'down',
+    'ArrowLeft':  'left',
+    'ArrowRight': 'right',
+    'w':          'up',
+    's':          'down',
+    'a':          'left',
+    'd':          'right',
+    'W':          'up',
+    'S':          'down',
+    'A':          'left',
+    'D':          'right',
+    ' ':          'fire',
+    'p':          'pause',
+    'P':          'pause',
+    'Escape':     'pause',
+  };
 
-    function _onKeyDown(event) {
-        const action = _keyMap[event.code];
-        if (action !== undefined) {
-            _keys[action] = true;
-            event.preventDefault();
+  const _preventDefaultActions = ['up', 'down', 'left', 'right', 'fire'];
+
+  let _pausePressed = false;
+  let _onPauseCallback = null;
+
+  function _onKeyDown(event) {
+    var action = _keyMap[event.key];
+    if (action === undefined) {
+      return;
+    }
+
+    if (_preventDefaultActions.indexOf(action) !== -1) {
+      event.preventDefault();
+    }
+
+    if (action === 'pause') {
+      if (!_pausePressed) {
+        _pausePressed = true;
+        if (typeof _onPauseCallback === 'function') {
+          _onPauseCallback();
         }
+      }
+      return;
     }
 
-    function _onKeyUp(event) {
-        const action = _keyMap[event.code];
-        if (action !== undefined) {
-            _keys[action] = false;
-            event.preventDefault();
-        }
+    _keys[action] = true;
+  }
+
+  function _onKeyUp(event) {
+    var action = _keyMap[event.key];
+    if (action === undefined) {
+      return;
     }
 
-    function init() {
-        window.removeEventListener('keydown', _onKeyDown);
-        window.removeEventListener('keyup',   _onKeyUp);
-        window.addEventListener('keydown', _onKeyDown);
-        window.addEventListener('keyup',   _onKeyUp);
+    if (action === 'pause') {
+      _pausePressed = false;
+      return;
     }
 
-    function getState() {
-        return {
-            left:  _keys.left,
-            right: _keys.right,
-            up:    _keys.up,
-            down:  _keys.down,
-            pause: _keys.pause,
-            start: _keys.start
-        };
-    }
+    _keys[action] = false;
+  }
 
-    function reset() {
-        _keys.left  = false;
-        _keys.right = false;
-        _keys.up    = false;
-        _keys.down  = false;
-        _keys.pause = false;
-        _keys.start = false;
-    }
+  function _reset() {
+    Object.keys(_keys).forEach(function (k) {
+      _keys[k] = false;
+    });
+    _pausePressed = false;
+  }
 
-    function destroy() {
-        window.removeEventListener('keydown', _onKeyDown);
-        window.removeEventListener('keyup',   _onKeyUp);
-        reset();
-    }
+  function activate() {
+    window.addEventListener('keydown', _onKeyDown);
+    window.addEventListener('keyup',   _onKeyUp);
+  }
 
+  function deactivate() {
+    window.removeEventListener('keydown', _onKeyDown);
+    window.removeEventListener('keyup',   _onKeyUp);
+    _reset();
+  }
+
+  function getState() {
     return {
-        init:     init,
-        getState: getState,
-        reset:    reset,
-        destroy:  destroy
+      up:    _keys.up,
+      down:  _keys.down,
+      left:  _keys.left,
+      right: _keys.right,
+      fire:  _keys.fire,
     };
+  }
+
+  function setPauseCallback(fn) {
+    if (typeof fn === 'function') {
+      _onPauseCallback = fn;
+    }
+  }
+
+  return {
+    activate:         activate,
+    deactivate:       deactivate,
+    getState:         getState,
+    setPauseCallback: setPauseCallback,
+  };
 
 })();

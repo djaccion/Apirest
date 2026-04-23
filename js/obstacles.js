@@ -1,363 +1,336 @@
-window.GalaxyGame = window.GalaxyGame || {};
-window.GalaxyGame.Obstacles = {};
+(function(SPACE_GAME) {
 
-(function (Obstacles) {
+  // ─── Private State ───────────────────────────────────────────────────────────
+  var _pool = [];
+  var _config = null;
 
-    var TYPES = {
-        COMET:    'comet',
-        ASTEROID: 'asteroid',
-        PLANET:   'planet',
-        UFO:      'ufo',
-        METEOR:   'meteor'
+  // ─── Private: Create blank obstacle DTO ──────────────────────────────────────
+  function _createBlankObstacle() {
+    return {
+      type:      'asteroid-small',
+      x:         0,
+      y:         0,
+      vx:        0,
+      vy:        0,
+      radius:    0,
+      rotation:  0,
+      rotSpeed:  0,
+      hp:        0,
+      points:    0,
+      active:    false,
+      color:     '#ffffff'
     };
+  }
 
-    var POWERUP_TYPES = {
-        SHIELD: 'shield',
-        TURBO:  'turbo',
-        MAGNET: 'magnet'
-    };
-
-    function _rand(min, max) {
-        return Math.random() * (max - min) + min;
+  // ─── Private: Get first inactive obstacle from pool ──────────────────────────
+  function _getInactive() {
+    for (var i = 0; i < _pool.length; i++) {
+      if (_pool[i].active === false) {
+        return _pool[i];
+      }
     }
+    return null;
+  }
 
-    function _randInt(min, max) {
-        return Math.floor(_rand(min, max + 1));
-    }
-
-    function _sign() {
-        return Math.random() < 0.5 ? -1 : 1;
-    }
-
-    function _lerp(a, b, t) {
-        return a + (b - a) * t;
-    }
-
-    function _createComet(cw, ch, dm) {
-        var spawnEdge = _randInt(0, 2);
-        var x, y, vx, vy;
-        var radius = _rand(8, 14);
-        var speedMag = _rand(150, 300) * dm;
-
-        if (spawnEdge === 0) {
-            x  = _rand(0, cw);
-            y  = -radius * 2;
-            vx = _sign() * _rand(80, 200) * dm;
-            vy = speedMag;
-        } else if (spawnEdge === 1) {
-            x  = -radius * 2;
-            y  = _rand(0, ch * 0.6);
-            vx = _rand(150, 300) * dm;
-            vy = _rand(100, 250) * dm;
-        } else {
-            x  = cw + radius * 2;
-            y  = _rand(0, ch * 0.6);
-            vx = -_rand(150, 300) * dm;
-            vy = _rand(100, 250) * dm;
-        }
-
+  // ─── Private: Spawn config by type ───────────────────────────────────────────
+  function _spawnConfig(type) {
+    switch (type) {
+      case 'asteroid-small':
         return {
-            type:     TYPES.COMET,
-            x:        x,
-            y:        y,
-            vx:       vx,
-            vy:       vy,
-            radius:   radius,
-            width:    radius * 2,
-            height:   radius * 2,
-            rotation: Math.atan2(vy, vx),
-            rotSpeed: 0,
-            hp:       1,
-            points:   15,
-            active:   true,
-            color:    '#00FFFF',
-            trail:    []
+          radius:   15,
+          hp:       1,
+          points:   10,
+          color:    '#8B7355',
+          rotSpeed: 0.5 + Math.random() * 1.5
+        };
+      case 'asteroid-medium':
+        return {
+          radius:   28,
+          hp:       2,
+          points:   25,
+          color:    '#6B5B45',
+          rotSpeed: 0.3 + Math.random() * 0.9
+        };
+      case 'asteroid-large':
+        return {
+          radius:   45,
+          hp:       4,
+          points:   50,
+          color:    '#5A4A38',
+          rotSpeed: 0.1 + Math.random() * 0.5
+        };
+      case 'enemy-drone':
+        return {
+          radius:   18,
+          hp:       3,
+          points:   100,
+          color:    '#ff4444',
+          rotSpeed: 0
+        };
+      default:
+        return {
+          radius:   15,
+          hp:       1,
+          points:   10,
+          color:    '#8B7355',
+          rotSpeed: 0.5 + Math.random() * 1.5
         };
     }
+  }
 
-    function _createAsteroid(cw, ch, dm) {
-        var radius = _rand(20, 35);
-        var x      = _rand(radius, cw - radius);
-        var y      = -radius * 2;
-        var vxBase = _sign() * _rand(20, 60) * dm;
-        var vy     = _rand(80, 160) * dm;
+  // ─── Private: Draw asteroid ───────────────────────────────────────────────────
+  function _drawAsteroid(ctx, obstacle) {
+    ctx.save();
+    ctx.translate(obstacle.x, obstacle.y);
+    ctx.rotate(obstacle.rotation);
 
-        return {
-            type:        TYPES.ASTEROID,
-            x:           x,
-            y:           y,
-            vx:          vxBase,
-            vy:          vy,
-            radius:      radius,
-            width:       radius * 2,
-            height:      radius * 2,
-            rotation:    _rand(0, Math.PI * 2),
-            rotSpeed:    _sign() * _rand(0.5, 2.0),
-            hp:          2,
-            points:      25,
-            active:      true,
-            color:       '#FF8800',
-            vxBase:      vxBase,
-            wobbleTimer: 0,
-            wobbleFreq:  _rand(1.5, 3.5),
-            wobbleAmp:   _rand(40, 90) * dm
-        };
+    ctx.beginPath();
+    for (var i = 0; i < 8; i++) {
+      var angle = (i / 8) * Math.PI * 2;
+      var r = obstacle.radius * (0.75 + Math.sin(i * 127.1) * 0.25);
+      var vx = Math.cos(angle) * r;
+      var vy = Math.sin(angle) * r;
+      if (i === 0) {
+        ctx.moveTo(vx, vy);
+      } else {
+        ctx.lineTo(vx, vy);
+      }
+    }
+    ctx.closePath();
+
+    ctx.fillStyle   = obstacle.color;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth   = 1;
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  // ─── Private: Draw drone ──────────────────────────────────────────────────────
+  function _drawDrone(ctx, obstacle) {
+    ctx.save();
+    ctx.translate(obstacle.x, obstacle.y);
+
+    var r = obstacle.radius;
+
+    // Body — hexagonal hull
+    ctx.beginPath();
+    for (var i = 0; i < 6; i++) {
+      var angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+      var px = Math.cos(angle) * r;
+      var py = Math.sin(angle) * r;
+      if (i === 0) {
+        ctx.moveTo(px, py);
+      } else {
+        ctx.lineTo(px, py);
+      }
+    }
+    ctx.closePath();
+    ctx.fillStyle   = obstacle.color;
+    ctx.strokeStyle = '#ff8888';
+    ctx.lineWidth   = 1.5;
+    ctx.fill();
+    ctx.stroke();
+
+    // Core — inner circle
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.35, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffaaaa';
+    ctx.fill();
+
+    // Wing left
+    ctx.beginPath();
+    ctx.moveTo(-r * 0.3, -r * 0.2);
+    ctx.lineTo(-r * 1.1, 0);
+    ctx.lineTo(-r * 0.3,  r * 0.2);
+    ctx.closePath();
+    ctx.fillStyle   = '#cc2222';
+    ctx.strokeStyle = '#ff6666';
+    ctx.lineWidth   = 1;
+    ctx.fill();
+    ctx.stroke();
+
+    // Wing right
+    ctx.beginPath();
+    ctx.moveTo(r * 0.3, -r * 0.2);
+    ctx.lineTo(r * 1.1,  0);
+    ctx.lineTo(r * 0.3,  r * 0.2);
+    ctx.closePath();
+    ctx.fillStyle   = '#cc2222';
+    ctx.strokeStyle = '#ff6666';
+    ctx.lineWidth   = 1;
+    ctx.fill();
+    ctx.stroke();
+
+    // Engine glow — bottom
+    ctx.beginPath();
+    ctx.arc(0, r * 0.6, r * 0.18, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255, 100, 0, 0.85)';
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // ─── Public API ───────────────────────────────────────────────────────────────
+
+  /**
+   * init()
+   * Reads config, pre-fills the pool with blank inactive obstacles.
+   * Bug 10 fix: CONFIG.OBSTACLES does not define POOL_SIZE — use a hardcoded
+   * fallback constant of 64 so the pool is never empty.
+   */
+  var POOL_SIZE = 64;
+
+  function init() {
+    _config = SPACE_GAME.CONFIG;
+    _pool   = [];
+
+    for (var i = 0; i < POOL_SIZE; i++) {
+      _pool.push(_createBlankObstacle());
+    }
+  }
+
+  /**
+   * spawn(type, canvasWidth, canvasHeight, speedMultiplier)
+   * Activates one pooled obstacle of the given type.
+   */
+  function spawn(type, canvasWidth, canvasHeight, speedMultiplier) {
+    var obstacle = _getInactive();
+    if (obstacle === null) {
+      return;
     }
 
-    function _createPlanet(cw, ch, dm) {
-        var radius = _rand(45, 70);
-        var x      = _rand(radius, cw - radius);
-        var y      = -radius * 2;
-        var vy     = _rand(30, 60) * dm;
+    var cfg = _spawnConfig(type);
 
-        return {
-            type:       TYPES.PLANET,
-            x:          x,
-            y:          y,
-            vx:         0,
-            vy:         vy,
-            radius:     radius,
-            width:      radius * 2,
-            height:     radius * 2,
-            rotation:   0,
-            rotSpeed:   _sign() * _rand(0.05, 0.2),
-            hp:         5,
-            points:     50,
-            active:     true,
-            color:      '#AA44FF',
-            ringAngle:  Math.random() * Math.PI
-        };
+    obstacle.active   = true;
+    obstacle.type     = type;
+    obstacle.radius   = cfg.radius;
+    obstacle.hp       = cfg.hp;
+    obstacle.points   = cfg.points;
+    obstacle.color    = cfg.color;
+    obstacle.rotSpeed = cfg.rotSpeed;
+    obstacle.rotation = Math.random() * Math.PI * 2;
+
+    obstacle.x  = Math.random() * canvasWidth;
+    obstacle.y  = -cfg.radius;
+
+    var mult = (typeof speedMultiplier === 'number') ? speedMultiplier : 1;
+
+    obstacle.vx = (-80 + Math.random() * 160) * mult;
+
+    if (type === 'enemy-drone') {
+      obstacle.vy = (120 + Math.random() * 160) * mult;
+    } else {
+      obstacle.vy = (80  + Math.random() * 120) * mult;
     }
+  }
 
-    function _createUFO(cw, ch, dm) {
-        var spawnLeft = Math.random() < 0.5;
-        var radius    = _rand(22, 28);
-        var x         = spawnLeft ? -radius * 2 : cw + radius * 2;
-        var y         = _rand(ch * 0.1, ch * 0.5);
-        var speed     = _rand(80, 140) * dm;
-        var vx        = spawnLeft ? speed : -speed;
+  /**
+   * update(dt, canvasWidth, canvasHeight)
+   * Advances physics for all active obstacles. dt is in SECONDS.
+   */
+  function update(dt, canvasWidth, canvasHeight) {
+    for (var i = 0; i < _pool.length; i++) {
+      var o = _pool[i];
+      if (!o.active) { continue; }
 
-        return {
-            type:          TYPES.UFO,
-            x:             x,
-            y:             y,
-            vx:            vx,
-            vy:            0,
-            radius:        radius,
-            width:         radius * 2,
-            height:        radius * 2,
-            rotation:      0,
-            rotSpeed:      0,
-            hp:            3,
-            points:        75,
-            active:        true,
-            color:         '#FF00FF',
-            targetX:       cw / 2,
-            targetY:       ch / 2,
-            speed:         speed,
-            shootTimer:    0,
-            shootCooldown: 2.5
-        };
+      o.x        += o.vx * dt;
+      o.y        += o.vy * dt;
+      o.rotation += o.rotSpeed * dt;
+
+      // Deactivate if out of bounds
+      if (o.y > canvasHeight + o.radius) {
+        o.active = false;
+        continue;
+      }
+      if (o.x < -o.radius || o.x > canvasWidth + o.radius) {
+        o.active = false;
+      }
     }
+  }
 
-    function _createMeteor(cw, ch, dm, offsetX, baseY) {
-        var radius = _rand(5, 9);
-        var x      = (offsetX !== undefined) ? offsetX : _rand(radius, cw - radius);
-        var y      = (baseY  !== undefined)  ? baseY   : -radius * 2;
+  /**
+   * draw(ctx)
+   * Renders all active obstacles onto the canvas context.
+   */
+  function draw(ctx) {
+    for (var i = 0; i < _pool.length; i++) {
+      var o = _pool[i];
+      if (!o.active) { continue; }
 
-        return {
-            type:     TYPES.METEOR,
-            x:        x,
-            y:        y,
-            vx:       _sign() * _rand(0, 20) * dm,
-            vy:       _rand(200, 350) * dm,
-            radius:   radius,
-            width:    radius * 2,
-            height:   radius * 2,
-            rotation: _rand(0, Math.PI * 2),
-            rotSpeed: _sign() * _rand(1.0, 4.0),
-            hp:       1,
-            points:   10,
-            active:   true,
-            color:    '#FF4444'
-        };
+      if (o.type === 'enemy-drone') {
+        _drawDrone(ctx, o);
+      } else {
+        _drawAsteroid(ctx, o);
+      }
     }
+  }
 
-    var POWERUP_COLORS = {
-        shield: '#00FFFF',
-        turbo:  '#FFFF00',
-        magnet: '#FF00FF'
-    };
+  /**
+   * checkCollision(entity)
+   * Checks circle-circle collision between entity and every active obstacle.
+   * entity must have { x, y, radius } properties.
+   * Returns the first obstacle hit, or null if none.
+   */
+  function checkCollision(entity) {
+    for (var i = 0; i < _pool.length; i++) {
+      var o = _pool[i];
+      if (!o.active) { continue; }
 
-    function _createPowerUp(cw, ch, type) {
-        var radius = 14;
-        var x      = _rand(radius + 10, cw - radius - 10);
+      var dx   = entity.x - o.x;
+      var dy   = entity.y - o.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
 
-        return {
-            type:        type,
-            x:           x,
-            y:           -20,
-            vx:          0,
-            vy:          _rand(60, 80),
-            radius:      radius,
-            width:       28,
-            height:      28,
-            active:      true,
-            pulseTimer:  0,
-            color:       POWERUP_COLORS[type] || '#FFFFFF'
-        };
+      if (dist < entity.radius + o.radius) {
+        return o;
+      }
     }
+    return null;
+  }
 
-    function _updateUFO(ufo, shipX, shipY, dt) {
-        var dx     = shipX - ufo.x;
-        var dy     = shipY - ufo.y;
-        var dist   = Math.sqrt(dx * dx + dy * dy) || 1;
-        var dirX   = dx / dist;
-        var dirY   = dy / dist;
-
-        var lerpFactor = Math.min(dt * 2.5, 1);
-        ufo.vx = _lerp(ufo.vx, dirX * ufo.speed, lerpFactor);
-        ufo.vy = _lerp(ufo.vy, dirY * ufo.speed, lerpFactor);
-
-        ufo.shootTimer += dt;
+  /**
+   * damage(obstacle, amount)
+   * Reduces hp by amount. Deactivates obstacle if hp reaches 0.
+   * Returns true if the obstacle was destroyed.
+   */
+  function damage(obstacle, amount) {
+    obstacle.hp -= amount;
+    if (obstacle.hp <= 0) {
+      obstacle.active = false;
+      return true;
     }
+    return false;
+  }
 
-    function _updateObstacle(obs, dt, shipX, shipY) {
-        if (obs.type === TYPES.UFO) {
-            _updateUFO(obs, shipX, shipY, dt);
-        }
-
-        if (obs.type === TYPES.ASTEROID) {
-            obs.wobbleTimer += dt;
-            obs.vx = obs.vxBase + Math.sin(obs.wobbleTimer * obs.wobbleFreq) * obs.wobbleAmp;
-        }
-
-        if (obs.pulseTimer !== undefined) {
-            obs.pulseTimer += dt;
-        }
-
-        obs.x += obs.vx * dt;
-        obs.y += obs.vy * dt;
-
-        obs.rotation += obs.rotSpeed * dt;
+  /**
+   * reset()
+   * Deactivates all obstacles in the pool (used on game restart).
+   */
+  function reset() {
+    for (var i = 0; i < _pool.length; i++) {
+      _pool[i].active = false;
     }
+  }
 
-    function _isOutOfBounds(obs, cw, ch) {
-        var margin = (obs.radius || 40) * 3;
-        return (
-            obs.y > ch + margin  ||
-            obs.y < -margin      ||
-            obs.x > cw + margin  ||
-            obs.x < -margin
-        );
-    }
+  /**
+   * getPool()
+   * Returns the raw pool array (read-only intent — for game.js iteration).
+   */
+  function getPool() {
+    return _pool;
+  }
 
-    Obstacles.spawnRandom = function (cw, ch, difficultyMult) {
-        var dm   = difficultyMult || 1;
-        var roll = Math.random();
-        if (roll < 0.25)       return _createComet(cw, ch, dm);
-        else if (roll < 0.55)  return _createAsteroid(cw, ch, dm);
-        else if (roll < 0.70)  return _createPlanet(cw, ch, dm);
-        else if (roll < 0.90)  return _createUFO(cw, ch, dm);
-        else                   return _createMeteor(cw, ch, dm);
-    };
+  // ─── Register on namespace ────────────────────────────────────────────────────
+  SPACE_GAME.Obstacles = {
+    init:           init,
+    spawn:          spawn,
+    update:         update,
+    draw:           draw,
+    checkCollision: checkCollision,
+    damage:         damage,
+    reset:          reset,
+    getPool:        getPool
+  };
 
-    Obstacles.spawnByType = function (type, cw, ch, difficultyMult) {
-        var dm = difficultyMult || 1;
-        switch (type) {
-            case TYPES.COMET:    return _createComet(cw, ch, dm);
-            case TYPES.ASTEROID: return _createAsteroid(cw, ch, dm);
-            case TYPES.PLANET:   return _createPlanet(cw, ch, dm);
-            case TYPES.UFO:      return _createUFO(cw, ch, dm);
-            case TYPES.METEOR:   return _createMeteor(cw, ch, dm);
-            default:
-                console.warn('[Obstacles] Tipo desconocido: ' + type);
-                return _createAsteroid(cw, ch, dm);
-        }
-    };
-
-    Obstacles.spawnMeteorSwarm = function (cw, ch, difficultyMult) {
-        var dm      = difficultyMult || 1;
-        var count   = _randInt(4, 7);
-        var swarm   = [];
-        var centerX = _rand(60, cw - 60);
-        var baseY   = _rand(-60, -20);
-        var spread  = 40;
-
-        for (var i = 0; i < count; i++) {
-            var offsetX = centerX + _rand(-spread, spread);
-            var offsetY = baseY   + _rand(-15, 15);
-            offsetX = Math.max(10, Math.min(cw - 10, offsetX));
-            swarm.push(_createMeteor(cw, ch, dm, offsetX, offsetY));
-        }
-        return swarm;
-    };
-
-    Obstacles.spawnPowerUp = function (cw, ch) {
-        var types = [POWERUP_TYPES.SHIELD, POWERUP_TYPES.TURBO, POWERUP_TYPES.MAGNET];
-        var type  = types[_randInt(0, 2)];
-        return _createPowerUp(cw, ch, type);
-    };
-
-    Obstacles.spawnPowerUpByType = function (type, cw, ch) {
-        return _createPowerUp(cw, ch, type);
-    };
-
-    Obstacles.updateAll = function (obstacleList, dt, shipX, shipY, cw, ch) {
-        var i;
-        for (i = 0; i < obstacleList.length; i++) {
-            var obs = obstacleList[i];
-            if (!obs.active) continue;
-            _updateObstacle(obs, dt, shipX, shipY);
-            if (_isOutOfBounds(obs, cw, ch)) {
-                obs.active = false;
-            }
-        }
-    };
-
-    Obstacles.updatePowerUps = function (powerUpList, dt, cw, ch) {
-        var i;
-        for (i = 0; i < powerUpList.length; i++) {
-            var pu = powerUpList[i];
-            if (!pu.active) continue;
-            pu.pulseTimer += dt;
-            pu.x += pu.vx * dt;
-            pu.y += pu.vy * dt;
-            if (_isOutOfBounds(pu, cw, ch)) {
-                pu.active = false;
-            }
-        }
-    };
-
-    Obstacles.filterActive = function (list) {
-        var result = [];
-        for (var i = 0; i < list.length; i++) {
-            if (list[i].active) result.push(list[i]);
-        }
-        return result;
-    };
-
-    Obstacles.destroy = function (obs) {
-        obs.active = false;
-    };
-
-    Obstacles.hit = function (obs, damage) {
-        var dmg = (damage !== undefined) ? damage : 1;
-        obs.hp -= dmg;
-        if (obs.hp <= 0) {
-            obs.active = false;
-            return true;
-        }
-        return false;
-    };
-
-    Obstacles.isOutOfBounds = function (obs, cw, ch) {
-        var canvasWidth  = cw  !== undefined ? cw  : (window.GalaxyGame && window.GalaxyGame.Config ? window.GalaxyGame.Config.CANVAS.WIDTH  : 800);
-        var canvasHeight = ch  !== undefined ? ch  : (window.GalaxyGame && window.GalaxyGame.Config ? window.GalaxyGame.Config.CANVAS.HEIGHT : 600);
-        return _isOutOfBounds(obs, canvasWidth, canvasHeight);
-    };
-
-    Obstacles.TYPES        = TYPES;
-    Obstacles.POWERUP_TYPES = POWERUP_TYPES;
-
-}(window.GalaxyGame.Obstacles));
+})(window.SPACE_GAME = window.SPACE_GAME || {});

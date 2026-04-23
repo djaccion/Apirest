@@ -1,51 +1,73 @@
-window.GalaxyGame = window.GalaxyGame || {};
-window.GalaxyGame.Utils = {};
+(function() {
+  window.SPACE_GAME = window.SPACE_GAME || {};
+  window.SPACE_GAME.Utils = {};
 
-GalaxyGame.Utils.clamp = function(value, min, max) {
+  SPACE_GAME.Utils.clamp = function(value, min, max) {
     return Math.min(Math.max(value, min), max);
-};
+  };
 
-GalaxyGame.Utils.randomBetween = function(min, max) {
+  SPACE_GAME.Utils.randomBetween = function(min, max) {
     return Math.random() * (max - min) + min;
-};
+  };
 
-GalaxyGame.Utils.randomIntBetween = function(min, max) {
-    return Math.floor(GalaxyGame.Utils.randomBetween(min, max + 1));
-};
+  SPACE_GAME.Utils.randomInt = function(min, max) {
+    return Math.floor(SPACE_GAME.Utils.randomBetween(min, max + 1));
+  };
 
-GalaxyGame.Utils.lerp = function(a, b, t) {
-    return a + (b - a) * t;
-};
+  SPACE_GAME.Utils.circlesCollide = function(ax, ay, ar, bx, by, br) {
+    var dx = ax - bx;
+    var dy = ay - by;
+    var sumR = ar + br;
+    return dx * dx + dy * dy < sumR * sumR;
+  };
 
-GalaxyGame.Utils.degToRad = function(degrees) {
-    return degrees * (Math.PI / 180);
-};
+  SPACE_GAME.Utils.shipHitsObstacle = function(ship, obstacle) {
+    if (obstacle.active === false) return false;
+    return SPACE_GAME.Utils.circlesCollide(ship.x, ship.y, ship.radius, obstacle.x, obstacle.y, obstacle.radius);
+  };
 
-GalaxyGame.Utils.normalizeAngle = function(angle) {
-    return ((angle % 360) + 360) % 360;
-};
+  function hexToRgb(hex) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    return { r: r, g: g, b: b };
+  }
 
-GalaxyGame.Utils.checkAABB = function(rectA, rectB) {
-    return !(
-        rectA.x + rectA.width  < rectB.x ||
-        rectA.x                > rectB.x + rectB.width ||
-        rectA.y + rectA.height < rectB.y ||
-        rectA.y                > rectB.y + rectB.height
-    );
-};
+  function componentToHex(c) {
+    return c.toString(16).padStart(2, '0');
+  }
 
-GalaxyGame.Utils.getDistance = function(x1, y1, x2, y2) {
-    return Math.hypot(x2 - x1, y2 - y1);
-};
+  SPACE_GAME.Utils.lerpColor = function(colorA, colorB, t) {
+    var a = hexToRgb(colorA);
+    var b = hexToRgb(colorB);
+    var r = Math.round(a.r + (b.r - a.r) * t);
+    var g = Math.round(a.g + (b.g - a.g) * t);
+    var bl = Math.round(a.b + (b.b - a.b) * t);
+    return '#' + componentToHex(r) + componentToHex(g) + componentToHex(bl);
+  };
 
-GalaxyGame.Utils.getAngleBetween = function(x1, y1, x2, y2) {
-    return Math.atan2(y2 - y1, x2 - x1);
-};
+  SPACE_GAME.Utils.drawNeonCircle = function(ctx, x, y, radius, color, glowIntensity) {
+    ctx.save();
+    ctx.shadowBlur = glowIntensity;
+    ctx.shadowColor = color;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  };
 
-GalaxyGame.Utils.isOutOfBounds = function(x, y, width, height, canvasWidth, canvasHeight) {
-    return x + width < 0 || x > canvasWidth || y + height < 0 || y > canvasHeight;
-};
+  SPACE_GAME.Utils.drawNeonLine = function(ctx, x1, y1, x2, y2, color, lineWidth, glowIntensity) {
+    ctx.save();
+    ctx.shadowBlur = glowIntensity;
+    ctx.shadowColor = color;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.restore();
+  };
 
-GalaxyGame.Utils.pickRandom = function(array) {
-    return array[GalaxyGame.Utils.randomIntBetween(0, array.length - 1)];
-};
+})();

@@ -1,651 +1,460 @@
-window.GalaxyGame = window.GalaxyGame || {};
+(function () {
+  window.SPACE_GAME = window.SPACE_GAME || {};
 
-GalaxyGame.Game = (function () {
+  // ─── Private module variables ───────────────────────────────────────────────
+  let _canvas, _ctx;
+  let _state = {};
+  let _listenersAttached = false;
 
-    // ─── Estado de la máquina ───────────────────────────────────────────────
-    let _state = 'menu';
+  const SHIP_RADIUS             = 18;
+  const SHIP_ACCEL              = 600;
+  const SHIP_FRICTION           = 0.85;
+  const SPEED_BASE              = [200, 320, 480];
+  const SCORE_LEVEL_THRESHOLDS  = [0, 500, 1500];
+  const POWERUP_DURATION        = 8;
+  const LIVES_START             = 3;
 
-    // ─── Referencias DOM ────────────────────────────────────────────────────
-    let _canvasWrapper = null;
-    let _screens = {};
-    let _hud = {};
+  // ─── Private: reset state ───────────────────────────────────────────────────
+  function _resetState() {
+    _state.score        = 0;
+    _state.lives        = LIVES_START;
+    _state.level        = 1;
+    _state.shipX        = _canvas.width  / 2;
+    _state.shipY        = _canvas.height / 2;
+    _state.shipVX       = 0;
+    _state.shipVY       = 0;
+    _state.speed        = SPEED_BASE[0];
+    _state.isPaused     = false;
+    _state.isGameOver   = false;
+    _state.isLevelingUp = false;
+    _state.powerup      = null;
+    _state.powerupTimer = 0;
+    _state.lastTime     = 0;
+    _state.rafId        = 0;
+    // highscore is preserved intentionally
+  }
 
-    // ─── Estado de partida ──────────────────────────────────────────────────
-    let _score = 0;
-    let _lives = 3;
-    let _level = 1;
-    let _difficulty = 'easy';
-    let _highScore = 0;
-    let _activePowerUp = null;
-    let _powerUpTimer = 0;
+  // ─── Private: toggle pause ──────────────────────────────────────────────────
+  function _togglePause() {
+    if (_state.isGameOver) return;
+    if (_state.isPaused) {
+      SPACE_GAME.Game.resume();
+    } else {
+      SPACE_GAME.Game.pause();
+    }
+  }
 
-    // ─── Game loop ──────────────────────────────────────────────────────────
-    let _lastTimestamp = 0;
-    let _rafId = null;
+  // ─── Private: level management ──────────────────────────────────────────────
+  function _checkLevelUp() {
+    if (_state.isLevelingUp) return;
 
-    // ─── Entidades ──────────────────────────────────────────────────────────
-    let _ship = null;
-    let _obstacles = [];
-    let _powerUps = [];
-    let _particles = [];
-    let _stars = [];
-
-    // ─── Timers de spawn ────────────────────────────────────────────────────
-    let _obstacleSpawnTimer = 0;
-    let _powerUpSpawnTimer = 0;
-
-    // ─── Puntuación por tiempo ──────────────────────────────────────────────
-    let _scoreAccumulator = 0;
-
-    // ─── Level-up banner ────────────────────────────────────────────────────
-    let _levelUpTimer = 0;
-    let _levelUpLabel = '';
-
-    // ─── Invulnerabilidad tras daño ─────────────────────────────────────────
-    let _invincibleTimer = 0;
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // CONFIGURACIÓN
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function _getDifficultyConfig() {
-        var configs = {
-            easy:   { obstacleInterval: 2000, speedMultiplier: 1.0, lives: 5, scoreRate: 1 },
-            medium: { obstacleInterval: 1200, speedMultiplier: 1.5, lives: 3, scoreRate: 2 },
-            hard:   { obstacleInterval: 700,  speedMultiplier: 2.2, lives: 1, scoreRate: 3 }
-        };
-        return configs[_difficulty] || configs.easy;
+    let newLevel = 1;
+    for (let i = SCORE_LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
+      if (_state.score >= SCORE_LEVEL_THRESHOLDS[i]) {
+        newLevel = i + 1;
+        break;
+      }
     }
 
-    function _getLevelConfig() {
-        var levels = {
-            1: { speedBonus: 0,   spawnBonus: 0,   label: 'NEBULOSA'      },
-            2: { speedBonus: 0.4, spawnBonus: 300,  label: 'GALAXIA'       },
-            3: { speedBonus: 0.9, spawnBonus: 600,  label: 'AGUJERO NEGRO' }
-        };
-        return levels[_level] || levels[1];
+    if (newLevel > _state.level) {
+      _state.level        = newLevel;
+      _state.speed        = SPEED_BASE[Math.min(newLevel - 1, SPEED_BASE.length - 1)];
+      _state.isLevelingUp = true;
+
+      // Update body level classes
+      document.body.classList.remove('is-level-1', 'is-level-2', 'is-level-3');
+      document.body.classList.add('is-level-' + _state.level);
+
+      // Bug 1 fix: init() accepts no parameters — call without arguments
+      SPACE_GAME.Obstacles.init();
+
+      // Show level-up screen for 3 seconds
+      // Bug 5 fix: use SPACE_GAME.HUD (all caps) not SPACE_GAME.Hud
+      SPACE_GAME.HUD.showLevelUp(_state.level);
+
+      setTimeout(function () {
+        _state.isLevelingUp = false;
+      }, 3000);
     }
+  }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // PANTALLAS Y ESTADO
-    // ═══════════════════════════════════════════════════════════════════════
+  // ─── Private: collision handling ────────────────────────────────────────────
+  function _handleCollisions() {
+    if (_state.powerup === 'shield') return; // shield absorbs all hits
 
-    function _showScreen(screenId) {
-        ['screen-start', 'screen-game', 'screen-gameover', 'screen-pause'].forEach(function (id) {
-            document.getElementById(id).classList.add('hidden');
-        });
-        document.getElementById(screenId).classList.remove('hidden');
-    }
+    const pool = SPACE_GAME.Obstacles.getPool();
+    for (let i = 0; i < pool.length; i++) {
+      const obs = pool[i];
+      if (!obs.active) continue;
 
-    function _setGameState(newState) {
-        _state = newState;
-        _canvasWrapper.classList.remove('is-running', 'is-paused', 'is-gameover');
+      const dx = _state.shipX - obs.x;
+      const dy = _state.shipY - obs.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const minDist = SHIP_RADIUS + obs.radius;
 
-        if (newState === 'playing') {
-            _canvasWrapper.classList.add('is-running');
-            _showScreen('screen-game');
-        } else if (newState === 'paused') {
-            _canvasWrapper.classList.add('is-paused');
-            _showScreen('screen-pause');
-        } else if (newState === 'gameover') {
-            _canvasWrapper.classList.add('is-gameover');
-            _showScreen('screen-gameover');
-        } else if (newState === 'menu') {
-            _showScreen('screen-start');
+      if (dist < minDist) {
+        // Bug 2 fix: pass the obstacle object, not the index; pass amount=1
+        SPACE_GAME.Obstacles.damage(obs, 1);
+        // Bug 9 fix: correct emit signature — emit(x, y, type, count)
+        SPACE_GAME.Particles.emit(_state.shipX, _state.shipY, 'explosion', 12);
+        // Bug 13 fix: correct sound name is 'playerHit' not 'hit'
+        SPACE_GAME.Audio.play('playerHit');
+
+        _state.lives -= 1;
+        // Bug 5 fix: use SPACE_GAME.HUD (all caps)
+        SPACE_GAME.HUD.update(_state, performance.now());
+
+        // Visual damage feedback
+        const screenGame = document.getElementById('screen-game');
+        screenGame.classList.add('is-damaged');
+        setTimeout(function () {
+          screenGame.classList.remove('is-damaged');
+        }, 500);
+
+        if (_state.lives <= 0) {
+          SPACE_GAME.Game.stop();
+          return;
         }
+        break; // one hit per frame
+      }
     }
+  }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // RESET Y HUD
-    // ═══════════════════════════════════════════════════════════════════════
+  // ─── Private: power-up pickup ────────────────────────────────────────────────
+  function _checkPowerupPickup() {
+    const pool = SPACE_GAME.Obstacles.getPool();
+    for (let i = 0; i < pool.length; i++) {
+      const obs = pool[i];
+      if (!obs.active || obs.type !== 'powerup') continue;
 
-    function _resetGame() {
-        var config = _getDifficultyConfig();
-        _score = 0;
-        _lives = config.lives;
-        _level = 1;
-        _activePowerUp = null;
-        _powerUpTimer = 0;
-        _obstacles = [];
-        _powerUps = [];
-        _particles = [];
-        _obstacleSpawnTimer = 0;
-        _powerUpSpawnTimer = 0;
-        _scoreAccumulator = 0;
-        _lastTimestamp = 0;
-        _levelUpTimer = 0;
-        _levelUpLabel = '';
-        _invincibleTimer = 0;
+      const dx = _state.shipX - obs.x;
+      const dy = _state.shipY - obs.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // Bug 16 corregido: Ship(x, y) requiere coordenadas; usar las de config
-        var startX = GalaxyGame.Config.PLAYER.START_X;
-        var startY = GalaxyGame.Config.PLAYER.START_Y;
-        _ship = new GalaxyGame.Entities.Ship(startX, startY);
+      if (dist < SHIP_RADIUS + obs.radius) {
+        _state.powerup      = obs.powerupType || 'shield';
+        _state.powerupTimer = POWERUP_DURATION;
 
-        GalaxyGame.Controls.reset();
-        _updateHUD();
-    }
-
-    function _updateHUD() {
-        _hud.scoreValue.textContent = _score;
-        _hud.livesValue.textContent = _lives;
-        _hud.levelValue.textContent = _getLevelConfig().label;
-
-        if (_activePowerUp) {
-            _hud.powerupContainer.classList.remove('hidden');
-            _hud.powerupValue.textContent = _activePowerUp.type.toUpperCase()
-                + ' ' + Math.ceil(_activePowerUp.timeLeft / 1000) + 's';
+        // Apply CSS state
+        const screenGame = document.getElementById('screen-game');
+        if (_state.powerup === 'boost') {
+          screenGame.classList.add('is-boosted');
+          screenGame.classList.remove('is-shielded');
         } else {
-            _hud.powerupContainer.classList.add('hidden');
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // SPAWN
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function _spawnObstacle(dt) {
-        var diffCfg  = _getDifficultyConfig();
-        var levelCfg = _getLevelConfig();
-        var interval = diffCfg.obstacleInterval - levelCfg.spawnBonus;
-        if (interval < 300) { interval = 300; }
-
-        _obstacleSpawnTimer += dt;
-        if (_obstacleSpawnTimer >= interval) {
-            _obstacleSpawnTimer = 0;
-            var speedMult = diffCfg.speedMultiplier + levelCfg.speedBonus;
-            // Bug 1 corregido: nombre incorrecto y firma diferente
-            // Era: GalaxyGame.Obstacles.createRandom(speedMult)
-            // Debe ser: GalaxyGame.Obstacles.spawnRandom(cw, ch, difficultyMult)
-            var cw = GalaxyGame.Config.CANVAS.WIDTH;
-            var ch = GalaxyGame.Config.CANVAS.HEIGHT;
-            var obstacle = GalaxyGame.Obstacles.spawnRandom(cw, ch, speedMult);
-            if (obstacle) { _obstacles.push(obstacle); }
-        }
-    }
-
-    function _spawnPowerUp(dt) {
-        var interval = 8000;
-        _powerUpSpawnTimer += dt;
-        if (_powerUpSpawnTimer >= interval) {
-            _powerUpSpawnTimer = 0;
-            // Bug 2 corregido: nombre incorrecto y firma diferente
-            // Era: GalaxyGame.Obstacles.createPowerUp()
-            // Debe ser: GalaxyGame.Obstacles.spawnPowerUp(cw, ch)
-            var cw = GalaxyGame.Config.CANVAS.WIDTH;
-            var ch = GalaxyGame.Config.CANVAS.HEIGHT;
-            var pu = GalaxyGame.Obstacles.spawnPowerUp(cw, ch);
-            if (pu) { _powerUps.push(pu); }
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // COLISIONES
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function _checkCollisions() {
-        if (!_ship) { return; }
-
-        var i, obs, pu, hit;
-
-        // Obstáculos
-        for (i = _obstacles.length - 1; i >= 0; i--) {
-            obs = _obstacles[i];
-            hit = GalaxyGame.Utils.checkAABB(_ship, obs);
-            if (hit) {
-                _obstacles.splice(i, 1);
-                _onShipHit(obs);
-            }
+          screenGame.classList.add('is-shielded');
+          screenGame.classList.remove('is-boosted');
         }
 
-        // Power-ups
-        for (i = _powerUps.length - 1; i >= 0; i--) {
-            pu = _powerUps[i];
-            hit = GalaxyGame.Utils.checkAABB(_ship, pu);
-            if (hit) {
-                _powerUps.splice(i, 1);
-                _onPowerUpCollected(pu);
-            }
-        }
+        // Bug 4 fix: _renderPowerupAlert is private — HUD.update handles it via state
+        // Bug 12 fix: set powerupActive and powerupName on _state so HUD.update renders the alert
+        _state.powerupActive = true;
+        _state.powerupName   = _state.powerup;
+
+        // Bug 14 fix: correct sound name is 'powerUp' not 'powerup'
+        SPACE_GAME.Audio.play('powerUp');
+        // Bug 3 fix: pass the obstacle object, not the index; pass amount=1
+        SPACE_GAME.Obstacles.damage(obs, 1);
+        break;
+      }
+    }
+  }
+
+  // ─── Private: update ────────────────────────────────────────────────────────
+  function _update(dt) {
+    // 7a. Read controls
+    const ctrl = SPACE_GAME.Controls.getState();
+
+    // 7b. Apply acceleration
+    if (ctrl.left)  _state.shipVX -= SHIP_ACCEL * dt;
+    if (ctrl.right) _state.shipVX += SHIP_ACCEL * dt;
+    if (ctrl.up)    _state.shipVY -= SHIP_ACCEL * dt;
+    if (ctrl.down)  _state.shipVY += SHIP_ACCEL * dt;
+
+    // Boost modifier
+    const speedMult = (_state.powerup === 'boost') ? 1.6 : 1.0;
+
+    // 7c. Apply friction
+    _state.shipVX *= SHIP_FRICTION;
+    _state.shipVY *= SHIP_FRICTION;
+
+    // 7d. Clamp velocity to max speed
+    const maxSpeed = _state.speed * speedMult;
+    const currentSpeed = Math.sqrt(_state.shipVX * _state.shipVX + _state.shipVY * _state.shipVY);
+    if (currentSpeed > maxSpeed) {
+      const scale = maxSpeed / currentSpeed;
+      _state.shipVX *= scale;
+      _state.shipVY *= scale;
     }
 
-    function _onShipHit(obs) {
-        if (_invincibleTimer > 0) { return; }
+    // 7e. Move ship
+    _state.shipX += _state.shipVX * dt;
+    _state.shipY += _state.shipVY * dt;
 
-        var shielded = _activePowerUp && _activePowerUp.type === 'shield';
-        if (shielded) {
-            _activePowerUp = null;
-            _canvasWrapper.classList.remove('is-shielded');
-            GalaxyGame.Audio.playExplosion();
-            _spawnParticles(obs.x, obs.y, '#00ffff', 12);
-            _updateHUD();
-            return;
-        }
+    // 7f. Clamp to canvas bounds
+    _state.shipX = Math.max(SHIP_RADIUS, Math.min(_canvas.width  - SHIP_RADIUS, _state.shipX));
+    _state.shipY = Math.max(SHIP_RADIUS, Math.min(_canvas.height - SHIP_RADIUS, _state.shipY));
 
-        _lives -= 1;
-        _invincibleTimer = 2000;
-        GalaxyGame.Audio.playExplosion();
-        _spawnParticles(obs.x, obs.y, '#ff4444', 18);
-        _updateHUD();
+    // Bug 6 fix: pass canvasWidth and canvasHeight, not _state.level
+    SPACE_GAME.Obstacles.update(dt, _canvas.width, _canvas.height);
 
-        if (_lives <= 0) {
-            _triggerGameOver();
-        }
+    // 7h. Update particles
+    SPACE_GAME.Particles.update(dt);
+
+    // Bug 7 fix: spawn(type, canvasWidth, canvasHeight, speedMultiplier)
+    // Determine obstacle type based on level and spawn with correct signature
+    const obstacleTypes = ['asteroid-small', 'asteroid-medium', 'enemy-drone'];
+    const spawnType = obstacleTypes[Math.min(_state.level - 1, obstacleTypes.length - 1)];
+    const spawnSpeedMult = 1 + (_state.level - 1) * 0.5;
+    SPACE_GAME.Obstacles.spawn(spawnType, _canvas.width, _canvas.height, spawnSpeedMult);
+
+    // 7j. Collision detection
+    _handleCollisions();
+
+    // 7k. Power-up pickup
+    _checkPowerupPickup();
+
+    // 7l. Power-up timer
+    if (_state.powerup !== null) {
+      _state.powerupTimer -= dt;
+      if (_state.powerupTimer <= 0) {
+        const screenGame = document.getElementById('screen-game');
+        screenGame.classList.remove('is-boosted', 'is-shielded');
+        _state.powerup       = null;
+        _state.powerupTimer  = 0;
+        _state.powerupActive = false;
+        _state.powerupName   = null;
+      }
     }
 
-    function _onPowerUpCollected(pu) {
-        GalaxyGame.Audio.playPowerUp();
-        _activePowerUp = { type: pu.type, timeLeft: 8000 };
-        _powerUpTimer  = 8000;
+    // 7m. Score increment (1 point per frame roughly, scaled by level)
+    _state.score += _state.level * dt * 10;
+    _state.score = Math.floor(_state.score);
 
-        _canvasWrapper.classList.remove('is-shielded', 'is-boosted', 'is-agile');
-        if (pu.type === 'shield') {
-            _canvasWrapper.classList.add('is-shielded');
-        } else if (pu.type === 'turbo') {
-            _canvasWrapper.classList.add('is-boosted');
-        } else if (pu.type === 'magnet') {
-            _canvasWrapper.classList.add('is-agile');
-        }
+    // 7n. Check level up
+    _checkLevelUp();
 
-        _score += 50 * _getDifficultyConfig().scoreRate;
-        _spawnParticles(pu.x, pu.y, '#ffff00', 14);
-        _updateHUD();
+    // Bug 5 fix: use SPACE_GAME.HUD (all caps); also pass timestamp for powerup alert timer
+    SPACE_GAME.HUD.update(_state, performance.now());
+  }
+
+  // ─── Private: render ────────────────────────────────────────────────────────
+  function _render() {
+    // Clear canvas
+    _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
+
+    // Background fill
+    _ctx.fillStyle = '#000011';
+    _ctx.fillRect(0, 0, _canvas.width, _canvas.height);
+
+    // Draw particles (behind everything)
+    SPACE_GAME.Particles.draw(_ctx);
+
+    // Draw obstacles
+    SPACE_GAME.Obstacles.draw(_ctx);
+
+    // Draw ship
+    _drawShip();
+  }
+
+  // ─── Private: draw ship ──────────────────────────────────────────────────────
+  function _drawShip() {
+    const x = _state.shipX;
+    const y = _state.shipY;
+
+    _ctx.save();
+    _ctx.translate(x, y);
+
+    // Shield visual
+    if (_state.powerup === 'shield') {
+      _ctx.beginPath();
+      _ctx.arc(0, 0, SHIP_RADIUS + 8, 0, Math.PI * 2);
+      _ctx.strokeStyle = 'rgba(0, 255, 255, 0.7)';
+      _ctx.lineWidth   = 3;
+      _ctx.stroke();
+
+      const shieldGrad = _ctx.createRadialGradient(0, 0, SHIP_RADIUS, 0, 0, SHIP_RADIUS + 8);
+      shieldGrad.addColorStop(0, 'rgba(0, 255, 255, 0.0)');
+      shieldGrad.addColorStop(1, 'rgba(0, 255, 255, 0.2)');
+      _ctx.fillStyle = shieldGrad;
+      _ctx.fill();
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // PARTÍCULAS
-    // ═══════════════════════════════════════════════════════════════════════
+    // Engine glow
+    const engineGrad = _ctx.createRadialGradient(0, 10, 0, 0, 10, 14);
+    engineGrad.addColorStop(0, 'rgba(255, 140, 0, 0.9)');
+    engineGrad.addColorStop(1, 'rgba(255, 60,  0, 0.0)');
+    _ctx.beginPath();
+    _ctx.arc(0, 10, 14, 0, Math.PI * 2);
+    _ctx.fillStyle = engineGrad;
+    _ctx.fill();
 
-    function _spawnParticles(x, y, color, count) {
-        var cfg = GalaxyGame.Config.PARTICLES;
-        for (var i = 0; i < count; i++) {
-            // Bug 17 corregido: Particle(x, y, velocityX, velocityY, color, life, radius)
-            // Era: new GalaxyGame.Entities.Particle(x, y, color) — faltan velocityX, velocityY, life
-            var angle = Math.random() * Math.PI * 2;
-            var speed = GalaxyGame.Utils.randomBetween(cfg.MIN_SPEED, cfg.MAX_SPEED);
-            var vx    = Math.cos(angle) * speed;
-            var vy    = Math.sin(angle) * speed;
-            var life  = cfg.LIFETIME_FRAMES / 60;
-            _particles.push(new GalaxyGame.Entities.Particle(x, y, vx, vy, color, life, 2));
-        }
+    // Ship body
+    _ctx.beginPath();
+    _ctx.moveTo(0, -SHIP_RADIUS);
+    _ctx.lineTo(SHIP_RADIUS * 0.7,  SHIP_RADIUS * 0.6);
+    _ctx.lineTo(0,                   SHIP_RADIUS * 0.2);
+    _ctx.lineTo(-SHIP_RADIUS * 0.7,  SHIP_RADIUS * 0.6);
+    _ctx.closePath();
+
+    const shipColor = (_state.powerup === 'boost') ? '#ffff00' : '#00ffff';
+    _ctx.fillStyle   = shipColor;
+    _ctx.strokeStyle = '#ffffff';
+    _ctx.lineWidth   = 1.5;
+    _ctx.fill();
+    _ctx.stroke();
+
+    // Cockpit
+    _ctx.beginPath();
+    _ctx.arc(0, -4, 5, 0, Math.PI * 2);
+    _ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    _ctx.fill();
+
+    _ctx.restore();
+
+    // Bug 8 fix: correct emit signature — emit(x, y, type, count)
+    SPACE_GAME.Particles.emit(x, y + SHIP_RADIUS * 0.6, 'thrust', 1);
+  }
+
+  // ─── Private: game loop ──────────────────────────────────────────────────────
+  function _loop(timestamp) {
+    const dt        = (timestamp - _state.lastTime) / 1000;
+    _state.lastTime = timestamp;
+    const dtClamped = Math.min(dt, 0.05);
+
+    if (_state.isPaused || _state.isGameOver || _state.isLevelingUp) {
+      _state.rafId = requestAnimationFrame(_loop);
+      return;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // PUNTUACIÓN Y NIVELES
-    // ═══════════════════════════════════════════════════════════════════════
+    _update(dtClamped);
+    _render();
 
-    function _updateScore(dt) {
-        var config = _getDifficultyConfig();
-        _scoreAccumulator += dt;
-        if (_scoreAccumulator >= 1000) {
-            _scoreAccumulator -= 1000;
-            _score += config.scoreRate;
-            _checkLevelUp();
-            _updateHUD();
-        }
+    _state.rafId = requestAnimationFrame(_loop);
+  }
+
+  // ─── Public: init ────────────────────────────────────────────────────────────
+  function init() {
+    _canvas = document.getElementById('game-canvas');
+    _ctx    = _canvas.getContext('2d');
+
+    const stored = localStorage.getItem('spaceGameHighscore');
+    _state.highscore = stored !== null ? Number(stored) : 0;
+
+    _resetState();
+
+    // Bug 1 fix: init() accepts no parameters
+    SPACE_GAME.Obstacles.init();
+    SPACE_GAME.Particles.reset();
+    // Bug 5 fix: use SPACE_GAME.HUD (all caps)
+    SPACE_GAME.HUD.init();
+    SPACE_GAME.Audio.init();
+    SPACE_GAME.Controls.setPauseCallback(_togglePause);
+
+    if (!_listenersAttached) {
+      _listenersAttached = true;
+
+      document.getElementById('btn-start').addEventListener('click', function () {
+        document.getElementById('screen-menu').classList.add('hidden');
+        document.getElementById('screen-game').classList.remove('hidden');
+        SPACE_GAME.Controls.activate();
+        SPACE_GAME.Game.start();
+      });
+
+      document.getElementById('btn-restart').addEventListener('click', function () {
+        document.getElementById('screen-gameover').classList.add('hidden');
+
+        // Clean up level classes
+        document.body.classList.remove('is-level-1', 'is-level-2', 'is-level-3');
+        document.body.classList.add('is-level-1');
+
+        // Clean up state classes
+        const screenGame = document.getElementById('screen-game');
+        screenGame.classList.remove('is-paused', 'is-damaged', 'is-boosted', 'is-shielded');
+
+        // Bug 1 fix: init() accepts no parameters
+        SPACE_GAME.Obstacles.init();
+        SPACE_GAME.Particles.reset();
+        // Bug 5 fix: use SPACE_GAME.HUD (all caps)
+        SPACE_GAME.HUD.reset();
+
+        _state.highscore = Number(localStorage.getItem('spaceGameHighscore')) || 0;
+        _resetState();
+
+        SPACE_GAME.Controls.activate();
+        document.getElementById('screen-game').classList.remove('hidden');
+        SPACE_GAME.Game.start();
+      });
+
+      document.getElementById('btn-resume').addEventListener('click', function () {
+        SPACE_GAME.Game.resume();
+      });
     }
 
-    function _checkLevelUp() {
-        var newLevel = _level;
-        if (_score >= 200 && _level < 2) { newLevel = 2; }
-        if (_score >= 600 && _level < 3) { newLevel = 3; }
+    document.body.classList.remove('is-level-1', 'is-level-2', 'is-level-3');
+    document.body.classList.add('is-level-1');
+  }
 
-        if (newLevel !== _level) {
-            _level = newLevel;
-            _levelUpLabel = _getLevelConfig().label;
-            _levelUpTimer = 3000;
-            GalaxyGame.Audio.playLevelUp();
-            _canvasWrapper.classList.add('is-level-up');
-        }
+  // ─── Public: start ───────────────────────────────────────────────────────────
+  function start() {
+    _state.lastTime = performance.now();
+    _state.rafId    = requestAnimationFrame(_loop);
+  }
+
+  // ─── Public: stop (game over) ────────────────────────────────────────────────
+  function stop() {
+    cancelAnimationFrame(_state.rafId);
+    _state.isGameOver = true;
+
+    SPACE_GAME.Controls.deactivate();
+
+    // Update highscore
+    if (_state.score > _state.highscore) {
+      _state.highscore = _state.score;
+      localStorage.setItem('spaceGameHighscore', String(_state.highscore));
     }
 
-    function _updateLevelUpBanner(dt) {
-        if (_levelUpTimer <= 0) { return; }
-        _levelUpTimer -= dt;
-        if (_levelUpTimer <= 0) {
-            _levelUpTimer = 0;
-            _canvasWrapper.classList.remove('is-level-up');
-        }
-    }
+    // Clean up state classes
+    const screenGame = document.getElementById('screen-game');
+    screenGame.classList.remove('is-paused', 'is-boosted', 'is-shielded');
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // POWER-UP TIMER
-    // ═══════════════════════════════════════════════════════════════════════
+    screenGame.classList.add('hidden');
 
-    function _updatePowerUpTimer(dt) {
-        if (!_activePowerUp) { return; }
-        _activePowerUp.timeLeft -= dt;
-        if (_activePowerUp.timeLeft <= 0) {
-            _canvasWrapper.classList.remove('is-shielded', 'is-boosted', 'is-agile');
-            _activePowerUp = null;
-            _updateHUD();
-        }
-    }
+    document.getElementById('gameover-score').textContent     = _state.score;
+    document.getElementById('gameover-highscore').textContent = _state.highscore;
+    document.getElementById('screen-gameover').classList.remove('hidden');
+  }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // INVULNERABILIDAD
-    // ═══════════════════════════════════════════════════════════════════════
+  // ─── Public: pause ───────────────────────────────────────────────────────────
+  function pause() {
+    if (_state.isGameOver || _state.isPaused) return;
+    _state.isPaused = true;
+    document.getElementById('overlay-pause').classList.remove('hidden');
+    document.getElementById('screen-game').classList.add('is-paused');
+  }
 
-    function _updateInvincibility(dt) {
-        if (_invincibleTimer <= 0) { return; }
-        _invincibleTimer -= dt;
-        if (_invincibleTimer < 0) { _invincibleTimer = 0; }
-    }
+  // ─── Public: resume ──────────────────────────────────────────────────────────
+  function resume() {
+    if (!_state.isPaused) return;
+    _state.isPaused = false;
+    // Reset lastTime so dt doesn't spike after unpause
+    _state.lastTime = performance.now();
+    document.getElementById('overlay-pause').classList.add('hidden');
+    document.getElementById('screen-game').classList.remove('is-paused');
+  }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // ACTUALIZACIÓN DE ENTIDADES
-    // ═══════════════════════════════════════════════════════════════════════
+  // ─── Public: getState ────────────────────────────────────────────────────────
+  function getState() {
+    return _state;
+  }
 
-    function _updateShip(dt) {
-        if (!_ship) { return; }
-        var controls = GalaxyGame.Controls.getState();
-        var hasTurbo = _activePowerUp && _activePowerUp.type === 'turbo';
-        _ship.update(dt, controls, hasTurbo);
-    }
-
-    function _updateObstacles(dt) {
-        var cw = GalaxyGame.Config.CANVAS.WIDTH;
-        var ch = GalaxyGame.Config.CANVAS.HEIGHT;
-        var shipX = _ship ? _ship.x : cw / 2;
-        var shipY = _ship ? _ship.y : ch / 2;
-
-        // Bug 3 corregido: nombre y firma completamente distintos
-        // Era: GalaxyGame.Obstacles.updateObstacle(obs, dt, speedMult, _ship) en bucle
-        // Debe ser: GalaxyGame.Obstacles.updateAll(obstacleList, dt, shipX, shipY, cw, ch)
-        GalaxyGame.Obstacles.updateAll(_obstacles, dt, shipX, shipY, cw, ch);
-
-        // Bug 4 corregido: isOutOfBounds no existe en la API pública de obstacles.js
-        // updateAll ya marca obs.active = false cuando sale de bounds;
-        // usar filterActive para limpiar el array
-        _obstacles = GalaxyGame.Obstacles.filterActive(_obstacles);
-    }
-
-    function _updatePowerUps(dt) {
-        var cw = GalaxyGame.Config.CANVAS.WIDTH;
-        var ch = GalaxyGame.Config.CANVAS.HEIGHT;
-
-        // Bug 5 corregido: los power-ups son objetos planos, no instancias con .update()
-        // Bug 4 corregido: isOutOfBounds no existe en la API pública
-        // Usar Obstacles.updatePowerUps que gestiona movimiento y bounds internamente
-        GalaxyGame.Obstacles.updatePowerUps(_powerUps, dt, cw, ch);
-        _powerUps = GalaxyGame.Obstacles.filterActive(_powerUps);
-    }
-
-    function _updateParticles(dt) {
-        for (var i = _particles.length - 1; i >= 0; i--) {
-            _particles[i].update(dt);
-            // Bug 6 corregido: Particle no tiene isDead(); usar la propiedad .active
-            // Era: _particles[i].isDead()
-            // Debe ser: !_particles[i].active
-            if (!_particles[i].active) {
-                _particles.splice(i, 1);
-            }
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // GAME OVER
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function _triggerGameOver() {
-        GalaxyGame.Audio.playGameOver();
-
-        if (_score > _highScore) {
-            _highScore = _score;
-            _saveHighScore();
-        }
-
-        _canvasWrapper.classList.remove('is-shielded', 'is-boosted', 'is-agile', 'is-level-up');
-
-        document.getElementById('gameover-score-value').textContent    = _score;
-        document.getElementById('gameover-highscore-value').textContent = _highScore;
-
-        _setGameState('gameover');
-
-        if (_rafId) {
-            cancelAnimationFrame(_rafId);
-            _rafId = null;
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // PERSISTENCIA HIGH SCORE
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function _loadHighScore() {
-        try {
-            var stored = localStorage.getItem('galaxyGame_highScore');
-            _highScore = stored ? parseInt(stored, 10) : 0;
-        } catch (e) {
-            _highScore = 0;
-        }
-    }
-
-    function _saveHighScore() {
-        try {
-            localStorage.setItem('galaxyGame_highScore', String(_highScore));
-        } catch (e) { /* silencioso */ }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // GAME LOOP
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function _gameLoop(timestamp) {
-        if (_state !== 'playing') { return; }
-
-        if (_lastTimestamp === 0) { _lastTimestamp = timestamp; }
-        var dt = timestamp - _lastTimestamp;
-        if (dt > 100) { dt = 100; }
-        _lastTimestamp = timestamp;
-
-        _updateShip(dt);
-        _updateObstacles(dt);
-        _updatePowerUps(dt);
-        _updateParticles(dt);
-        _spawnObstacle(dt);
-        _spawnPowerUp(dt);
-        _checkCollisions();
-        _updateScore(dt);
-        _updatePowerUpTimer(dt);
-        _updateInvincibility(dt);
-        _updateLevelUpBanner(dt);
-
-        var levelLabel = _levelUpTimer > 0 ? _levelUpLabel : '';
-        var isInvincible = _invincibleTimer > 0;
-
-        // Bug 10 corregido: drawFrame espera un objeto gameState, no 7 argumentos posicionales
-        // Era: GalaxyGame.Renderer.drawFrame(_stars, _ship, _obstacles, _powerUps, _particles, levelLabel, isInvincible)
-        // Debe ser: GalaxyGame.Renderer.drawFrame({ stars, ship, obstacles, powerUps, particles, levelUpBanner })
-        GalaxyGame.Renderer.drawFrame({
-            stars:         _stars,
-            ship:          _ship,
-            obstacles:     _obstacles,
-            powerUps:      _powerUps,
-            particles:     _particles,
-            levelUpBanner: levelLabel || null
-        });
-
-        _rafId = requestAnimationFrame(_gameLoop);
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // EVENTOS DE UI
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function _onDifficultySelect(e) {
-        var btn = e.currentTarget;
-        var diff = btn.getAttribute('data-difficulty');
-        if (!diff) { return; }
-
-        _difficulty = diff;
-
-        document.querySelectorAll('.btn-difficulty').forEach(function (b) {
-            b.classList.remove('is-active');
-        });
-        btn.classList.add('is-active');
-    }
-
-    function _onStartGame() {
-        _resetGame();
-        _setGameState('playing');
-        _lastTimestamp = 0;
-        _rafId = requestAnimationFrame(_gameLoop);
-    }
-
-    function _onPause() {
-        if (_state !== 'playing') { return; }
-        if (_rafId) {
-            cancelAnimationFrame(_rafId);
-            _rafId = null;
-        }
-        _setGameState('paused');
-    }
-
-    function _onResume() {
-        if (_state !== 'paused') { return; }
-        _lastTimestamp = 0;
-        _setGameState('playing');
-        _rafId = requestAnimationFrame(_gameLoop);
-    }
-
-    function _onQuitToMenu() {
-        if (_rafId) {
-            cancelAnimationFrame(_rafId);
-            _rafId = null;
-        }
-        _canvasWrapper.classList.remove('is-running', 'is-paused', 'is-gameover',
-            'is-shielded', 'is-boosted', 'is-agile', 'is-level-up');
-        _updateStartScreenHighScore();
-        _setGameState('menu');
-    }
-
-    function _onRestart() {
-        _resetGame();
-        _setGameState('playing');
-        _lastTimestamp = 0;
-        _rafId = requestAnimationFrame(_gameLoop);
-    }
-
-    function _onKeyboardGlobal(e) {
-        if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') {
-            if (_state === 'playing') { _onPause(); }
-            else if (_state === 'paused') { _onResume(); }
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // HELPERS DE UI
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function _updateStartScreenHighScore() {
-        var el = document.getElementById('start-highscore-value');
-        if (el) { el.textContent = _highScore; }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // INICIALIZACIÓN DE ESTRELLAS
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function _initStars() {
-        _stars = [];
-        var cfg    = GalaxyGame.Config;
-        var starCfg = cfg.STARS;
-        var cw     = cfg.CANVAS.WIDTH;
-        var ch     = cfg.CANVAS.HEIGHT;
-        var count  = starCfg.COUNT || 120;
-
-        // Bug 7 corregido: GalaxyGame.Entities.Star no existe en entities.js
-        // Construir objetos planos de estrella directamente
-        for (var i = 0; i < count; i++) {
-            _stars.push({
-                x:      GalaxyGame.Utils.randomBetween(0, cw),
-                y:      GalaxyGame.Utils.randomBetween(0, ch),
-                radius: GalaxyGame.Utils.randomBetween(starCfg.MIN_RADIUS, starCfg.MAX_RADIUS),
-                speed:  GalaxyGame.Utils.randomBetween(starCfg.MIN_SPEED,  starCfg.MAX_SPEED),
-                opacity: GalaxyGame.Utils.randomBetween(0.3, 1.0)
-            });
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // INIT PÚBLICO
-    // ═══════════════════════════════════════════════════════════════════════
-
-    function init() {
-        _loadHighScore();
-
-        // Referencias DOM
-        _canvasWrapper = document.getElementById('game-canvas-wrapper');
-
-        _screens = {
-            start:    document.getElementById('screen-start'),
-            game:     document.getElementById('screen-game'),
-            pause:    document.getElementById('screen-pause'),
-            gameover: document.getElementById('screen-gameover')
-        };
-
-        _hud = {
-            scoreValue:       document.getElementById('hud-score-value'),
-            livesValue:       document.getElementById('hud-lives-value'),
-            levelValue:       document.getElementById('hud-level-value'),
-            powerupLabel:     document.getElementById('hud-powerup-label'),
-            powerupValue:     document.getElementById('hud-powerup-value'),
-            powerupContainer: document.getElementById('hud-powerup')
-        };
-
-        // Inicializar sub-módulos
-        GalaxyGame.Controls.init();
-        GalaxyGame.Renderer.init(document.getElementById('game-canvas'));
-        _initStars();
-
-        // Botones de dificultad
-        document.querySelectorAll('.btn-difficulty').forEach(function (btn) {
-            btn.addEventListener('click', _onDifficultySelect);
-        });
-
-        // Botón inicio
-        var btnStart = document.getElementById('btn-start');
-        if (btnStart) { btnStart.addEventListener('click', _onStartGame); }
-
-        // Botón reanudar
-        var btnResume = document.getElementById('btn-resume');
-        if (btnResume) { btnResume.addEventListener('click', _onResume); }
-
-        // Botón salir desde pausa
-        var btnQuitPause = document.getElementById('btn-quit-pause');
-        if (btnQuitPause) { btnQuitPause.addEventListener('click', _onQuitToMenu); }
-
-        // Botón reiniciar desde game over
-        var btnRestart = document.getElementById('btn-restart');
-        if (btnRestart) { btnRestart.addEventListener('click', _onRestart); }
-
-        // Botón salir desde game over
-        var btnQuitGameover = document.getElementById('btn-quit-gameover');
-        if (btnQuitGameover) { btnQuitGameover.addEventListener('click', _onQuitToMenu); }
-
-        // Teclado global (pausa con Escape/P)
-        document.addEventListener('keydown', _onKeyboardGlobal);
-
-        // Marcar dificultad fácil como activa por defecto
-        var defaultBtn = document.getElementById('btn-difficulty-easy');
-        if (defaultBtn) { defaultBtn.classList.add('is-active'); }
-
-        // Mostrar high score en pantalla de inicio
-        _updateStartScreenHighScore();
-
-        // Estado inicial
-        _setGameState('menu');
-    }
-
-    // ─── API pública ────────────────────────────────────────────────────────
-    return {
-        init: init
-    };
+  // ─── Expose public API ───────────────────────────────────────────────────────
+  window.SPACE_GAME.Game = {
+    init:     init,
+    start:    start,
+    stop:     stop,
+    pause:    pause,
+    resume:   resume,
+    getState: getState
+  };
 
 })();
-
-// Arrancar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function () {
-    GalaxyGame.Game.init();
-});

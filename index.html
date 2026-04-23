@@ -1,83 +1,100 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galaxy Game — PROYEC-21</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Space Shooter — Arcade 80s</title>
+
+  <!-- FUENTE EXTERNA: única dependencia CDN permitida -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- ESTILOS: orden obligatorio, responsive después de base -->
+  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/responsive.css">
 </head>
 <body>
-    <div id="game-root">
-        <div id="game-canvas-wrapper">
-            <canvas id="game-canvas" width="800" height="600"></canvas>
-            <div id="hud-overlay">
-                <div id="hud-score">
-                    <span id="hud-score-label">SCORE</span>
-                    <span id="hud-score-value">0</span>
-                </div>
-                <div id="hud-lives">
-                    <span id="hud-lives-label">LIVES</span>
-                    <span id="hud-lives-value">3</span>
-                </div>
-                <div id="hud-level">
-                    <span id="hud-level-label">LEVEL</span>
-                    <span id="hud-level-value">1</span>
-                </div>
-                <div id="hud-powerup" class="hidden">
-                    <span id="hud-powerup-label">POWER</span>
-                    <span id="hud-powerup-value">---</span>
-                </div>
-            </div>
-            <div id="screen-start">
-                <h1 id="start-title">GALAXY GAME</h1>
-                <p id="start-subtitle">ARCADE ESPACIAL</p>
-                <div id="start-difficulty">
-                    <button id="btn-difficulty-easy" class="btn-difficulty is-active" data-difficulty="easy">NEBULOSA</button>
-                    <button id="btn-difficulty-medium" class="btn-difficulty" data-difficulty="medium">GALAXIA</button>
-                    <button id="btn-difficulty-hard" class="btn-difficulty" data-difficulty="hard">AGUJERO NEGRO</button>
-                </div>
-                <button id="btn-start">INICIAR JUEGO</button>
-                <div id="start-controls-hint">
-                    <p>← → GIRAR &nbsp; ↑ ACELERAR &nbsp; ↓ FRENAR</p>
-                    <p>P PAUSAR</p>
-                </div>
-                <div id="start-highscore">
-                    <span>HIGH SCORE: </span>
-                    <span id="start-highscore-value">0</span>
-                </div>
-            </div>
-            <div id="screen-game" class="hidden">
-            </div>
-            <div id="screen-pause" class="hidden">
-                <h2 id="pause-title">PAUSA</h2>
-                <button id="btn-resume">CONTINUAR</button>
-                <button id="btn-quit-pause">SALIR AL MENÚ</button>
-            </div>
-            <div id="screen-gameover" class="hidden">
-                <h2 id="gameover-title">GAME OVER</h2>
-                <div id="gameover-score">
-                    <span>SCORE FINAL: </span>
-                    <span id="gameover-score-value">0</span>
-                </div>
-                <div id="gameover-highscore">
-                    <span>HIGH SCORE: </span>
-                    <span id="gameover-highscore-value">0</span>
-                </div>
-                <button id="btn-restart">JUGAR DE NUEVO</button>
-                <button id="btn-quit-gameover">MENÚ PRINCIPAL</button>
-            </div>
-        </div>
+
+  <!-- CAPA 1: Fondo decorativo de estrellas — poblado dinámicamente por particles.js -->
+  <div id="star-field" aria-hidden="true"></div>
+
+  <!-- CAPA 2: Canvas principal del juego -->
+  <canvas id="game-canvas" width="800" height="600" aria-label="Campo de juego Space Shooter"></canvas>
+
+  <!-- CAPA 3: Overlay de efecto CRT (scanlines) -->
+  <div class="scanline" aria-hidden="true"></div>
+
+  <!-- PANTALLA: Menú Principal — visible al inicio -->
+  <section id="screen-menu" class="screen" role="main">
+    <h1 id="menu-title" class="neon-text">SPACE SHOOTER</h1>
+    <p class="neon-text">— ARCADE 80s —</p>
+    <button id="btn-start" class="btn-arcade" type="button">INICIAR JUEGO</button>
+  </section>
+
+  <!-- PANTALLA: Juego Activo — oculta al inicio -->
+  <section id="screen-game" class="screen hidden" role="main" aria-label="Pantalla de juego activo">
+
+    <!-- HUD superior -->
+    <div id="hud-score" aria-live="polite" aria-label="Puntuación">SCORE: 0</div>
+    <div id="hud-level" aria-live="polite" aria-label="Nivel">LEVEL: 1</div>
+    <div id="hud-lives" aria-live="polite" aria-label="Vidas">LIVES: 3</div>
+
+    <!-- Barra de velocidad -->
+    <div id="hud-speed-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+
+    <!-- Alerta de power-up: oculta por defecto -->
+    <div id="hud-powerup-alert" class="hidden" aria-live="assertive">
+      <span class="powerup-icon" aria-hidden="true"></span>
+      <span id="hud-powerup-name"></span>
     </div>
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/audio.js"></script>
-    <script src="js/renderer.js"></script>
-    <script src="js/entities.js"></script>
-    <script src="js/controls.js"></script>
-    <script src="js/obstacles.js"></script>
-    <script src="js/game.js"></script>
+
+    <!-- Overlay de pausa: oculto por defecto -->
+    <div id="overlay-pause" class="hidden" role="dialog" aria-modal="true" aria-label="Juego pausado">
+      <p class="neon-text">PAUSA</p>
+      <button id="btn-resume" class="btn-arcade" type="button">CONTINUAR</button>
+    </div>
+
+  </section>
+
+  <!-- PANTALLA: Subida de Nivel — oculta al inicio, se cierra automáticamente por timer -->
+  <section id="screen-levelup" class="screen hidden" role="alertdialog" aria-live="assertive" aria-label="Subida de nivel">
+    <p class="neon-text">¡NIVEL SUPERADO!</p>
+  </section>
+
+  <!-- PANTALLA: Game Over — oculta al inicio -->
+  <section id="screen-gameover" class="screen hidden" role="main" aria-label="Pantalla de fin de juego">
+    <h2 class="neon-text">GAME OVER</h2>
+    <p class="neon-text">SCORE: <span id="gameover-score">0</span></p>
+    <p class="neon-text">BEST:  <span id="gameover-highscore">0</span></p>
+    <button id="btn-restart" class="btn-arcade" type="button">REINICIAR</button>
+  </section>
+
+  <!-- SCRIPTS: orden de dependencia CRÍTICO — no reordenar -->
+
+  <!-- 1. Configuración global: sin dependencias -->
+  <script src="./js/config.js"></script>
+
+  <!-- 2. Utilidades puras: depende de config.js -->
+  <script src="./js/utils.js"></script>
+
+  <!-- 3. Audio: depende de config.js -->
+  <script src="./js/audio.js"></script>
+
+  <!-- 4. Controles: depende de config.js, utils.js -->
+  <script src="./js/controls.js"></script>
+
+  <!-- 5. Partículas: depende de config.js, utils.js -->
+  <script src="./js/particles.js"></script>
+
+  <!-- 6. Obstáculos: depende de config.js, utils.js, particles.js -->
+  <script src="./js/obstacles.js"></script>
+
+  <!-- 7. HUD: depende de config.js, utils.js -->
+  <script src="./js/hud.js"></script>
+
+  <!-- 8. Motor principal: depende de TODOS los anteriores -->
+  <script src="./js/game.js"></script>
+
 </body>
 </html>

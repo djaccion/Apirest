@@ -1,0 +1,155 @@
+/* =============================================================
+   css/responsive.css
+   RESPONSIVE OVERRIDES ONLY — base styles live in css/styles.css
+   This file ONLY contains media query overrides.
+   Breakpoint order: desktop-first (largest → smallest)
+   DO NOT redeclare :root variables outside @media blocks.
+   DO NOT use @import. Loaded via <link> in index.html.
+   ============================================================= */
+
+/* ─────────────────────────────────────────────
+   BREAKPOINT: TABLET — max-width: 900px
+   ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+
+  :root {
+    --canvas-width: 90vw;
+    --canvas-height: 67.5vw; /* mantiene ratio 4:3 (800×600) */
+  }
+
+  #game-canvas {
+    width: var(--canvas-width);
+    height: var(--canvas-height);
+    max-width: 800px;
+    max-height: 600px;
+  }
+
+  .screen {
+    padding: 1rem;
+  }
+
+  .neon-text {
+    font-size: 1rem;
+  }
+
+  #menu-title {
+    font-size: 1.2rem;
+  }
+
+  .btn-arcade {
+    font-size: 0.7rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  #hud-score,
+  #hud-level,
+  #hud-lives {
+    font-size: 0.55rem;
+  }
+
+  #hud-speed-bar {
+    width: 80px;
+  }
+
+  #hud-powerup-alert {
+    font-size: 0.55rem;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   BREAKPOINT: MÓVIL — max-width: 600px
+   ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+
+  :root {
+    --canvas-width: 100vw;
+    --canvas-height: 75vw; /* mantiene ratio 4:3 a ancho completo */
+  }
+
+  #game-canvas {
+    width: var(--canvas-width);
+    height: var(--canvas-height);
+    border-radius: 0;
+  }
+
+  .screen {
+    padding: 0.5rem;
+  }
+
+  .neon-text {
+    font-size: 0.7rem;
+  }
+
+  #menu-title {
+    font-size: 0.9rem;
+  }
+
+  .btn-arcade {
+    font-size: 0.6rem;
+    padding: 0.5rem 0.8rem;
+    width: 80%;
+  }
+
+  #hud-score,
+  #hud-level,
+  #hud-lives {
+    font-size: 0.45rem;
+  }
+
+  #hud-speed-bar {
+    width: 50px;
+  }
+
+  #hud-powerup-alert {
+    font-size: 0.45rem;
+    max-width: 90vw;
+  }
+
+  #overlay-pause {
+    font-size: 0.8rem;
+  }
+
+  /* Garantiza cobertura total en móvil.
+     NOTA AL TECH LEAD: si styles.css declara width/height fijos
+     en px para .scanline o #star-field, estos overrides los corrigen.
+     Verificar que styles.css no use valores fijos en esos selectores. */
+  .scanline {
+    width: 100%;
+    height: 100%;
+  }
+
+  #star-field {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   BREAKPOINT: ALTURA REDUCIDA — max-height: 500px
+   Cubre landscape en móvil donde la altura es el recurso escaso.
+   ───────────────────────────────────────────── */
+@media (max-height: 500px) {
+
+  :root {
+    --canvas-height: 90vh;
+    --canvas-width: 120vh; /* mantiene ratio 4:3 en orientación landscape */
+  }
+
+  #game-canvas {
+    width: var(--canvas-width);
+    height: var(--canvas-height);
+    max-width: 100vw;
+  }
+
+  .screen {
+    overflow-y: auto;
+  }
+
+  #menu-title {
+    margin-bottom: 0.5rem;
+  }
+
+  .btn-arcade {
+    margin: 0.3rem 0;
+  }
+}
