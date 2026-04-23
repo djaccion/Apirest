@@ -1,745 +1,651 @@
-// ============================================================
-// PROYEC-21 | js/game.js
-// Juego Arcade de Naves Espaciales — Monolito con Namespacing
-// ============================================================
+window.GalaxyGame = window.GalaxyGame || {};
 
-// --- [1] NAMESPACE RAÍZ ---
-var Game = {};
+GalaxyGame.Game = (function () {
 
-// --- [2] CONSTANTES DE CONFIGURACIÓN ---
-var CONFIG = {
-  CANVAS_WIDTH:        800,
-  CANVAS_HEIGHT:       600,
-  SHIP_SPEED:          4,
-  SHIP_MAX_SPEED:      7,
-  SHIP_FRICTION:       0.97,
-  SHIP_ROTATION_SPEED: 0.05,
-  SHIP_MIN_SPEED:      0.5,
-  BULLET_SPEED:        10,
-  BULLET_MAX:          5,
-  PARTICLE_LIFE:       40,
-  PARTICLE_COUNT:      12,
-  OBSTACLE_SPAWN_RATE: 90,
-  POWERUP_SPAWN_RATE:  600,
-  LIVES_INITIAL:       3,
-  INVINCIBLE_FRAMES:   120,
-  LEVEL_SCORE_THRESHOLDS: [0, 500, 1500],
-  HIT_FLASH_MS:        300,
-  LEVELUP_DISPLAY_MS:  2000,
-  COLORS: {
-    BG:           '#0a0a1a',
-    SHIP:         '#00ffff',
-    SHIP_THRUST:  '#ff6600',
-    BULLET:       '#ffff00',
-    SHIELD:       '#00ff88',
-    HIT:          '#ff0044',
-    STAR_DIM:     '#334466',
-    STAR_BRIGHT:  '#aaccff',
-    COMET:        '#ff8844',
-    ASTEROID:     '#888888',
-    PLANET:       '#4466ff',
-    UFO:          '#ff44ff',
-    NEBULA:       '#220033',
-    POWERUP_SPD:  '#ffff00',
-    POWERUP_SHD:  '#00ff88',
-    POWERUP_MAG:  '#ff88ff',
-    PARTICLE_EXP: '#ff4400',
-    PARTICLE_TRL: '#0088ff'
-  }
-};
+    // ─── Estado de la máquina ───────────────────────────────────────────────
+    let _state = 'menu';
 
-// --- [3] Game.State — Máquina de Estados ---
-Game.State = {
-  MENU:      'MENU',
-  PLAYING:   'PLAYING',
-  PAUSED:    'PAUSED',
-  GAME_OVER: 'GAME_OVER',
+    // ─── Referencias DOM ────────────────────────────────────────────────────
+    let _canvasWrapper = null;
+    let _screens = {};
+    let _hud = {};
 
-  current: 'MENU',
+    // ─── Estado de partida ──────────────────────────────────────────────────
+    let _score = 0;
+    let _lives = 3;
+    let _level = 1;
+    let _difficulty = 'easy';
+    let _highScore = 0;
+    let _activePowerUp = null;
+    let _powerUpTimer = 0;
 
-  els: {},
+    // ─── Game loop ──────────────────────────────────────────────────────────
+    let _lastTimestamp = 0;
+    let _rafId = null;
 
-  toPlaying: function() {
-    this.current = this.PLAYING;
-    document.body.classList.add('is-running');
-    document.body.classList.remove('is-gameover', 'is-paused');
-    this.els.screenStart.classList.add('hidden');
-    this.els.screenGame.classList.remove('hidden');
-    this.els.screenGameover.classList.add('hidden');
-    this.els.screenPause.classList.add('hidden');
-  },
+    // ─── Entidades ──────────────────────────────────────────────────────────
+    let _ship = null;
+    let _obstacles = [];
+    let _powerUps = [];
+    let _particles = [];
+    let _stars = [];
 
-  toPaused: function() {
-    this.current = this.PAUSED;
-    document.body.classList.toggle('is-paused');
-    this.els.screenPause.classList.toggle('hidden');
-  },
+    // ─── Timers de spawn ────────────────────────────────────────────────────
+    let _obstacleSpawnTimer = 0;
+    let _powerUpSpawnTimer = 0;
 
-  toGameOver: function() {
-    this.current = this.GAME_OVER;
-    document.body.classList.remove('is-running');
-    document.body.classList.add('is-gameover');
-    this.els.screenGame.classList.add('hidden');
-    this.els.screenGameover.classList.remove('hidden');
-  },
+    // ─── Puntuación por tiempo ──────────────────────────────────────────────
+    let _scoreAccumulator = 0;
 
-  toMenu: function() {
-    this.current = this.MENU;
-    document.body.classList.remove('is-gameover', 'is-running', 'is-paused');
-    this.els.screenGameover.classList.add('hidden');
-    this.els.screenStart.classList.remove('hidden');
-  },
+    // ─── Level-up banner ────────────────────────────────────────────────────
+    let _levelUpTimer = 0;
+    let _levelUpLabel = '';
 
-  showLevelUp: function(levelNum) {
-    var overlay = this.els.overlayLevelUp;
-    var numEl   = this.els.overlayLevelNumber;
-    numEl.textContent = levelNum;
-    overlay.classList.add('is-leveling');
-    overlay.classList.remove('hidden');
-    setTimeout(function() {
-      overlay.classList.remove('is-leveling');
-      overlay.classList.add('hidden');
-    }, CONFIG.LEVELUP_DISPLAY_MS);
-  }
-};
+    // ─── Invulnerabilidad tras daño ─────────────────────────────────────────
+    let _invincibleTimer = 0;
 
-// --- [4] Game.Controls — Entrada de Teclado ---
-Game.Controls = {
-  keys: {},
+    // ═══════════════════════════════════════════════════════════════════════
+    // CONFIGURACIÓN
+    // ═══════════════════════════════════════════════════════════════════════
 
-  init: function() {
-    var self = this;
-    window.addEventListener('keydown', function(e) {
-      self.keys[e.code] = true;
-      if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].indexOf(e.code) !== -1) {
-        e.preventDefault();
-      }
-      if ((e.code === 'Escape' || e.code === 'KeyP') && Game.State.current === Game.State.PLAYING) {
-        Game.State.toPaused();
-      } else if ((e.code === 'Escape' || e.code === 'KeyP') && Game.State.current === Game.State.PAUSED) {
-        Game.State.toPaused();
-      }
-    });
-    window.addEventListener('keyup', function(e) {
-      self.keys[e.code] = false;
-    });
-  },
-
-  isDown: function(code) {
-    return !!this.keys[code];
-  }
-};
-
-// --- [5] Game.Ship — Física de la Nave ---
-Game.Ship = {
-  x: 0,
-  y: 0,
-  vx: 0,
-  vy: 0,
-  angle: 0,
-  radius: 16,
-  lives: CONFIG.LIVES_INITIAL,
-  invincibleFrames: 0,
-  shieldActive: false,
-  shieldTimer: 0,
-  speedBoostActive: false,
-  speedBoostTimer: 0,
-  magnetActive: false,
-  magnetTimer: 0,
-  bullets: [],
-  shootCooldown: 0,
-  thrustOn: false,
-
-  init: function() {
-    this.x = CONFIG.CANVAS_WIDTH / 2;
-    this.y = CONFIG.CANVAS_HEIGHT / 2;
-    this.vx = 0;
-    this.vy = 0;
-    this.angle = -Math.PI / 2;
-    this.lives = CONFIG.LIVES_INITIAL;
-    this.invincibleFrames = 0;
-    this.shieldActive = false;
-    this.shieldTimer = 0;
-    this.speedBoostActive = false;
-    this.speedBoostTimer = 0;
-    this.magnetActive = false;
-    this.magnetTimer = 0;
-    this.bullets = [];
-    this.shootCooldown = 0;
-    this.thrustOn = false;
-  },
-
-  update: function() {
-    var maxSpeed = this.speedBoostActive
-      ? CONFIG.SHIP_MAX_SPEED * 1.6
-      : CONFIG.SHIP_MAX_SPEED;
-    var accel = this.speedBoostActive
-      ? CONFIG.SHIP_SPEED * 1.4
-      : CONFIG.SHIP_SPEED;
-
-    if (Game.Controls.isDown('ArrowLeft')) {
-      this.angle -= CONFIG.SHIP_ROTATION_SPEED;
-    }
-    if (Game.Controls.isDown('ArrowRight')) {
-      this.angle += CONFIG.SHIP_ROTATION_SPEED;
+    function _getDifficultyConfig() {
+        var configs = {
+            easy:   { obstacleInterval: 2000, speedMultiplier: 1.0, lives: 5, scoreRate: 1 },
+            medium: { obstacleInterval: 1200, speedMultiplier: 1.5, lives: 3, scoreRate: 2 },
+            hard:   { obstacleInterval: 700,  speedMultiplier: 2.2, lives: 1, scoreRate: 3 }
+        };
+        return configs[_difficulty] || configs.easy;
     }
 
-    this.thrustOn = Game.Controls.isDown('ArrowUp');
-    if (this.thrustOn) {
-      this.vx += Math.cos(this.angle) * (accel * 0.1);
-      this.vy += Math.sin(this.angle) * (accel * 0.1);
+    function _getLevelConfig() {
+        var levels = {
+            1: { speedBonus: 0,   spawnBonus: 0,   label: 'NEBULOSA'      },
+            2: { speedBonus: 0.4, spawnBonus: 300,  label: 'GALAXIA'       },
+            3: { speedBonus: 0.9, spawnBonus: 600,  label: 'AGUJERO NEGRO' }
+        };
+        return levels[_level] || levels[1];
     }
 
-    // Fricción
-    this.vx *= CONFIG.SHIP_FRICTION;
-    this.vy *= CONFIG.SHIP_FRICTION;
+    // ═══════════════════════════════════════════════════════════════════════
+    // PANTALLAS Y ESTADO
+    // ═══════════════════════════════════════════════════════════════════════
 
-    // Velocidad mínima no-cero (deriva espacial)
-    var speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-    if (speed > 0 && speed < CONFIG.SHIP_MIN_SPEED) {
-      var ratio = CONFIG.SHIP_MIN_SPEED / speed;
-      this.vx *= ratio;
-      this.vy *= ratio;
+    function _showScreen(screenId) {
+        ['screen-start', 'screen-game', 'screen-gameover', 'screen-pause'].forEach(function (id) {
+            document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById(screenId).classList.remove('hidden');
     }
 
-    // Clamp velocidad máxima
-    if (speed > maxSpeed) {
-      var clampRatio = maxSpeed / speed;
-      this.vx *= clampRatio;
-      this.vy *= clampRatio;
-    }
+    function _setGameState(newState) {
+        _state = newState;
+        _canvasWrapper.classList.remove('is-running', 'is-paused', 'is-gameover');
 
-    this.x += this.vx;
-    this.y += this.vy;
-
-    // Wrap-around de pantalla
-    if (this.x < -this.radius) this.x = CONFIG.CANVAS_WIDTH + this.radius;
-    if (this.x > CONFIG.CANVAS_WIDTH + this.radius) this.x = -this.radius;
-    if (this.y < -this.radius) this.y = CONFIG.CANVAS_HEIGHT + this.radius;
-    if (this.y > CONFIG.CANVAS_HEIGHT + this.radius) this.y = -this.radius;
-
-    // Disparo
-    if (this.shootCooldown > 0) this.shootCooldown--;
-    if (Game.Controls.isDown('Space') && this.shootCooldown === 0 && this.bullets.length < CONFIG.BULLET_MAX) {
-      this.bullets.push({
-        x: this.x + Math.cos(this.angle) * this.radius,
-        y: this.y + Math.sin(this.angle) * this.radius,
-        vx: Math.cos(this.angle) * CONFIG.BULLET_SPEED + this.vx,
-        vy: Math.sin(this.angle) * CONFIG.BULLET_SPEED + this.vy,
-        life: 60
-      });
-      this.shootCooldown = 12;
-      Game.Audio.playShoot();
-    }
-
-    // Actualizar balas
-    for (var i = this.bullets.length - 1; i >= 0; i--) {
-      var b = this.bullets[i];
-      b.x += b.vx;
-      b.y += b.vy;
-      b.life--;
-      if (b.life <= 0 ||
-          b.x < 0 || b.x > CONFIG.CANVAS_WIDTH ||
-          b.y < 0 || b.y > CONFIG.CANVAS_HEIGHT) {
-        this.bullets.splice(i, 1);
-      }
-    }
-
-    // Timers de power-ups
-    if (this.invincibleFrames > 0) this.invincibleFrames--;
-
-    if (this.shieldActive) {
-      this.shieldTimer--;
-      if (this.shieldTimer <= 0) {
-        this.shieldActive = false;
-        document.getElementById('player-ship').classList.remove('is-powered');
-      }
-    }
-    if (this.speedBoostActive) {
-      this.speedBoostTimer--;
-      if (this.speedBoostTimer <= 0) {
-        this.speedBoostActive = false;
-        if (!this.shieldActive && !this.magnetActive) {
-          document.getElementById('player-ship').classList.remove('is-powered');
+        if (newState === 'playing') {
+            _canvasWrapper.classList.add('is-running');
+            _showScreen('screen-game');
+        } else if (newState === 'paused') {
+            _canvasWrapper.classList.add('is-paused');
+            _showScreen('screen-pause');
+        } else if (newState === 'gameover') {
+            _canvasWrapper.classList.add('is-gameover');
+            _showScreen('screen-gameover');
+        } else if (newState === 'menu') {
+            _showScreen('screen-start');
         }
-      }
     }
-    if (this.magnetActive) {
-      this.magnetTimer--;
-      if (this.magnetTimer <= 0) {
-        this.magnetActive = false;
-        if (!this.shieldActive && !this.speedBoostActive) {
-          document.getElementById('player-ship').classList.remove('is-powered');
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // RESET Y HUD
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _resetGame() {
+        var config = _getDifficultyConfig();
+        _score = 0;
+        _lives = config.lives;
+        _level = 1;
+        _activePowerUp = null;
+        _powerUpTimer = 0;
+        _obstacles = [];
+        _powerUps = [];
+        _particles = [];
+        _obstacleSpawnTimer = 0;
+        _powerUpSpawnTimer = 0;
+        _scoreAccumulator = 0;
+        _lastTimestamp = 0;
+        _levelUpTimer = 0;
+        _levelUpLabel = '';
+        _invincibleTimer = 0;
+
+        // Bug 16 corregido: Ship(x, y) requiere coordenadas; usar las de config
+        var startX = GalaxyGame.Config.PLAYER.START_X;
+        var startY = GalaxyGame.Config.PLAYER.START_Y;
+        _ship = new GalaxyGame.Entities.Ship(startX, startY);
+
+        GalaxyGame.Controls.reset();
+        _updateHUD();
+    }
+
+    function _updateHUD() {
+        _hud.scoreValue.textContent = _score;
+        _hud.livesValue.textContent = _lives;
+        _hud.levelValue.textContent = _getLevelConfig().label;
+
+        if (_activePowerUp) {
+            _hud.powerupContainer.classList.remove('hidden');
+            _hud.powerupValue.textContent = _activePowerUp.type.toUpperCase()
+                + ' ' + Math.ceil(_activePowerUp.timeLeft / 1000) + 's';
+        } else {
+            _hud.powerupContainer.classList.add('hidden');
         }
-      }
-    }
-  },
-
-  hit: function() {
-    if (this.invincibleFrames > 0 || this.shieldActive) {
-      if (this.shieldActive) {
-        this.shieldActive = false;
-        this.shieldTimer = 0;
-        document.getElementById('player-ship').classList.remove('is-powered');
-        Game.Audio.playShieldBreak();
-      }
-      return;
-    }
-    this.lives--;
-    this.invincibleFrames = CONFIG.INVINCIBLE_FRAMES;
-    var shipEl = document.getElementById('player-ship');
-    shipEl.classList.add('is-hit');
-    setTimeout(function() {
-      shipEl.classList.remove('is-hit');
-    }, CONFIG.HIT_FLASH_MS);
-    Game.Audio.playExplosion();
-    Game.Particles.spawnExplosion(Game.Ship.x, Game.Ship.y);
-  },
-
-  applyPowerUp: function(type) {
-    var shipEl = document.getElementById('player-ship');
-    shipEl.classList.add('is-powered');
-    if (type === 'speed') {
-      this.speedBoostActive = true;
-      this.speedBoostTimer = 300;
-    } else if (type === 'shield') {
-      this.shieldActive = true;
-      this.shieldTimer = 400;
-    } else if (type === 'magnet') {
-      this.magnetActive = true;
-      this.magnetTimer = 350;
-    }
-    Game.Audio.playPowerUp();
-  }
-};
-
-// --- [6] Game.Particles — Sistema de Partículas ---
-Game.Particles = {
-  list: [],
-
-  spawnExplosion: function(x, y) {
-    for (var i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
-      var angle = (Math.PI * 2 / CONFIG.PARTICLE_COUNT) * i + (Math.random() - 0.5) * 0.5;
-      var speed = 1.5 + Math.random() * 3;
-      this.list.push({
-        x: x,
-        y: y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        life: CONFIG.PARTICLE_LIFE,
-        maxLife: CONFIG.PARTICLE_LIFE,
-        color: CONFIG.COLORS.PARTICLE_EXP,
-        size: 2 + Math.random() * 3,
-        type: 'explosion'
-      });
-    }
-  },
-
-  spawnTrail: function(x, y, angle) {
-    var trailAngle = angle + Math.PI + (Math.random() - 0.5) * 0.6;
-    var speed = 1 + Math.random() * 2;
-    this.list.push({
-      x: x,
-      y: y,
-      vx: Math.cos(trailAngle) * speed,
-      vy: Math.sin(trailAngle) * speed,
-      life: 15 + Math.floor(Math.random() * 10),
-      maxLife: 25,
-      color: CONFIG.COLORS.SHIP_THRUST,
-      size: 1.5 + Math.random() * 2,
-      type: 'trail'
-    });
-  },
-
-  spawnCollect: function(x, y, color) {
-    for (var i = 0; i < 6; i++) {
-      var angle = (Math.PI * 2 / 6) * i;
-      this.list.push({
-        x: x,
-        y: y,
-        vx: Math.cos(angle) * 2,
-        vy: Math.sin(angle) * 2,
-        life: 20,
-        maxLife: 20,
-        color: color || CONFIG.COLORS.STAR_BRIGHT,
-        size: 2,
-        type: 'collect'
-      });
-    }
-  },
-
-  update: function() {
-    for (var i = this.list.length - 1; i >= 0; i--) {
-      var p = this.list[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vx *= 0.95;
-      p.vy *= 0.95;
-      p.life--;
-      if (p.life <= 0) {
-        this.list.splice(i, 1);
-      }
-    }
-  },
-
-  clear: function() {
-    this.list = [];
-  }
-};
-
-// --- [7] Game.Obstacles — Fábrica de Obstáculos ---
-Game.Obstacles = {
-  list: [],
-  spawnTimer: 0,
-
-  TYPES: ['comet', 'asteroid', 'planet', 'ufo', 'nebula'],
-
-  create: function(type, level) {
-    var edge = Math.floor(Math.random() * 4);
-    var x, y, vx, vy;
-    var margin = 40;
-
-    if (edge === 0) { x = Math.random() * CONFIG.CANVAS_WIDTH; y = -margin; }
-    else if (edge === 1) { x = CONFIG.CANVAS_WIDTH + margin; y = Math.random() * CONFIG.CANVAS_HEIGHT; }
-    else if (edge === 2) { x = Math.random() * CONFIG.CANVAS_WIDTH; y = CONFIG.CANVAS_HEIGHT + margin; }
-    else { x = -margin; y = Math.random() * CONFIG.CANVAS_HEIGHT; }
-
-    var targetX = CONFIG.CANVAS_WIDTH / 2 + (Math.random() - 0.5) * 300;
-    var targetY = CONFIG.CANVAS_HEIGHT / 2 + (Math.random() - 0.5) * 300;
-    var dx = targetX - x;
-    var dy = targetY - y;
-    var dist = Math.sqrt(dx * dx + dy * dy);
-    var baseSpeed = 1.2 + Math.random() * 1.5 + (level - 1) * 0.4;
-
-    vx = (dx / dist) * baseSpeed;
-    vy = (dy / dist) * baseSpeed;
-
-    var obstacle = { x: x, y: y, vx: vx, vy: vy, type: type, angle: Math.random() * Math.PI * 2, rotSpeed: (Math.random() - 0.5) * 0.04 };
-
-    if (type === 'comet') {
-      obstacle.radius = 10 + Math.random() * 8;
-      obstacle.color = CONFIG.COLORS.COMET;
-      obstacle.damage = true;
-      obstacle.points = 15;
-    } else if (type === 'asteroid') {
-      obstacle.radius = 18 + Math.random() * 14;
-      obstacle.color = CONFIG.COLORS.ASTEROID;
-      obstacle.damage = true;
-      obstacle.points = 10;
-      obstacle.vertices = [];
-      for (var i = 0; i < 8; i++) {
-        obstacle.vertices.push(0.7 + Math.random() * 0.5);
-      }
-    } else if (type === 'planet') {
-      obstacle.radius = 28 + Math.random() * 16;
-      obstacle.color = CONFIG.COLORS.PLANET;
-      obstacle.damage = true;
-      obstacle.points = 5;
-      obstacle.vx *= 0.5;
-      obstacle.vy *= 0.5;
-    } else if (type === 'ufo') {
-      obstacle.radius = 20;
-      obstacle.color = CONFIG.COLORS.UFO;
-      obstacle.damage = true;
-      obstacle.points = 25;
-      obstacle.wobble = 0;
-    } else if (type === 'nebula') {
-      obstacle.radius = 35 + Math.random() * 20;
-      obstacle.color = CONFIG.COLORS.NEBULA;
-      obstacle.damage = false;
-      obstacle.trap = true;
-      obstacle.points = 0;
-      obstacle.vx *= 0.3;
-      obstacle.vy *= 0.3;
-      obstacle.alpha = 0.55;
     }
 
-    return obstacle;
-  },
+    // ═══════════════════════════════════════════════════════════════════════
+    // SPAWN
+    // ═══════════════════════════════════════════════════════════════════════
 
-  spawn: function(level) {
-    this.spawnTimer++;
-    var rate = Math.max(40, CONFIG.OBSTACLE_SPAWN_RATE - (level - 1) * 20);
-    if (this.spawnTimer >= rate) {
-      this.spawnTimer = 0;
-      var typeIndex = Math.floor(Math.random() * this.TYPES.length);
-      // Nebula only from level 2+
-      if (this.TYPES[typeIndex] === 'nebula' && level < 2) {
-        typeIndex = Math.floor(Math.random() * 4);
-      }
-      this.list.push(this.create(this.TYPES[typeIndex], level));
+    function _spawnObstacle(dt) {
+        var diffCfg  = _getDifficultyConfig();
+        var levelCfg = _getLevelConfig();
+        var interval = diffCfg.obstacleInterval - levelCfg.spawnBonus;
+        if (interval < 300) { interval = 300; }
+
+        _obstacleSpawnTimer += dt;
+        if (_obstacleSpawnTimer >= interval) {
+            _obstacleSpawnTimer = 0;
+            var speedMult = diffCfg.speedMultiplier + levelCfg.speedBonus;
+            // Bug 1 corregido: nombre incorrecto y firma diferente
+            // Era: GalaxyGame.Obstacles.createRandom(speedMult)
+            // Debe ser: GalaxyGame.Obstacles.spawnRandom(cw, ch, difficultyMult)
+            var cw = GalaxyGame.Config.CANVAS.WIDTH;
+            var ch = GalaxyGame.Config.CANVAS.HEIGHT;
+            var obstacle = GalaxyGame.Obstacles.spawnRandom(cw, ch, speedMult);
+            if (obstacle) { _obstacles.push(obstacle); }
+        }
     }
-  },
 
-  update: function(level) {
-    this.spawn(level);
-    for (var i = this.list.length - 1; i >= 0; i--) {
-      var o = this.list[i];
-      o.x += o.vx;
-      o.y += o.vy;
-      o.angle += o.rotSpeed;
-      if (o.type === 'ufo') {
-        o.wobble += 0.05;
-        o.y += Math.sin(o.wobble) * 0.8;
-      }
-      // Eliminar si sale de pantalla con margen
-      var margin = 80;
-      if (o.x < -margin || o.x > CONFIG.CANVAS_WIDTH + margin ||
-          o.y < -margin || o.y > CONFIG.CANVAS_HEIGHT + margin) {
-        this.list.splice(i, 1);
-      }
+    function _spawnPowerUp(dt) {
+        var interval = 8000;
+        _powerUpSpawnTimer += dt;
+        if (_powerUpSpawnTimer >= interval) {
+            _powerUpSpawnTimer = 0;
+            // Bug 2 corregido: nombre incorrecto y firma diferente
+            // Era: GalaxyGame.Obstacles.createPowerUp()
+            // Debe ser: GalaxyGame.Obstacles.spawnPowerUp(cw, ch)
+            var cw = GalaxyGame.Config.CANVAS.WIDTH;
+            var ch = GalaxyGame.Config.CANVAS.HEIGHT;
+            var pu = GalaxyGame.Obstacles.spawnPowerUp(cw, ch);
+            if (pu) { _powerUps.push(pu); }
+        }
     }
-  },
 
-  clear: function() {
-    this.list = [];
-    this.spawnTimer = 0;
-  }
-};
+    // ═══════════════════════════════════════════════════════════════════════
+    // COLISIONES
+    // ═══════════════════════════════════════════════════════════════════════
 
-// --- [8] Game.PowerUps — Fábrica de Power-Ups ---
-Game.PowerUps = {
-  list: [],
-  spawnTimer: 0,
+    function _checkCollisions() {
+        if (!_ship) { return; }
 
-  TYPES: ['speed', 'shield', 'magnet'],
+        var i, obs, pu, hit;
 
-  create: function(type) {
-    var x = 60 + Math.random() * (CONFIG.CANVAS_WIDTH - 120);
-    var y = 60 + Math.random() * (CONFIG.CANVAS_HEIGHT - 120);
-    var colorMap = {
-      speed:  CONFIG.COLORS.POWERUP_SPD,
-      shield: CONFIG.COLORS.POWERUP_SHD,
-      magnet: CONFIG.COLORS.POWERUP_MAG
-    };
+        // Obstáculos
+        for (i = _obstacles.length - 1; i >= 0; i--) {
+            obs = _obstacles[i];
+            hit = GalaxyGame.Utils.checkAABB(_ship, obs);
+            if (hit) {
+                _obstacles.splice(i, 1);
+                _onShipHit(obs);
+            }
+        }
+
+        // Power-ups
+        for (i = _powerUps.length - 1; i >= 0; i--) {
+            pu = _powerUps[i];
+            hit = GalaxyGame.Utils.checkAABB(_ship, pu);
+            if (hit) {
+                _powerUps.splice(i, 1);
+                _onPowerUpCollected(pu);
+            }
+        }
+    }
+
+    function _onShipHit(obs) {
+        if (_invincibleTimer > 0) { return; }
+
+        var shielded = _activePowerUp && _activePowerUp.type === 'shield';
+        if (shielded) {
+            _activePowerUp = null;
+            _canvasWrapper.classList.remove('is-shielded');
+            GalaxyGame.Audio.playExplosion();
+            _spawnParticles(obs.x, obs.y, '#00ffff', 12);
+            _updateHUD();
+            return;
+        }
+
+        _lives -= 1;
+        _invincibleTimer = 2000;
+        GalaxyGame.Audio.playExplosion();
+        _spawnParticles(obs.x, obs.y, '#ff4444', 18);
+        _updateHUD();
+
+        if (_lives <= 0) {
+            _triggerGameOver();
+        }
+    }
+
+    function _onPowerUpCollected(pu) {
+        GalaxyGame.Audio.playPowerUp();
+        _activePowerUp = { type: pu.type, timeLeft: 8000 };
+        _powerUpTimer  = 8000;
+
+        _canvasWrapper.classList.remove('is-shielded', 'is-boosted', 'is-agile');
+        if (pu.type === 'shield') {
+            _canvasWrapper.classList.add('is-shielded');
+        } else if (pu.type === 'turbo') {
+            _canvasWrapper.classList.add('is-boosted');
+        } else if (pu.type === 'magnet') {
+            _canvasWrapper.classList.add('is-agile');
+        }
+
+        _score += 50 * _getDifficultyConfig().scoreRate;
+        _spawnParticles(pu.x, pu.y, '#ffff00', 14);
+        _updateHUD();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // PARTÍCULAS
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _spawnParticles(x, y, color, count) {
+        var cfg = GalaxyGame.Config.PARTICLES;
+        for (var i = 0; i < count; i++) {
+            // Bug 17 corregido: Particle(x, y, velocityX, velocityY, color, life, radius)
+            // Era: new GalaxyGame.Entities.Particle(x, y, color) — faltan velocityX, velocityY, life
+            var angle = Math.random() * Math.PI * 2;
+            var speed = GalaxyGame.Utils.randomBetween(cfg.MIN_SPEED, cfg.MAX_SPEED);
+            var vx    = Math.cos(angle) * speed;
+            var vy    = Math.sin(angle) * speed;
+            var life  = cfg.LIFETIME_FRAMES / 60;
+            _particles.push(new GalaxyGame.Entities.Particle(x, y, vx, vy, color, life, 2));
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // PUNTUACIÓN Y NIVELES
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _updateScore(dt) {
+        var config = _getDifficultyConfig();
+        _scoreAccumulator += dt;
+        if (_scoreAccumulator >= 1000) {
+            _scoreAccumulator -= 1000;
+            _score += config.scoreRate;
+            _checkLevelUp();
+            _updateHUD();
+        }
+    }
+
+    function _checkLevelUp() {
+        var newLevel = _level;
+        if (_score >= 200 && _level < 2) { newLevel = 2; }
+        if (_score >= 600 && _level < 3) { newLevel = 3; }
+
+        if (newLevel !== _level) {
+            _level = newLevel;
+            _levelUpLabel = _getLevelConfig().label;
+            _levelUpTimer = 3000;
+            GalaxyGame.Audio.playLevelUp();
+            _canvasWrapper.classList.add('is-level-up');
+        }
+    }
+
+    function _updateLevelUpBanner(dt) {
+        if (_levelUpTimer <= 0) { return; }
+        _levelUpTimer -= dt;
+        if (_levelUpTimer <= 0) {
+            _levelUpTimer = 0;
+            _canvasWrapper.classList.remove('is-level-up');
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // POWER-UP TIMER
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _updatePowerUpTimer(dt) {
+        if (!_activePowerUp) { return; }
+        _activePowerUp.timeLeft -= dt;
+        if (_activePowerUp.timeLeft <= 0) {
+            _canvasWrapper.classList.remove('is-shielded', 'is-boosted', 'is-agile');
+            _activePowerUp = null;
+            _updateHUD();
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // INVULNERABILIDAD
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _updateInvincibility(dt) {
+        if (_invincibleTimer <= 0) { return; }
+        _invincibleTimer -= dt;
+        if (_invincibleTimer < 0) { _invincibleTimer = 0; }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // ACTUALIZACIÓN DE ENTIDADES
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _updateShip(dt) {
+        if (!_ship) { return; }
+        var controls = GalaxyGame.Controls.getState();
+        var hasTurbo = _activePowerUp && _activePowerUp.type === 'turbo';
+        _ship.update(dt, controls, hasTurbo);
+    }
+
+    function _updateObstacles(dt) {
+        var cw = GalaxyGame.Config.CANVAS.WIDTH;
+        var ch = GalaxyGame.Config.CANVAS.HEIGHT;
+        var shipX = _ship ? _ship.x : cw / 2;
+        var shipY = _ship ? _ship.y : ch / 2;
+
+        // Bug 3 corregido: nombre y firma completamente distintos
+        // Era: GalaxyGame.Obstacles.updateObstacle(obs, dt, speedMult, _ship) en bucle
+        // Debe ser: GalaxyGame.Obstacles.updateAll(obstacleList, dt, shipX, shipY, cw, ch)
+        GalaxyGame.Obstacles.updateAll(_obstacles, dt, shipX, shipY, cw, ch);
+
+        // Bug 4 corregido: isOutOfBounds no existe en la API pública de obstacles.js
+        // updateAll ya marca obs.active = false cuando sale de bounds;
+        // usar filterActive para limpiar el array
+        _obstacles = GalaxyGame.Obstacles.filterActive(_obstacles);
+    }
+
+    function _updatePowerUps(dt) {
+        var cw = GalaxyGame.Config.CANVAS.WIDTH;
+        var ch = GalaxyGame.Config.CANVAS.HEIGHT;
+
+        // Bug 5 corregido: los power-ups son objetos planos, no instancias con .update()
+        // Bug 4 corregido: isOutOfBounds no existe en la API pública
+        // Usar Obstacles.updatePowerUps que gestiona movimiento y bounds internamente
+        GalaxyGame.Obstacles.updatePowerUps(_powerUps, dt, cw, ch);
+        _powerUps = GalaxyGame.Obstacles.filterActive(_powerUps);
+    }
+
+    function _updateParticles(dt) {
+        for (var i = _particles.length - 1; i >= 0; i--) {
+            _particles[i].update(dt);
+            // Bug 6 corregido: Particle no tiene isDead(); usar la propiedad .active
+            // Era: _particles[i].isDead()
+            // Debe ser: !_particles[i].active
+            if (!_particles[i].active) {
+                _particles.splice(i, 1);
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // GAME OVER
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _triggerGameOver() {
+        GalaxyGame.Audio.playGameOver();
+
+        if (_score > _highScore) {
+            _highScore = _score;
+            _saveHighScore();
+        }
+
+        _canvasWrapper.classList.remove('is-shielded', 'is-boosted', 'is-agile', 'is-level-up');
+
+        document.getElementById('gameover-score-value').textContent    = _score;
+        document.getElementById('gameover-highscore-value').textContent = _highScore;
+
+        _setGameState('gameover');
+
+        if (_rafId) {
+            cancelAnimationFrame(_rafId);
+            _rafId = null;
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // PERSISTENCIA HIGH SCORE
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _loadHighScore() {
+        try {
+            var stored = localStorage.getItem('galaxyGame_highScore');
+            _highScore = stored ? parseInt(stored, 10) : 0;
+        } catch (e) {
+            _highScore = 0;
+        }
+    }
+
+    function _saveHighScore() {
+        try {
+            localStorage.setItem('galaxyGame_highScore', String(_highScore));
+        } catch (e) { /* silencioso */ }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // GAME LOOP
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _gameLoop(timestamp) {
+        if (_state !== 'playing') { return; }
+
+        if (_lastTimestamp === 0) { _lastTimestamp = timestamp; }
+        var dt = timestamp - _lastTimestamp;
+        if (dt > 100) { dt = 100; }
+        _lastTimestamp = timestamp;
+
+        _updateShip(dt);
+        _updateObstacles(dt);
+        _updatePowerUps(dt);
+        _updateParticles(dt);
+        _spawnObstacle(dt);
+        _spawnPowerUp(dt);
+        _checkCollisions();
+        _updateScore(dt);
+        _updatePowerUpTimer(dt);
+        _updateInvincibility(dt);
+        _updateLevelUpBanner(dt);
+
+        var levelLabel = _levelUpTimer > 0 ? _levelUpLabel : '';
+        var isInvincible = _invincibleTimer > 0;
+
+        // Bug 10 corregido: drawFrame espera un objeto gameState, no 7 argumentos posicionales
+        // Era: GalaxyGame.Renderer.drawFrame(_stars, _ship, _obstacles, _powerUps, _particles, levelLabel, isInvincible)
+        // Debe ser: GalaxyGame.Renderer.drawFrame({ stars, ship, obstacles, powerUps, particles, levelUpBanner })
+        GalaxyGame.Renderer.drawFrame({
+            stars:         _stars,
+            ship:          _ship,
+            obstacles:     _obstacles,
+            powerUps:      _powerUps,
+            particles:     _particles,
+            levelUpBanner: levelLabel || null
+        });
+
+        _rafId = requestAnimationFrame(_gameLoop);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // EVENTOS DE UI
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _onDifficultySelect(e) {
+        var btn = e.currentTarget;
+        var diff = btn.getAttribute('data-difficulty');
+        if (!diff) { return; }
+
+        _difficulty = diff;
+
+        document.querySelectorAll('.btn-difficulty').forEach(function (b) {
+            b.classList.remove('is-active');
+        });
+        btn.classList.add('is-active');
+    }
+
+    function _onStartGame() {
+        _resetGame();
+        _setGameState('playing');
+        _lastTimestamp = 0;
+        _rafId = requestAnimationFrame(_gameLoop);
+    }
+
+    function _onPause() {
+        if (_state !== 'playing') { return; }
+        if (_rafId) {
+            cancelAnimationFrame(_rafId);
+            _rafId = null;
+        }
+        _setGameState('paused');
+    }
+
+    function _onResume() {
+        if (_state !== 'paused') { return; }
+        _lastTimestamp = 0;
+        _setGameState('playing');
+        _rafId = requestAnimationFrame(_gameLoop);
+    }
+
+    function _onQuitToMenu() {
+        if (_rafId) {
+            cancelAnimationFrame(_rafId);
+            _rafId = null;
+        }
+        _canvasWrapper.classList.remove('is-running', 'is-paused', 'is-gameover',
+            'is-shielded', 'is-boosted', 'is-agile', 'is-level-up');
+        _updateStartScreenHighScore();
+        _setGameState('menu');
+    }
+
+    function _onRestart() {
+        _resetGame();
+        _setGameState('playing');
+        _lastTimestamp = 0;
+        _rafId = requestAnimationFrame(_gameLoop);
+    }
+
+    function _onKeyboardGlobal(e) {
+        if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') {
+            if (_state === 'playing') { _onPause(); }
+            else if (_state === 'paused') { _onResume(); }
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // HELPERS DE UI
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _updateStartScreenHighScore() {
+        var el = document.getElementById('start-highscore-value');
+        if (el) { el.textContent = _highScore; }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // INICIALIZACIÓN DE ESTRELLAS
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function _initStars() {
+        _stars = [];
+        var cfg    = GalaxyGame.Config;
+        var starCfg = cfg.STARS;
+        var cw     = cfg.CANVAS.WIDTH;
+        var ch     = cfg.CANVAS.HEIGHT;
+        var count  = starCfg.COUNT || 120;
+
+        // Bug 7 corregido: GalaxyGame.Entities.Star no existe en entities.js
+        // Construir objetos planos de estrella directamente
+        for (var i = 0; i < count; i++) {
+            _stars.push({
+                x:      GalaxyGame.Utils.randomBetween(0, cw),
+                y:      GalaxyGame.Utils.randomBetween(0, ch),
+                radius: GalaxyGame.Utils.randomBetween(starCfg.MIN_RADIUS, starCfg.MAX_RADIUS),
+                speed:  GalaxyGame.Utils.randomBetween(starCfg.MIN_SPEED,  starCfg.MAX_SPEED),
+                opacity: GalaxyGame.Utils.randomBetween(0.3, 1.0)
+            });
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // INIT PÚBLICO
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function init() {
+        _loadHighScore();
+
+        // Referencias DOM
+        _canvasWrapper = document.getElementById('game-canvas-wrapper');
+
+        _screens = {
+            start:    document.getElementById('screen-start'),
+            game:     document.getElementById('screen-game'),
+            pause:    document.getElementById('screen-pause'),
+            gameover: document.getElementById('screen-gameover')
+        };
+
+        _hud = {
+            scoreValue:       document.getElementById('hud-score-value'),
+            livesValue:       document.getElementById('hud-lives-value'),
+            levelValue:       document.getElementById('hud-level-value'),
+            powerupLabel:     document.getElementById('hud-powerup-label'),
+            powerupValue:     document.getElementById('hud-powerup-value'),
+            powerupContainer: document.getElementById('hud-powerup')
+        };
+
+        // Inicializar sub-módulos
+        GalaxyGame.Controls.init();
+        GalaxyGame.Renderer.init(document.getElementById('game-canvas'));
+        _initStars();
+
+        // Botones de dificultad
+        document.querySelectorAll('.btn-difficulty').forEach(function (btn) {
+            btn.addEventListener('click', _onDifficultySelect);
+        });
+
+        // Botón inicio
+        var btnStart = document.getElementById('btn-start');
+        if (btnStart) { btnStart.addEventListener('click', _onStartGame); }
+
+        // Botón reanudar
+        var btnResume = document.getElementById('btn-resume');
+        if (btnResume) { btnResume.addEventListener('click', _onResume); }
+
+        // Botón salir desde pausa
+        var btnQuitPause = document.getElementById('btn-quit-pause');
+        if (btnQuitPause) { btnQuitPause.addEventListener('click', _onQuitToMenu); }
+
+        // Botón reiniciar desde game over
+        var btnRestart = document.getElementById('btn-restart');
+        if (btnRestart) { btnRestart.addEventListener('click', _onRestart); }
+
+        // Botón salir desde game over
+        var btnQuitGameover = document.getElementById('btn-quit-gameover');
+        if (btnQuitGameover) { btnQuitGameover.addEventListener('click', _onQuitToMenu); }
+
+        // Teclado global (pausa con Escape/P)
+        document.addEventListener('keydown', _onKeyboardGlobal);
+
+        // Marcar dificultad fácil como activa por defecto
+        var defaultBtn = document.getElementById('btn-difficulty-easy');
+        if (defaultBtn) { defaultBtn.classList.add('is-active'); }
+
+        // Mostrar high score en pantalla de inicio
+        _updateStartScreenHighScore();
+
+        // Estado inicial
+        _setGameState('menu');
+    }
+
+    // ─── API pública ────────────────────────────────────────────────────────
     return {
-      x: x,
-      y: y,
-      type: type,
-      radius: 12,
-      color: colorMap[type],
-      life: 400,
-      pulse: 0
+        init: init
     };
-  },
 
-  spawn: function() {
-    this.spawnTimer++;
-    if (this.spawnTimer >= CONFIG.POWERUP_SPAWN_RATE) {
-      this.spawnTimer = 0;
-      var type = this.TYPES[Math.floor(Math.random() * this.TYPES.length)];
-      this.list.push(this.create(type));
-    }
-  },
+})();
 
-  update: function() {
-    this.spawn();
-    for (var i = this.list.length - 1; i >= 0; i--) {
-      var p = this.list[i];
-      p.pulse += 0.08;
-      p.life--;
-
-      // Imán: atraer hacia nave
-      if (Game.Ship.magnetActive) {
-        var dx = Game.Ship.x - p.x;
-        var dy = Game.Ship.y - p.y;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 200 && dist > 1) {
-          p.x += (dx / dist) * 3;
-          p.y += (dy / dist) * 3;
-        }
-      }
-
-      if (p.life <= 0) {
-        this.list.splice(i, 1);
-      }
-    }
-  },
-
-  clear: function() {
-    this.list = [];
-    this.spawnTimer = 0;
-  }
-};
-
-// --- [9] Game.Renderer — Dibujo Procedural ---
-Game.Renderer = {
-  canvas: null,
-  ctx: null,
-  stars: [],
-
-  init: function(canvas) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
-    canvas.width = CONFIG.CANVAS_WIDTH;
-    canvas.height = CONFIG.CANVAS_HEIGHT;
-    this.generateStars();
-  },
-
-  generateStars: function() {
-    this.stars = [];
-    for (var i = 0; i < 120; i++) {
-      this.stars.push({
-        x: Math.random() * CONFIG.CANVAS_WIDTH,
-        y: Math.random() * CONFIG.CANVAS_HEIGHT,
-        r: Math.random() < 0.2 ? 1.5 : 0.8,
-        bright: Math.random() < 0.25,
-        twinkle: Math.random() * Math.PI * 2
-      });
-    }
-  },
-
-  clear: function() {
-    var ctx = this.ctx;
-    ctx.fillStyle = CONFIG.COLORS.BG;
-    ctx.fillRect(0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
-  },
-
-  drawStars: function(frame) {
-    var ctx = this.ctx;
-    for (var i = 0; i < this.stars.length; i++) {
-      var s = this.stars[i];
-      s.twinkle += 0.03;
-      var alpha = s.bright ? 0.6 + Math.sin(s.twinkle) * 0.4 : 0.3 + Math.sin(s.twinkle) * 0.1;
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = s.bright ? CONFIG.COLORS.STAR_BRIGHT : CONFIG.COLORS.STAR_DIM;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  },
-
-  drawShip: function(ship) {
-    var ctx = this.ctx;
-    ctx.save();
-    ctx.translate(ship.x, ship.y);
-    ctx.rotate(ship.angle);
-
-    // Parpadeo de invencibilidad
-    if (ship.invincibleFrames > 0 && Math.floor(ship.invincibleFrames / 6) % 2 === 0) {
-      ctx.restore();
-      return;
-    }
-
-    var shipColor = ship.shieldActive ? CONFIG.COLORS.SHIELD : CONFIG.COLORS.SHIP;
-
-    // Estela de propulsión
-    if (ship.thrustOn) {
-      ctx.beginPath();
-      ctx.moveTo(-ship.radius * 0.6, -ship.radius * 0.4);
-      ctx.lineTo(-ship.radius * 1.4 - Math.random() * 6, 0);
-      ctx.lineTo(-ship.radius * 0.6, ship.radius * 0.4);
-      ctx.closePath();
-      ctx.fillStyle = CONFIG.COLORS.SHIP_THRUST;
-      ctx.globalAlpha = 0.7 + Math.random() * 0.3;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    }
-
-    // Cuerpo de la nave (triángulo con detalle)
-    ctx.beginPath();
-    ctx.moveTo(ship.radius, 0);
-    ctx.lineTo(-ship.radius * 0.7, -ship.radius * 0.55);
-    ctx.lineTo(-ship.radius * 0.4, 0);
-    ctx.lineTo(-ship.radius * 0.7, ship.radius * 0.55);
-    ctx.closePath();
-    ctx.strokeStyle = shipColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Cabina
-    ctx.beginPath();
-    ctx.arc(ship.radius * 0.1, 0, ship.radius * 0.25, 0, Math.PI * 2);
-    ctx.fillStyle = shipColor;
-    ctx.globalAlpha = 0.5;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-
-    // Escudo visual
-    if (ship.shieldActive) {
-      ctx.beginPath();
-      ctx.arc(0, 0, ship.radius * 1.5, 0, Math.PI * 2);
-      ctx.strokeStyle = CONFIG.COLORS.SHIELD;
-      ctx.lineWidth = 2;
-      ctx.globalAlpha = 0.5 + Math.sin(Date.now() * 0.01) * 0.3;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-    }
-
-    ctx.restore();
-  },
-
-  drawBullets: function(bullets) {
-    var ctx = this.ctx;
-    for (var i = 0; i < bullets.length; i++) {
-      var b = bullets[i];
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, 3, 0, Math.PI * 2);
-      ctx.fillStyle = CONFIG.COLORS.BULLET;
-      ctx.shadowColor = CONFIG.COLORS.BULLET;
-      ctx.shadowBlur = 6;
-      ctx.fill();
-      ctx.restore();
-    }
-  },
-
-  drawObstacle: function(o) {
-    var ctx = this.ctx;
-    ctx.save();
-    ctx.translate(o.x, o.y);
-    ctx.rotate(o.angle);
-
-    if (o.type === 'comet') {
-      // Estela del cometa
-      var grad = ctx.createLinearGradient(-o.radius * 3, 0, o.radius, 0);
-      grad.addColorStop(0, 'rgba(255,136,68,0)');
-      grad.addColorStop(1, CONFIG.COLORS.COMET);
-      ctx.beginPath();
-      ctx.moveTo(-o.radius * 3, -o.radius * 0.3);
-      ctx.lineTo(o.radius, 0);
-      ctx.lineTo(-o.radius * 3, o.radius * 0.3);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.globalAlpha = 0.6;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      // Núcleo
-      ctx.beginPath();
-      ctx.arc(0, 0, o.radius, 0, Math.PI * 2);
-      ctx.fillStyle = CONFIG.COLORS.COMET;
-      ctx.fill();
-      ctx.strokeStyle = '#ffcc88';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-    } else if (o.type === 'asteroid') {
-      ctx.beginPath();
-      var verts = o.vertices;
-      for (var i = 0; i < verts.length; i++) {
-        var a = (Math.PI * 2 / verts.length) * i;
-        var r = o.radius * verts[i];
-        if (i === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
-        else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
-      }
-      ctx.closePath();
-      ctx.fillStyle = CONFIG.COLORS.ASTEROID;
-      ctx.fill();
-      ctx.strokeStyle = '#aaaaaa';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-    } else if (o.type === 'planet') {
-      // Planeta con gradiente
-      var pGrad = ctx.createRadialGradient(-o.radius * 0.3, -o.radius * 0.3, o.radius * 0.1, 0, 0, o.radius);
-      pGrad.addColorStop(0, '#88aaff');
-      pGrad.addColorStop(0.6, CONFIG.COLORS.PLANET);
-      pGrad.addColorStop(1, '#112244');
-      ctx.beginPath();
-      ctx.arc(0, 0, o.radius, 0, Math.PI * 2);
-      ctx.fillStyle = pGrad;
-      ctx.fill();
-      // Anillo
-      ctx.beginPath();
-      ctx.ellipse(0, 0, o
+// Arrancar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function () {
+    GalaxyGame.Game.init();
+});

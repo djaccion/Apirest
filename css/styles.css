@@ -1,243 +1,475 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+/* ============================================================
+   GALAXY GAME — css/styles.css
+   Proyecto: PROYEC-21
+   Única hoja de estilos del proyecto.
+   ============================================================ */
 
+/* ============================================================
+   PASO 1 — Variables globales en :root
+   ============================================================ */
 :root {
-  --color-bg:           #000010;
-  --color-neon-cyan:    #00FFFF;
-  --color-neon-magenta: #FF00FF;
-  --color-neon-yellow:  #FFE600;
-  --color-neon-green:   #39FF14;
-  --color-neon-red:     #FF3131;
-  --color-text:         #E0E0FF;
-  --font-pixel:         'Press Start 2P', monospace;
-  --canvas-width:       800px;
-  --canvas-height:      600px;
-  --transition-fast:    150ms ease-in-out;
-  --glow-cyan:          0 0 8px #00FFFF, 0 0 20px #00FFFF40;
-  --glow-magenta:       0 0 8px #FF00FF, 0 0 20px #FF00FF40;
-  --glow-red:           0 0 8px #FF3131, 0 0 20px #FF313140;
-  --glow-green:         0 0 8px #39FF14, 0 0 20px #39FF1440;
+  --color-bg:            #000000;
+  --color-neon-cyan:     #00FFFF;
+  --color-neon-green:    #39FF14;
+  --color-neon-yellow:   #FFE600;
+  --color-neon-pink:     #FF00FF;
+  --color-neon-orange:   #FF6600;
+  --color-text-primary:  #FFFFFF;
+  --color-text-dim:      #888888;
+  --color-hud-bg:        rgba(0, 0, 0, 0.75);
+  --color-btn-border:    #00FFFF;
+  --color-btn-hover-bg:  rgba(0, 255, 255, 0.15);
+  --color-btn-active-bg: rgba(0, 255, 255, 0.35);
+  --color-shield:        rgba(0, 255, 255, 0.4);
+  --color-boost:         rgba(255, 102, 0, 0.4);
+
+  --font-arcade:         'Press Start 2P', monospace;
+
+  --canvas-width:        800px;
+  --canvas-height:       600px;
+
+  --hud-height:          48px;
+  --hud-font-size:       10px;
+  --btn-font-size:       11px;
+  --title-font-size:     28px;
+  --subtitle-font-size:  11px;
+
+  --transition-fast:     0.15s ease;
+  --transition-med:      0.3s ease;
 }
 
-*,
-*::before,
-*::after {
+/* ============================================================
+   PASO 2 — Reset y base global
+   ============================================================ */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
+html, body {
+  width: 100%;
+  height: 100%;
   background-color: var(--color-bg);
-  font-family: var(--font-pixel);
-  color: var(--color-text);
+  color: var(--color-text-primary);
+  font-family: var(--font-arcade);
   overflow: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  user-select: none;
+  justify-content: center;
 }
 
+/* ============================================================
+   PASO 3 — Clase .hidden (OBLIGATORIA, CANÓNICA)
+   ============================================================ */
 .hidden {
   display: none !important;
 }
 
-#screen-game {
+/* ============================================================
+   PASO 4 — #game-root
+   ============================================================ */
+#game-root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg);
+}
+
+/* ============================================================
+   PASO 5 — #game-canvas-wrapper
+   ============================================================ */
+#game-canvas-wrapper {
   position: relative;
   width: var(--canvas-width);
   height: var(--canvas-height);
-  border: 2px solid var(--color-neon-cyan);
-  box-shadow: var(--glow-cyan);
+  background-color: var(--color-bg);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 2px var(--color-neon-cyan),
+    0 0 24px 4px rgba(0, 255, 255, 0.25);
 }
 
+/* ============================================================
+   PASO 6 — #game-canvas
+   ============================================================ */
 #game-canvas {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-#hud {
+/* ============================================================
+   PASO 7 — #hud-overlay y grupos del HUD
+   ============================================================ */
+#hud-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
+  height: var(--hud-height);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(to bottom, #00001088, transparent);
-  pointer-events: none;
+  justify-content: space-between;
+  padding: 0 16px;
+  background-color: var(--color-hud-bg);
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2);
   z-index: 10;
-  font-size: 0.6rem;
+  pointer-events: none;
 }
 
-#hud-score {
-  color: var(--color-neon-yellow);
-  text-shadow: var(--glow-cyan);
-  letter-spacing: 0.05em;
+#hud-score,
+#hud-lives,
+#hud-level,
+#hud-powerup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 
-#hud-lives {
-  color: var(--color-neon-yellow);
-  letter-spacing: 0.05em;
+#hud-score-label,
+#hud-lives-label,
+#hud-level-label,
+#hud-powerup-label {
+  font-size: 7px;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-#hud-level {
-  color: var(--color-neon-yellow);
-  letter-spacing: 0.05em;
-}
-
-#btn-pause {
-  position: absolute;
-  top: 0.5rem;
-  right: 1rem;
-  background: transparent;
-  border: 1px solid var(--color-neon-cyan);
+#hud-score-value,
+#hud-lives-value,
+#hud-level-value {
+  font-size: var(--hud-font-size);
   color: var(--color-neon-cyan);
-  font-family: var(--font-pixel);
-  font-size: 0.5rem;
-  padding: 0.3rem 0.6rem;
-  cursor: pointer;
-  pointer-events: all;
-  transition: box-shadow var(--transition-fast);
-  z-index: 20;
 }
 
-#btn-pause:hover {
-  box-shadow: var(--glow-cyan);
+#hud-powerup-value {
+  font-size: var(--hud-font-size);
+  color: var(--color-neon-yellow);
 }
 
+/* ============================================================
+   PASO 8 — Pantallas de estado
+   ============================================================ */
+
+/* Patrón base compartido para pantallas superpuestas */
 #screen-start,
 #screen-pause,
 #screen-gameover {
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 2rem;
-  background: #000010CC;
-  z-index: 100;
+  justify-content: center;
+  gap: 20px;
+  z-index: 20;
 }
 
-#screen-start h1,
-#screen-gameover h2 {
-  font-size: 1.5rem;
+/* Pantalla de inicio — fondo semitransparente sobre el canvas */
+#screen-start {
+  background-color: rgba(0, 0, 0, 0.88);
+}
+
+/* Pantalla de pausa — fondo más oscuro para indicar pausa */
+#screen-pause {
+  background-color: rgba(0, 0, 0, 0.82);
+}
+
+/* Pantalla de game-over */
+#screen-gameover {
+  background-color: rgba(0, 0, 0, 0.88);
+}
+
+/* ============================================================
+   PASO 9 — Títulos de pantalla
+   ============================================================ */
+#start-title {
+  font-size: var(--title-font-size);
   color: var(--color-neon-cyan);
-  text-shadow: var(--glow-cyan);
   text-align: center;
-  line-height: 2;
+  text-shadow:
+    0 0 8px var(--color-neon-cyan),
+    0 0 24px rgba(0, 255, 255, 0.5);
+  letter-spacing: 2px;
+  line-height: 1.4;
 }
 
-#screen-start p,
-#screen-pause p {
-  font-size: 0.55rem;
-  color: var(--color-text);
+#pause-title {
+  font-size: 22px;
+  color: var(--color-neon-yellow);
   text-align: center;
-  line-height: 2;
-  max-width: 500px;
+  text-shadow:
+    0 0 8px var(--color-neon-yellow),
+    0 0 20px rgba(255, 230, 0, 0.4);
+  letter-spacing: 2px;
 }
 
-#btn-start,
-#btn-resume,
-#btn-restart {
-  background: transparent;
-  border: 2px solid var(--color-neon-magenta);
-  color: var(--color-neon-magenta);
-  font-family: var(--font-pixel);
-  font-size: 0.75rem;
-  padding: 1rem 2rem;
+#gameover-title {
+  font-size: 24px;
+  color: var(--color-neon-pink);
+  text-align: center;
+  text-shadow:
+    0 0 8px var(--color-neon-pink),
+    0 0 24px rgba(255, 0, 255, 0.5);
+  letter-spacing: 2px;
+}
+
+/* ============================================================
+   PASO 10 — Subtítulo de pantalla de inicio
+   ============================================================ */
+#start-subtitle {
+  font-size: var(--subtitle-font-size);
+  color: var(--color-text-dim);
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   PASO 11 — Selector de dificultad
+   ============================================================ */
+#start-difficulty {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Botones de dificultad */
+.btn-difficulty {
+  font-family: var(--font-arcade);
+  font-size: var(--btn-font-size);
+  color: var(--color-text-primary);
+  background-color: transparent;
+  border: 1px solid var(--color-btn-border);
+  padding: 8px 14px;
   cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  transition: box-shadow var(--transition-fast), background var(--transition-fast);
+  letter-spacing: 1px;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.btn-difficulty:hover {
+  background-color: var(--color-btn-hover-bg);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+}
+
+.btn-difficulty.is-active {
+  background-color: var(--color-btn-active-bg);
+  color: var(--color-neon-cyan);
+  box-shadow:
+    0 0 0 1px var(--color-neon-cyan),
+    0 0 12px rgba(0, 255, 255, 0.4);
+}
+
+/* ============================================================
+   PASO 12 — Botones de acción principales
+   ============================================================ */
+#btn-start,
+#btn-resume,
+#btn-quit-pause,
+#btn-restart,
+#btn-quit-gameover {
+  font-family: var(--font-arcade);
+  font-size: var(--btn-font-size);
+  color: var(--color-neon-cyan);
+  background-color: transparent;
+  border: 2px solid var(--color-neon-cyan);
+  padding: 12px 24px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+  outline: none;
 }
 
 #btn-start:hover,
 #btn-resume:hover,
 #btn-restart:hover {
-  background: #FF00FF18;
-  box-shadow: var(--glow-magenta);
+  background-color: var(--color-btn-hover-bg);
+  box-shadow:
+    0 0 12px rgba(0, 255, 255, 0.5),
+    0 0 24px rgba(0, 255, 255, 0.2);
+  transform: scale(1.04);
 }
 
-#btn-start.is-active,
-#btn-resume.is-active,
-#btn-restart.is-active {
-  background: #FF00FF30;
-  box-shadow: var(--glow-magenta), inset 0 0 10px #FF00FF40;
+#btn-start:active,
+#btn-resume:active,
+#btn-restart:active {
+  background-color: var(--color-btn-active-bg);
+  transform: scale(0.97);
 }
 
-#hiscore-display {
-  font-size: 0.6rem;
-  color: var(--color-neon-yellow);
-  letter-spacing: 0.08em;
+/* Botones de salir — acento en naranja/rosa para distinguirlos */
+#btn-quit-pause,
+#btn-quit-gameover {
+  color: var(--color-neon-orange);
+  border-color: var(--color-neon-orange);
+  font-size: 9px;
+  padding: 8px 18px;
 }
 
-#final-score,
-#final-hiscore {
-  font-size: 0.75rem;
-  color: var(--color-neon-yellow);
-  letter-spacing: 0.08em;
+#btn-quit-pause:hover,
+#btn-quit-gameover:hover {
+  background-color: rgba(255, 102, 0, 0.15);
+  box-shadow:
+    0 0 10px rgba(255, 102, 0, 0.4),
+    0 0 20px rgba(255, 102, 0, 0.15);
+  transform: scale(1.04);
+}
+
+#btn-quit-pause:active,
+#btn-quit-gameover:active {
+  background-color: rgba(255, 102, 0, 0.3);
+  transform: scale(0.97);
+}
+
+/* ============================================================
+   PASO 13 — Hint de controles en pantalla de inicio
+   ============================================================ */
+#start-controls-hint {
+  font-size: 8px;
+  color: var(--color-text-dim);
   text-align: center;
+  line-height: 2;
+  letter-spacing: 1px;
 }
 
-#overlay-level-up {
-  position: absolute;
-  inset: 0;
+/* ============================================================
+   PASO 14 — Bloque de high score en pantalla de inicio
+   ============================================================ */
+#start-highscore {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 1rem;
-  z-index: 50;
-  pointer-events: none;
+  gap: 6px;
 }
 
-#overlay-level-number {
-  font-size: 1.2rem;
+#start-highscore-value {
+  font-size: 14px;
   color: var(--color-neon-green);
-  text-shadow: var(--glow-green);
-  text-align: center;
+  text-shadow:
+    0 0 6px var(--color-neon-green),
+    0 0 16px rgba(57, 255, 20, 0.35);
 }
 
-#overlay-level-up.is-leveling #overlay-level-number {
-  animation: level-pulse 0.4s ease-in-out infinite alternate;
+/* ============================================================
+   PASO 15 — Bloques de puntuación en pantalla de game-over
+   ============================================================ */
+#gameover-score,
+#gameover-highscore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
-#player-ship.is-hit {
-  filter: drop-shadow(var(--glow-red));
+#gameover-score-value {
+  font-size: 16px;
+  color: var(--color-neon-cyan);
+  text-shadow:
+    0 0 6px var(--color-neon-cyan),
+    0 0 16px rgba(0, 255, 255, 0.35);
 }
 
-#player-ship.is-powered {
-  filter: drop-shadow(var(--glow-green));
+#gameover-highscore-value {
+  font-size: 14px;
+  color: var(--color-neon-green);
+  text-shadow:
+    0 0 6px var(--color-neon-green),
+    0 0 16px rgba(57, 255, 20, 0.35);
 }
 
-@keyframes level-pulse {
-  from {
-    text-shadow: var(--glow-green);
-    transform: scale(1);
-  }
-  to {
-    text-shadow: 0 0 16px #39FF14, 0 0 40px #39FF1480;
-    transform: scale(1.08);
-  }
+/* ============================================================
+   PASO 16 — Estados visuales is-* sobre #game-canvas-wrapper
+   ============================================================ */
+
+/* Estado: juego en ejecución — sin cambio visual extra, el canvas lo gestiona */
+#game-canvas-wrapper.is-running {
+  /* Estado base, sin overlay adicional */
 }
 
-@media (max-width: 860px) {
-  body::before {
-    content: 'Gira el dispositivo o usa un escritorio para jugar.';
-    position: fixed;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: var(--color-bg);
-    color: var(--color-neon-cyan);
-    font-family: var(--font-pixel);
-    font-size: 0.6rem;
-    text-align: center;
-    padding: 2rem;
-    z-index: 9999;
+/* Estado: pausa — leve tinte sobre el wrapper */
+#game-canvas-wrapper.is-paused {
+  box-shadow:
+    0 0 0 2px var(--color-neon-yellow),
+    0 0 24px 4px rgba(255, 230, 0, 0.25);
+}
+
+/* Estado: game-over — tinte rojo/rosa */
+#game-canvas-wrapper.is-gameover {
+  box-shadow:
+    0 0 0 2px var(--color-neon-pink),
+    0 0 24px 4px rgba(255, 0, 255, 0.3);
+}
+
+/* Estado: nave con escudo activo */
+#game-canvas-wrapper.is-shielded #game-canvas {
+  filter: drop-shadow(0 0 6px var(--color-neon-cyan));
+}
+
+/* Estado: nave con turbo activo */
+#game-canvas-wrapper.is-boosted #game-canvas {
+  filter: drop-shadow(0 0 6px var(--color-neon-orange));
+}
+
+/* Estado: transición de nivel */
+#game-canvas-wrapper.is-level-up {
+  box-shadow:
+    0 0 0 2px var(--color-neon-green),
+    0 0 32px 8px rgba(57, 255, 20, 0.35);
+}
+
+/* ============================================================
+   PASO 17 — Animación de parpadeo arcade (.is-flashing)
+   ============================================================ */
+@keyframes arcade-flash {
+  0%,  100% { opacity: 1; }
+  50%        { opacity: 0; }
+}
+
+.is-flashing {
+  animation: arcade-flash 0.5s step-end infinite;
+}
+
+/* ============================================================
+   PASO 18 — Animación de entrada para títulos (neón pulse)
+   ============================================================ */
+@keyframes neon-pulse {
+  0%,  100% { opacity: 1;   text-shadow: 0 0 8px var(--color-neon-cyan), 0 0 24px rgba(0, 255, 255, 0.5); }
+  50%        { opacity: 0.8; text-shadow: 0 0 16px var(--color-neon-cyan), 0 0 40px rgba(0, 255, 255, 0.7); }
+}
+
+#start-title {
+  animation: neon-pulse 2.4s ease-in-out infinite;
+}
+
+/* ============================================================
+   PASO 19 — Responsive: único bloque @media con transform:scale()
+   ============================================================ */
+@media (max-width: 840px), (max-height: 640px) {
+  #game-canvas-wrapper {
+    transform-origin: center center;
+    transform: scale(
+      min(
+        calc((100vw - 16px) / 800),
+        calc((100vh - 16px) / 600)
+      )
+    );
   }
 }

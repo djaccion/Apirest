@@ -1,51 +1,83 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPACE ARCADE — PROYEC-21</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Game — PROYEC-21</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-
-  <div id="screen-start">
-    <h1>SPACE ARCADE</h1>
-    <p>PRESIONA ENTER O TOCA INICIAR</p>
-    <div id="hiscore-display">HI-SCORE: 0</div>
-    <button id="btn-start">INICIAR</button>
-  </div>
-
-  <div id="screen-game" class="hidden">
-    <canvas id="game-canvas"></canvas>
-    <div id="hud">
-      <span id="hud-score">SCORE: 0</span>
-      <span id="hud-lives">VIDAS: 3</span>
-      <span id="hud-level">NIVEL: 1</span>
+    <div id="game-root">
+        <div id="game-canvas-wrapper">
+            <canvas id="game-canvas" width="800" height="600"></canvas>
+            <div id="hud-overlay">
+                <div id="hud-score">
+                    <span id="hud-score-label">SCORE</span>
+                    <span id="hud-score-value">0</span>
+                </div>
+                <div id="hud-lives">
+                    <span id="hud-lives-label">LIVES</span>
+                    <span id="hud-lives-value">3</span>
+                </div>
+                <div id="hud-level">
+                    <span id="hud-level-label">LEVEL</span>
+                    <span id="hud-level-value">1</span>
+                </div>
+                <div id="hud-powerup" class="hidden">
+                    <span id="hud-powerup-label">POWER</span>
+                    <span id="hud-powerup-value">---</span>
+                </div>
+            </div>
+            <div id="screen-start">
+                <h1 id="start-title">GALAXY GAME</h1>
+                <p id="start-subtitle">ARCADE ESPACIAL</p>
+                <div id="start-difficulty">
+                    <button id="btn-difficulty-easy" class="btn-difficulty is-active" data-difficulty="easy">NEBULOSA</button>
+                    <button id="btn-difficulty-medium" class="btn-difficulty" data-difficulty="medium">GALAXIA</button>
+                    <button id="btn-difficulty-hard" class="btn-difficulty" data-difficulty="hard">AGUJERO NEGRO</button>
+                </div>
+                <button id="btn-start">INICIAR JUEGO</button>
+                <div id="start-controls-hint">
+                    <p>← → GIRAR &nbsp; ↑ ACELERAR &nbsp; ↓ FRENAR</p>
+                    <p>P PAUSAR</p>
+                </div>
+                <div id="start-highscore">
+                    <span>HIGH SCORE: </span>
+                    <span id="start-highscore-value">0</span>
+                </div>
+            </div>
+            <div id="screen-game" class="hidden">
+            </div>
+            <div id="screen-pause" class="hidden">
+                <h2 id="pause-title">PAUSA</h2>
+                <button id="btn-resume">CONTINUAR</button>
+                <button id="btn-quit-pause">SALIR AL MENÚ</button>
+            </div>
+            <div id="screen-gameover" class="hidden">
+                <h2 id="gameover-title">GAME OVER</h2>
+                <div id="gameover-score">
+                    <span>SCORE FINAL: </span>
+                    <span id="gameover-score-value">0</span>
+                </div>
+                <div id="gameover-highscore">
+                    <span>HIGH SCORE: </span>
+                    <span id="gameover-highscore-value">0</span>
+                </div>
+                <button id="btn-restart">JUGAR DE NUEVO</button>
+                <button id="btn-quit-gameover">MENÚ PRINCIPAL</button>
+            </div>
+        </div>
     </div>
-    <div id="player-ship"></div>
-    <button id="btn-pause">⏸ PAUSA</button>
-  </div>
-
-  <div id="screen-pause" class="hidden">
-    <h2>PAUSA</h2>
-    <button id="btn-resume">CONTINUAR</button>
-  </div>
-
-  <div id="screen-gameover" class="hidden">
-    <h2>GAME OVER</h2>
-    <p id="final-score">SCORE: 0</p>
-    <p id="final-hiscore">HI-SCORE: 0</p>
-    <button id="btn-restart">REINTENTAR</button>
-  </div>
-
-  <div id="overlay-level-up" class="hidden">
-    <p>¡NIVEL SUPERADO!</p>
-    <span id="overlay-level-number"></span>
-  </div>
-
-  <script src="js/game.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/entities.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/obstacles.js"></script>
+    <script src="js/game.js"></script>
 </body>
 </html>
