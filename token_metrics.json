@@ -1,37 +1,37 @@
 {
-  "tokens_input": 381886,
-  "tokens_output": 76055,
-  "tokens_total": 457941,
-  "estimated_hours": 57.6,
-  "squad_days_equivalent": 7.2,
+  "tokens_input": 123533,
+  "tokens_output": 35791,
+  "tokens_total": 159324,
+  "estimated_hours": 15.4,
+  "squad_days_equivalent": 2,
   "hours_by_agent": {
     "arquitecto": {
-      "hours": 1.8,
+      "hours": 1.7,
       "calls": 1,
       "hoursPerCall": 1.5,
-      "volumeMultiplier": 1.17,
-      "tokens": 4242
+      "volumeMultiplier": 1.15,
+      "tokens": 3962
     },
     "tech_lead": {
-      "hours": 21.9,
-      "calls": 12,
+      "hours": 6,
+      "calls": 4,
       "hoursPerCall": 0.8,
-      "volumeMultiplier": 2.28,
-      "tokens": 91994
+      "volumeMultiplier": 1.87,
+      "tokens": 28852
     },
     "desarrollador": {
-      "hours": 17.7,
-      "calls": 14,
+      "hours": 4.2,
+      "calls": 4,
       "hoursPerCall": 0.5,
-      "volumeMultiplier": 2.53,
-      "tokens": 180697
+      "volumeMultiplier": 2.12,
+      "tokens": 57737
     },
     "qa": {
-      "hours": 16.2,
-      "calls": 16,
+      "hours": 3.5,
+      "calls": 4,
       "hoursPerCall": 0.4,
-      "volumeMultiplier": 2.53,
-      "tokens": 181008
+      "volumeMultiplier": 2.18,
+      "tokens": 68773
     }
   },
   "modelo": "claude-sonnet-4-6",
@@ -59,30 +59,30 @@
       "skill_name": "test"
     }
   ],
-  "timestamp": "2026-04-23T13:20:54.643Z",
+  "timestamp": "2026-04-25T18:34:50.414Z",
   "by_agent": {
     "arquitecto": {
-      "input": 2529,
-      "output": 1713,
+      "input": 2370,
+      "output": 1592,
       "calls": 1,
       "skill_name": "DISEÑO-ARQUITECTURA"
     },
     "tech_lead": {
-      "input": 63020,
-      "output": 28974,
-      "calls": 12,
+      "input": 19352,
+      "output": 9500,
+      "calls": 4,
       "skill_name": "MICROPLANIFICACION-DISEÑO"
     },
     "desarrollador": {
-      "input": 152583,
-      "output": 28114,
-      "calls": 14,
+      "input": 37665,
+      "output": 20072,
+      "calls": 4,
       "skill_name": "FRONTEND-DESARROLLO"
     },
     "qa": {
-      "input": 163754,
-      "output": 17254,
-      "calls": 16,
+      "input": 64146,
+      "output": 4627,
+      "calls": 4,
       "skill_name": "test"
     }
   }
