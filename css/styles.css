@@ -1,29 +1,59 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ============================================================
+   PROYEC-21 — Juego Arcade Naves Espaciales
+   css/styles.css — Hoja de estilos única
+   ============================================================ */
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: #000000;
-  font-family: 'Courier New', Courier, monospace;
+/* ------------------------------------------------------------
+   PASO 3.1 — Variables globales y reset base
+   ------------------------------------------------------------ */
+:root {
+  --color-bg: #000000;
+  --color-neon-cyan: #00ffff;
+  --color-neon-green: #00ff41;
+  --color-neon-yellow: #ffff00;
+  --color-neon-red: #ff003c;
+  --color-neon-purple: #bf00ff;
+  --color-text-dim: #4a4a6a;
+  --font-arcade: 'Courier New', Courier, monospace;
+  --canvas-width: 480px;
+  --canvas-height: 640px;
 }
 
-/* --- UTILIDADES --- */
-.hidden { display: none !important; }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* --- CONTENEDOR RAÍZ --- */
-.game-wrapper {
-  position: relative;
+/* Garantiza que el atributo hidden funcione aunque algún selector lo sobreescriba */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-neon-cyan);
+  font-family: var(--font-arcade);
+  overflow: hidden;
   width: 100vw;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #000000;
-  overflow: hidden;
 }
 
-/* --- CLASE BASE PANTALLAS --- */
+/* ------------------------------------------------------------
+   PASO 3.2 — Contenedor principal #game-wrapper
+   ------------------------------------------------------------ */
+#game-wrapper {
+  position: relative;
+  width: var(--canvas-width);
+  height: var(--canvas-height);
+}
+
+/* ------------------------------------------------------------
+   PASO 3.3 — Clase base .screen
+   ------------------------------------------------------------ */
 .screen {
   position: absolute;
   top: 0;
@@ -34,220 +64,342 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
-  z-index: 10;
 }
 
-/* --- CANVAS --- */
-#canvas-game {
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-}
-
-/* --- PANTALLA MENÚ --- */
-#screen-menu {
-  z-index: 20;
-  background-color: rgba(0, 0, 10, 0.92);
-  gap: 24px;
-}
-
-/* --- PANTALLA GAME OVER --- */
-#screen-gameover {
-  z-index: 20;
-  background-color: rgba(10, 0, 0, 0.92);
-  gap: 20px;
-}
-
-/* --- PANTALLA LEVEL UP --- */
-#screen-levelup {
-  z-index: 20;
-  background-color: rgba(0, 10, 0, 0.85);
-  gap: 16px;
-  pointer-events: none;
-}
-
-/* --- TIPOGRAFÍA ARCADE --- */
-.arcade-text {
-  font-family: 'Courier New', Courier, monospace;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  text-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
-}
-
-#screen-menu .arcade-text:first-child {
-  font-size: clamp(2rem, 6vw, 4rem);
-  color: #00ffff;
-}
-
-#screen-gameover .arcade-text:first-child {
-  font-size: clamp(1.8rem, 5vw, 3rem);
-  color: #ff4444;
-}
-
-#screen-levelup .arcade-text:first-child {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-  color: #44ff44;
-}
-
-#text-final-score,
-#text-level-reached,
-#text-level-reached-up {
-  font-size: clamp(1rem, 3vw, 1.5rem);
-  color: #ffff00;
-  font-family: 'Courier New', Courier, monospace;
-  letter-spacing: 2px;
-}
-
-/* --- BOTONES --- */
-#btn-start,
-#btn-restart,
-#btn-pause {
-  background-color: transparent;
-  border: 2px solid #00ffff;
-  color: #00ffff;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 1rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding: 12px 32px;
-  cursor: pointer;
-  transition: background-color 150ms ease, color 150ms ease;
-}
-
-#btn-start:hover,
-#btn-restart:hover,
-#btn-pause:hover {
-  background-color: #00ffff;
-  color: #000000;
-}
-
-#btn-pause {
-  border-color: #ffff00;
-  color: #ffff00;
-  font-size: 0.8rem;
-  padding: 6px 16px;
-}
-
-#btn-pause:hover {
-  background-color: #ffff00;
-  color: #000000;
-}
-
-/* --- HUD --- */
-#hud {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 15;
-  pointer-events: none;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 12px 20px;
-  box-sizing: border-box;
-}
-
-.hud-panel {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  align-items: center;
-}
-
-.hud-item {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.85rem;
-  letter-spacing: 2px;
-  color: #00ffff;
-  text-transform: uppercase;
-  text-shadow: 0 0 6px #00ffff;
-}
-
-#hud-score,
-#hud-level,
-#hud-lives {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.85rem;
-  color: #00ffff;
-  letter-spacing: 2px;
-  text-shadow: 0 0 6px #00ffff;
-}
-
-/* --- INDICADORES POWER-UP --- */
-.powerup-indicator {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: 2px solid #555555;
-  border-radius: 4px;
-  opacity: 0.35;
-  transition: opacity 200ms ease, border-color 200ms ease;
-  font-size: 0.7rem;
-  font-family: 'Courier New', Courier, monospace;
-  color: #555555;
-  text-transform: uppercase;
-  letter-spacing: 0;
-}
-
-.powerup-indicator.is-active {
-  opacity: 1;
-  border-color: #00ffff;
-  color: #00ffff;
-  text-shadow: 0 0 6px #00ffff;
-  box-shadow: 0 0 8px #00ffff44;
-}
-
-#hud-powerup-speed.is-active {
-  border-color: #ffaa00;
-  color: #ffaa00;
-  text-shadow: 0 0 6px #ffaa00;
-  box-shadow: 0 0 8px #ffaa0044;
-}
-
-#hud-powerup-shield.is-active {
-  border-color: #00aaff;
-  color: #00aaff;
-  text-shadow: 0 0 6px #00aaff;
-  box-shadow: 0 0 8px #00aaff44;
-}
-
-#hud-powerup-maneuver.is-active {
-  border-color: #aa00ff;
-  color: #aa00ff;
-  text-shadow: 0 0 6px #aa00ff;
-  box-shadow: 0 0 8px #aa00ff44;
-}
-
-/* --- ESTADOS DE CLASE --- */
-.is-damaged {
-  animation: damage-flash 500ms ease forwards;
-}
-
-.is-paused #canvas-game {
-  filter: brightness(0.5);
-}
-
-/* --- BORDE ARCADE --- */
-.arcade-border {
-  border: 2px solid #00ffff;
-  box-shadow: 0 0 12px #00ffff44, inset 0 0 12px #00ffff11;
-}
-
-/* --- OVERLAY SCANLINES --- */
-.scanlines::after {
-  content: '';
+/* ------------------------------------------------------------
+   PASO 3.4 — Pantalla Menú (#screen-menu)
+   ------------------------------------------------------------ */
+.star-field {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#screen-menu > *:not(.star-field) {
+  position: relative;
+  z-index: 1;
+}
+
+.game-title {
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: var(--color-neon-cyan);
+  text-shadow:
+    0 0 10px var(--color-neon-cyan),
+    0 0 20px var(--color-neon-cyan),
+    0 0 40px var(--color-neon-cyan);
+  letter-spacing: 0.15em;
+  text-align: center;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.game-subtitle {
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+}
+
+/* ------------------------------------------------------------
+   PASO 3.5 — Selector de dificultad
+   ------------------------------------------------------------ */
+.difficulty-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.selector-label {
+  font-size: 0.7rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ------------------------------------------------------------
+   PASO 3.6 — Botones (.btn-arcade)
+   ------------------------------------------------------------ */
+.btn-arcade {
+  font-family: var(--font-arcade);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  border: 1px solid var(--color-text-dim);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.btn-arcade:hover {
+  border-color: var(--color-neon-cyan);
+  color: var(--color-neon-cyan);
+  text-shadow: 0 0 8px var(--color-neon-cyan);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+}
+
+/* Estado activo: botón de dificultad seleccionado */
+.btn-arcade.is-active {
+  border-color: var(--color-neon-green);
+  color: var(--color-neon-green);
+  text-shadow: 0 0 8px var(--color-neon-green);
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.4);
+}
+
+/* Variante principal: botón START */
+.btn-arcade--primary {
+  border-color: var(--color-neon-cyan);
+  color: var(--color-neon-cyan);
+  font-size: 1rem;
+  padding: 0.8rem 2.5rem;
+  text-shadow: 0 0 8px var(--color-neon-cyan);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+}
+
+.btn-arcade--primary:hover {
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+}
+
+/* Variante peligrosa: botón RESTART */
+.btn-arcade--danger {
+  border-color: var(--color-neon-red);
+  color: var(--color-neon-red);
+  text-shadow: 0 0 8px var(--color-neon-red);
+}
+
+.btn-arcade--danger:hover {
+  background: rgba(255, 0, 60, 0.1);
+  box-shadow: 0 0 16px rgba(255, 0, 60, 0.5);
+}
+
+/* ------------------------------------------------------------
+   PASO 3.7 — Hint de controles
+   ------------------------------------------------------------ */
+.controls-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 2rem;
+}
+
+.controls-hint p {
+  font-size: 0.6rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------
+   PASO 3.8 — HUD de juego (#screen-game)
+   ------------------------------------------------------------ */
+#screen-game {
+  justify-content: flex-start;
+}
+
+.hud-bar {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.75);
+  border-bottom: 1px solid var(--color-text-dim);
+}
+
+.hud-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.hud-stat__label {
+  font-size: 0.5rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hud-stat__value {
+  font-size: 0.9rem;
+  color: var(--color-neon-cyan);
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 6px var(--color-neon-cyan);
+}
+
+/* Indicador de power-up activo */
+#hud-powerup-indicator {
+  font-size: 0.65rem;
+  color: var(--color-neon-yellow);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px var(--color-neon-yellow);
+  animation: hud-powerup-pulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes hud-powerup-pulse {
+  from { opacity: 0.6; }
+  to   { opacity: 1; }
+}
+
+/* Canvas del juego */
+#game-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: block;
+}
+
+/* Estado de pausa aplicado sobre #screen-game */
+#screen-game.is-paused #game-canvas {
+  filter: brightness(0.4);
+}
+
+/* ------------------------------------------------------------
+   PASO 3.9 — Overlays: paneles semitransparentes
+   ------------------------------------------------------------ */
+.overlay-panel {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2.5rem 3rem;
+  background: rgba(0, 0, 0, 0.88);
+  border: 1px solid var(--color-text-dim);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.15),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.overlay-panel__title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.overlay-panel__subtitle {
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* Pantalla de pausa */
+#screen-pause .overlay-panel__title {
+  color: var(--color-neon-yellow);
+  text-shadow:
+    0 0 10px var(--color-neon-yellow),
+    0 0 20px var(--color-neon-yellow);
+}
+
+/* Pantalla de game over */
+#screen-gameover .overlay-panel__title {
+  color: var(--color-neon-red);
+  text-shadow:
+    0 0 10px var(--color-neon-red),
+    0 0 25px var(--color-neon-red);
+}
+
+/* Pantalla de subida de nivel */
+#screen-levelup .overlay-panel__title {
+  color: var(--color-neon-green);
+  text-shadow:
+    0 0 10px var(--color-neon-green),
+    0 0 25px var(--color-neon-green);
+}
+
+/* Estadísticas de resultado (game over / level up) */
+.result-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.result-stats p {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+}
+
+.result-stats p span {
+  color: var(--color-neon-cyan);
+  text-shadow: 0 0 6px var(--color-neon-cyan);
+}
+
+/* ------------------------------------------------------------
+   PASO 3.10 — Estados visuales de la nave (clases is-*)
+   ------------------------------------------------------------ */
+
+/* Parpadeo al recibir daño — aplicado sobre el canvas o un wrapper */
+.is-damaged {
+  animation: ship-damage-flash 0.3s steps(2, end);
+}
+
+@keyframes ship-damage-flash {
+  0%   { opacity: 1; }
+  25%  { opacity: 0.1; }
+  50%  { opacity: 1; }
+  75%  { opacity: 0.1; }
+  100% { opacity: 1; }
+}
+
+/* Power-up activo genérico */
+.is-powered {
+  filter: brightness(1.4) saturate(1.6);
+}
+
+/* Escudo activo */
+.is-shield {
+  filter: drop-shadow(0 0 8px var(--color-neon-cyan))
+          drop-shadow(0 0 16px var(--color-neon-cyan));
+}
+
+/* ------------------------------------------------------------
+   PASO 3.11 — Efecto CRT scanlines (.scanline)
+   ------------------------------------------------------------ */
+.scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  pointer-events: none;
   background: repeating-linear-gradient(
     to bottom,
     transparent 0px,
@@ -255,71 +407,89 @@ html, body {
     rgba(0, 0, 0, 0.18) 2px,
     rgba(0, 0, 0, 0.18) 4px
   );
-  pointer-events: none;
-  z-index: 100;
 }
 
-/* --- ANIMACIONES CSS --- */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
+/* Viñeta CRT en los bordes */
+.scanline::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
 }
 
-.blink {
-  animation: blink 1s step-start infinite;
+/* ------------------------------------------------------------
+   PASO 3.12 — Animaciones de pantalla y efectos globales
+   ------------------------------------------------------------ */
+
+/* Parpadeo de texto tipo arcade */
+@keyframes arcade-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
 
-@keyframes damage-flash {
-  0%   { filter: brightness(1) saturate(1); }
-  20%  { filter: brightness(3) saturate(0) hue-rotate(0deg); }
-  40%  { filter: brightness(1) saturate(1); }
-  60%  { filter: brightness(3) saturate(0); }
-  80%  { filter: brightness(1) saturate(1); }
-  100% { filter: brightness(1) saturate(1); }
+/* Entrada suave de overlays */
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-@keyframes levelup-pulse {
-  0%   { transform: scale(1);    opacity: 1; }
-  50%  { transform: scale(1.06); opacity: 0.85; }
-  100% { transform: scale(1);    opacity: 1; }
+#screen-pause .overlay-panel,
+#screen-gameover .overlay-panel,
+#screen-levelup .overlay-panel {
+  animation: overlay-fade-in 0.2s ease-out forwards;
 }
 
-#screen-levelup:not(.hidden) {
-  animation: levelup-pulse 600ms ease infinite;
+/* Pulso de neón para el título del menú */
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 10px var(--color-neon-cyan),
+      0 0 20px var(--color-neon-cyan),
+      0 0 40px var(--color-neon-cyan);
+  }
+  50% {
+    text-shadow:
+      0 0 5px var(--color-neon-cyan),
+      0 0 10px var(--color-neon-cyan),
+      0 0 20px var(--color-neon-cyan);
+  }
 }
 
-/* --- MEDIA QUERY MÓVIL CRÍTICO --- */
-@media (max-width: 480px) {
-  .arcade-text {
-    letter-spacing: 2px;
+.game-title {
+  animation: neon-pulse 2.5s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------
+   PASO 3.13 — Responsive mínimo (centrado en mobile)
+   ------------------------------------------------------------ */
+@media (max-width: 500px) {
+  #game-wrapper {
+    width: 100vw;
+    height: calc(100vw * (640 / 480));
+    max-height: 100vh;
   }
 
-  #btn-start,
-  #btn-restart {
-    font-size: 0.85rem;
-    padding: 10px 24px;
-    letter-spacing: 2px;
+  #game-wrapper {
+    --canvas-width: 100vw;
   }
+}
 
-  .hud-item,
-  #hud-score,
-  #hud-level,
-  #hud-lives {
-    font-size: 0.7rem;
-    letter-spacing: 1px;
-  }
-
-  .powerup-indicator {
-    width: 22px;
-    height: 22px;
-    font-size: 0.6rem;
-  }
-
-  #hud {
-    padding: 8px 12px;
-  }
-
-  .hud-panel {
-    gap: 12px;
+@media (max-height: 660px) {
+  #game-wrapper {
+    height: 100vh;
+    width: calc(100vh * (480 / 640));
   }
 }

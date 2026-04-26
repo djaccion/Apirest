@@ -3,56 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Space Arcade — PROYEC-21</title>
+  <title>STAR FIGHTER — Arcade 80s</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="game-wrapper">
+  <div id="game-wrapper">
+    <div class="star-field" aria-hidden="true"></div>
 
     <div id="screen-menu" class="screen">
-      <h1 class="arcade-text blink">SPACE ARCADE</h1>
-      <p class="arcade-text">USA LAS FLECHAS PARA MOVERTE</p>
-      <button id="btn-start" class="arcade-text">INICIAR PARTIDA</button>
-    </div>
+      <h1 class="game-title">STAR FIGHTER</h1>
+      <p class="game-subtitle">ARCADE 80s</p>
 
-    <div id="screen-game" class="screen hidden">
-      <canvas id="canvas-game"></canvas>
-    </div>
-
-    <div id="screen-gameover" class="screen hidden">
-      <h2 class="arcade-text">GAME OVER</h2>
-      <p class="arcade-text">PUNTUACIÓN: <span id="text-final-score">0</span></p>
-      <p class="arcade-text">NIVEL ALCANZADO: <span id="text-level-reached">1</span></p>
-      <button id="btn-restart" class="arcade-text">REINICIAR</button>
-    </div>
-
-    <div id="screen-levelup" class="screen hidden">
-      <h2 class="arcade-text blink">¡NIVEL SUPERADO!</h2>
-      <p id="text-level-reached-up" class="arcade-text">NIVEL</p>
-    </div>
-
-    <div id="hud" class="hud-panel hidden">
-      <div class="hud-item arcade-text">
-        SCORE: <span id="hud-score">0</span>
+      <div class="difficulty-selector">
+        <p class="selector-label">DIFICULTAD</p>
+        <div class="btn-group">
+          <button id="btn-difficulty-easy"   class="btn-arcade is-active">FÁCIL</button>
+          <button id="btn-difficulty-medium" class="btn-arcade">NORMAL</button>
+          <button id="btn-difficulty-hard"   class="btn-arcade">DIFÍCIL</button>
+        </div>
       </div>
-      <div class="hud-item arcade-text">
-        NIVEL: <span id="hud-level">1</span>
+
+      <button id="btn-start" class="btn-arcade btn-arcade--primary">INICIAR JUEGO</button>
+
+      <div class="controls-hint">
+        <p>← → GIRAR &nbsp;|&nbsp; ↑ ↓ ACELERAR &nbsp;|&nbsp; ESPACIO DISPARAR</p>
+        <p>ESC / P PAUSA</p>
       </div>
-      <div class="hud-item arcade-text">
-        VIDAS: <span id="hud-lives">3</span>
-      </div>
-      <div class="hud-item">
-        <span id="hud-powerup-speed"    class="powerup-indicator arcade-text hidden">VEL</span>
-        <span id="hud-powerup-shield"   class="powerup-indicator arcade-text hidden">ESC</span>
-        <span id="hud-powerup-maneuver" class="powerup-indicator arcade-text hidden">MAN</span>
-      </div>
-      <button id="btn-pause" class="arcade-text">PAUSA</button>
     </div>
 
-    <div class="scanlines" aria-hidden="true"></div>
+    <div id="screen-game" class="screen" hidden>
+      <div class="hud-bar">
+        <div class="hud-stat">
+          <span class="hud-stat__label">SCORE</span>
+          <span id="hud-score" class="hud-stat__value">000000</span>
+        </div>
+        <div class="hud-stat">
+          <span class="hud-stat__label">NIVEL</span>
+          <span id="hud-level" class="hud-stat__value">01</span>
+        </div>
+        <div class="hud-stat">
+          <span class="hud-stat__label">VIDAS</span>
+          <span id="hud-lives" class="hud-stat__value">3</span>
+        </div>
+        <div class="hud-stat">
+          <span id="hud-powerup-indicator" class="hud-stat__value" hidden>— —</span>
+        </div>
+      </div>
 
+      <canvas id="game-canvas"></canvas>
+    </div>
+
+    <div id="screen-pause" class="screen" hidden>
+      <div class="overlay-panel">
+        <h2 class="overlay-panel__title">— PAUSA —</h2>
+        <button id="btn-resume" class="btn-arcade btn-arcade--primary">CONTINUAR</button>
+      </div>
+    </div>
+
+    <div id="screen-gameover" class="screen" hidden>
+      <div class="overlay-panel">
+        <h2 class="overlay-panel__title">GAME OVER</h2>
+
+        <div class="result-stats">
+          <div class="hud-stat">
+            <span class="hud-stat__label">PUNTUACIÓN FINAL</span>
+            <span id="gameover-score-value" class="hud-stat__value">000000</span>
+          </div>
+          <div class="hud-stat">
+            <span class="hud-stat__label">NIVEL ALCANZADO</span>
+            <span id="gameover-level-value" class="hud-stat__value">01</span>
+          </div>
+        </div>
+
+        <button id="btn-restart" class="btn-arcade btn-arcade--danger">REINICIAR</button>
+      </div>
+    </div>
+
+    <div id="screen-levelup" class="screen" hidden>
+      <div class="overlay-panel">
+        <h2 class="overlay-panel__title">¡NIVEL SUPERADO!</h2>
+        <p class="overlay-panel__subtitle">
+          NIVEL <span id="levelup-level-value">02</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="scanline" aria-hidden="true"></div>
   </div>
 
-  <script src="js/main.js"></script>
+  <script src="js/game.js"></script>
 </body>
 </html>
