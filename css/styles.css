@@ -1,0 +1,325 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000000;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* --- UTILIDADES --- */
+.hidden { display: none !important; }
+
+/* --- CONTENEDOR RAÍZ --- */
+.game-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  overflow: hidden;
+}
+
+/* --- CLASE BASE PANTALLAS --- */
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  z-index: 10;
+}
+
+/* --- CANVAS --- */
+#canvas-game {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* --- PANTALLA MENÚ --- */
+#screen-menu {
+  z-index: 20;
+  background-color: rgba(0, 0, 10, 0.92);
+  gap: 24px;
+}
+
+/* --- PANTALLA GAME OVER --- */
+#screen-gameover {
+  z-index: 20;
+  background-color: rgba(10, 0, 0, 0.92);
+  gap: 20px;
+}
+
+/* --- PANTALLA LEVEL UP --- */
+#screen-levelup {
+  z-index: 20;
+  background-color: rgba(0, 10, 0, 0.85);
+  gap: 16px;
+  pointer-events: none;
+}
+
+/* --- TIPOGRAFÍA ARCADE --- */
+.arcade-text {
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+}
+
+#screen-menu .arcade-text:first-child {
+  font-size: clamp(2rem, 6vw, 4rem);
+  color: #00ffff;
+}
+
+#screen-gameover .arcade-text:first-child {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  color: #ff4444;
+}
+
+#screen-levelup .arcade-text:first-child {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  color: #44ff44;
+}
+
+#text-final-score,
+#text-level-reached,
+#text-level-reached-up {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  color: #ffff00;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 2px;
+}
+
+/* --- BOTONES --- */
+#btn-start,
+#btn-restart,
+#btn-pause {
+  background-color: transparent;
+  border: 2px solid #00ffff;
+  color: #00ffff;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 12px 32px;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+#btn-start:hover,
+#btn-restart:hover,
+#btn-pause:hover {
+  background-color: #00ffff;
+  color: #000000;
+}
+
+#btn-pause {
+  border-color: #ffff00;
+  color: #ffff00;
+  font-size: 0.8rem;
+  padding: 6px 16px;
+}
+
+#btn-pause:hover {
+  background-color: #ffff00;
+  color: #000000;
+}
+
+/* --- HUD --- */
+#hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 15;
+  pointer-events: none;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px 20px;
+  box-sizing: border-box;
+}
+
+.hud-panel {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+}
+
+.hud-item {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: #00ffff;
+  text-transform: uppercase;
+  text-shadow: 0 0 6px #00ffff;
+}
+
+#hud-score,
+#hud-level,
+#hud-lives {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  color: #00ffff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 6px #00ffff;
+}
+
+/* --- INDICADORES POWER-UP --- */
+.powerup-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #555555;
+  border-radius: 4px;
+  opacity: 0.35;
+  transition: opacity 200ms ease, border-color 200ms ease;
+  font-size: 0.7rem;
+  font-family: 'Courier New', Courier, monospace;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.powerup-indicator.is-active {
+  opacity: 1;
+  border-color: #00ffff;
+  color: #00ffff;
+  text-shadow: 0 0 6px #00ffff;
+  box-shadow: 0 0 8px #00ffff44;
+}
+
+#hud-powerup-speed.is-active {
+  border-color: #ffaa00;
+  color: #ffaa00;
+  text-shadow: 0 0 6px #ffaa00;
+  box-shadow: 0 0 8px #ffaa0044;
+}
+
+#hud-powerup-shield.is-active {
+  border-color: #00aaff;
+  color: #00aaff;
+  text-shadow: 0 0 6px #00aaff;
+  box-shadow: 0 0 8px #00aaff44;
+}
+
+#hud-powerup-maneuver.is-active {
+  border-color: #aa00ff;
+  color: #aa00ff;
+  text-shadow: 0 0 6px #aa00ff;
+  box-shadow: 0 0 8px #aa00ff44;
+}
+
+/* --- ESTADOS DE CLASE --- */
+.is-damaged {
+  animation: damage-flash 500ms ease forwards;
+}
+
+.is-paused #canvas-game {
+  filter: brightness(0.5);
+}
+
+/* --- BORDE ARCADE --- */
+.arcade-border {
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 12px #00ffff44, inset 0 0 12px #00ffff11;
+}
+
+/* --- OVERLAY SCANLINES --- */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.18) 2px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* --- ANIMACIONES CSS --- */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.blink {
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes damage-flash {
+  0%   { filter: brightness(1) saturate(1); }
+  20%  { filter: brightness(3) saturate(0) hue-rotate(0deg); }
+  40%  { filter: brightness(1) saturate(1); }
+  60%  { filter: brightness(3) saturate(0); }
+  80%  { filter: brightness(1) saturate(1); }
+  100% { filter: brightness(1) saturate(1); }
+}
+
+@keyframes levelup-pulse {
+  0%   { transform: scale(1);    opacity: 1; }
+  50%  { transform: scale(1.06); opacity: 0.85; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+#screen-levelup:not(.hidden) {
+  animation: levelup-pulse 600ms ease infinite;
+}
+
+/* --- MEDIA QUERY MÓVIL CRÍTICO --- */
+@media (max-width: 480px) {
+  .arcade-text {
+    letter-spacing: 2px;
+  }
+
+  #btn-start,
+  #btn-restart {
+    font-size: 0.85rem;
+    padding: 10px 24px;
+    letter-spacing: 2px;
+  }
+
+  .hud-item,
+  #hud-score,
+  #hud-level,
+  #hud-lives {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+  }
+
+  .powerup-indicator {
+    width: 22px;
+    height: 22px;
+    font-size: 0.6rem;
+  }
+
+  #hud {
+    padding: 8px 12px;
+  }
+
+  .hud-panel {
+    gap: 12px;
+  }
+}
