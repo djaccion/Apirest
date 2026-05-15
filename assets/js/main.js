@@ -1,354 +1,352 @@
-'use strict';
+// =============================================================================
+// main.js — XP-14 Página Web Metodologías TI
+// Controlador único de comportamiento (SFA)
+// =============================================================================
 
-// ============================================================
-// BLOQUE 0 — Constantes globales
-// ============================================================
+// =============================================================================
+// PASO 1 — Helpers de visibilidad
+// =============================================================================
 
-const SECTIONS = ['section-home', 'section-stories', 'section-news'];
+function showElement(el) { el.classList.remove('is-hidden'); }
+function hideElement(el) { el.classList.add('is-hidden');    }
 
-const NAV_HASH_MAP = {
-  '':         'section-home',
-  '#home':    'section-home',
-  '#stories': 'section-stories',
-  '#news':    'section-news'
-};
+// =============================================================================
+// PASO 2 — Cache de referencias al DOM
+// =============================================================================
 
-// ============================================================
-// BLOQUE 1 — Utilidad escapeHTML (fuera del listener, pura)
-// ============================================================
+var navLinks     = document.querySelectorAll('.nav__link');
+var sections     = document.querySelectorAll('main > section');
+var navToggle    = document.getElementById('nav-toggle');
+var navMenu      = document.getElementById('nav-menu');
+var faqContainer = document.getElementById('faq-container');
+var cookieBanner = document.getElementById('cookie-banner');
+var acceptBtn    = document.getElementById('cookie-accept-btn');
+var rejectBtn    = document.getElementById('cookie-reject-btn');
+var footerYear   = document.getElementById('footer-year');
 
-function escapeHTML(str) {
-  var textarea = document.createElement('textarea');
-  textarea.textContent = str;
-  return textarea.innerHTML;
-}
+// =============================================================================
+// PASO 3 — Función de navegación entre secciones
+// =============================================================================
 
-// ============================================================
-// BLOQUE 2 — Módulo de Navegación
-// ============================================================
+function navigateTo(targetId) {
+  var i;
 
-function showSection(targetId, navMain, navMobileMenu) {
-  SECTIONS.forEach(function (id) {
-    var el = document.getElementById(id);
-    if (el) el.classList.add('is-hidden');
-  });
-
-  var target = document.getElementById(targetId);
-  if (target) target.classList.remove('is-hidden');
-
-  var navItems = [];
-  if (navMain) {
-    var mainItems = navMain.querySelectorAll('[data-target]');
-    mainItems.forEach(function (item) { navItems.push(item); });
-  }
-  if (navMobileMenu) {
-    var mobileItems = navMobileMenu.querySelectorAll('[data-target]');
-    mobileItems.forEach(function (item) { navItems.push(item); });
+  // 1. Ocultar todas las secciones
+  for (i = 0; i < sections.length; i++) {
+    hideElement(sections[i]);
   }
 
-  navItems.forEach(function (item) {
-    if (item.getAttribute('data-target') === targetId) {
-      item.classList.add('is-active');
-    } else {
-      item.classList.remove('is-active');
+  // 2. Desactivar todos los nav links
+  for (i = 0; i < navLinks.length; i++) {
+    navLinks[i].classList.remove('is-active');
+  }
+
+  // 3. Mostrar la sección objetivo
+  var targetSection = document.getElementById(targetId);
+  if (targetSection) {
+    showElement(targetSection);
+  }
+
+  // 4. Activar el nav link correspondiente
+  for (i = 0; i < navLinks.length; i++) {
+    if (navLinks[i].dataset.target === targetId) {
+      navLinks[i].classList.add('is-active');
+      break;
     }
-  });
+  }
 
+  // 5. Ir al tope de la página
   window.scrollTo(0, 0);
-}
 
-function navigateTo(hash, navMain, navMobileMenu) {
-  var targetId = NAV_HASH_MAP[hash] !== undefined
-    ? NAV_HASH_MAP[hash]
-    : 'section-home';
-
-  showSection(targetId, navMain, navMobileMenu);
-
-  var desiredHash = hash || '#home';
-  if (window.location.hash !== desiredHash) {
-    history.pushState(null, '', desiredHash);
-  }
-}
-
-function resolveHashFromDataTarget(dataTarget) {
-  if (dataTarget === 'section-home') return '#home';
-  return '#' + dataTarget.replace('section-', '');
-}
-
-function initNavigation(navMain, navMobileMenu, navMobileToggle) {
-  navigateTo(window.location.hash, navMain, navMobileMenu);
-
-  window.addEventListener('popstate', function () {
-    navigateTo(window.location.hash, navMain, navMobileMenu);
-  });
-
-  function handleNavClick(event) {
-    var el = event.target.closest('[data-target]');
-    if (!el) return;
-    event.preventDefault();
-    var dataTarget = el.getAttribute('data-target');
-    var hash = resolveHashFromDataTarget(dataTarget);
-    navigateTo(hash, navMain, navMobileMenu);
-    if (navMobileMenu && !navMobileMenu.classList.contains('is-hidden')) {
-      closeMobileMenu(navMobileMenu, navMobileToggle);
+  // 6. Cerrar el menú móvil si está abierto
+  if (navMenu && !navMenu.classList.contains('is-hidden')) {
+    hideElement(navMenu);
+    if (navToggle) {
+      navToggle.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', 'Abrir menú de navegación');
     }
   }
-
-  if (navMain) navMain.addEventListener('click', handleNavClick);
-  if (navMobileMenu) navMobileMenu.addEventListener('click', handleNavClick);
 }
 
-// ============================================================
-// BLOQUE 3 — Módulo de Menú Móvil
-// ============================================================
+// =============================================================================
+// PASO 4 — Listeners de navegación
+// =============================================================================
 
-function closeMobileMenu(navMobileMenu, navMobileToggle) {
-  navMobileMenu.classList.add('is-hidden');
-  navMobileToggle.classList.remove('is-open');
-  document.body.classList.remove('has-overlay');
+for (var n = 0; n < navLinks.length; n++) {
+  navLinks[n].addEventListener('click', function(e) {
+    e.preventDefault();
+    var target = this.dataset.target;
+    if (target) { navigateTo(target); }
+  });
 }
 
-function initMobileMenu(navMobileMenu, navMobileToggle) {
-  navMobileToggle.addEventListener('click', function () {
-    if (navMobileMenu.classList.contains('is-hidden')) {
-      navMobileMenu.classList.remove('is-hidden');
-      navMobileToggle.classList.add('is-open');
-      document.body.classList.add('has-overlay');
+// =============================================================================
+// PASO 5 — Toggle del menú móvil
+// =============================================================================
+
+if (navToggle) {
+  navToggle.addEventListener('click', function() {
+    var isCurrentlyHidden = navMenu.classList.contains('is-hidden');
+
+    navMenu.classList.toggle('is-hidden');
+    navToggle.classList.toggle('is-open');
+
+    // Sincronizar aria-expanded con el nuevo estado del menú:
+    // si estaba oculto (isCurrentlyHidden=true) ahora se abre → expanded=true
+    // si estaba visible (isCurrentlyHidden=false) ahora se cierra → expanded=false
+    if (isCurrentlyHidden) {
+      navToggle.setAttribute('aria-expanded', 'true');
+      navToggle.setAttribute('aria-label', 'Cerrar menú de navegación');
     } else {
-      closeMobileMenu(navMobileMenu, navMobileToggle);
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', 'Abrir menú de navegación');
     }
   });
 }
 
-// ============================================================
-// BLOQUE 4 — Módulo FAQ (acordeón no exclusivo)
-// ============================================================
+// =============================================================================
+// PASO 6 — Acordeón FAQ
+// =============================================================================
 
-function initFAQ(faqList) {
-  if (!faqList) return;
+function initFaq() {
+  if (!faqContainer) { return; }
 
-  faqList.addEventListener('click', function (event) {
-    var questionBtn = event.target.closest('.faq__question');
-    if (!questionBtn) return;
+  var questions = faqContainer.querySelectorAll('.faq__question');
 
-    var item = questionBtn.closest('.faq__item');
-    if (!item) return;
+  for (var i = 0; i < questions.length; i++) {
+    questions[i].addEventListener('click', function() {
+      var parentItem = this.parentElement;
+      var answer     = parentItem.querySelector('.faq__answer');
+      var isOpen     = parentItem.classList.contains('is-open');
 
-    var answer = item.querySelector('.faq__answer');
-    if (!answer) return;
+      // Cerrar todos los items abiertos
+      var allItems = faqContainer.querySelectorAll('.faq__item');
+      for (var j = 0; j < allItems.length; j++) {
+        allItems[j].classList.remove('is-open');
+        var openQuestion = allItems[j].querySelector('.faq__question');
+        if (openQuestion) { openQuestion.setAttribute('aria-expanded', 'false'); }
+        var openAnswer = allItems[j].querySelector('.faq__answer');
+        if (openAnswer) { hideElement(openAnswer); }
+      }
 
-    if (item.classList.contains('is-open')) {
-      item.classList.remove('is-open');
-      answer.classList.add('is-hidden');
-      questionBtn.setAttribute('aria-expanded', 'false');
-    } else {
-      item.classList.add('is-open');
-      answer.classList.remove('is-hidden');
-      questionBtn.setAttribute('aria-expanded', 'true');
-    }
-  });
-}
-
-// ============================================================
-// BLOQUE 5 — Módulo de Búsqueda
-// ============================================================
-
-var SEARCH_DATA = [
-  {
-    id: 1,
-    title: 'Metodología Agile: Principios y Valores',
-    excerpt: 'Agile es un conjunto de principios para el desarrollo de software que prioriza la colaboración, la adaptación al cambio y la entrega continua de valor.',
-    section: 'stories',
-    tags: ['agile', 'metodología', 'scrum']
-  },
-  {
-    id: 2,
-    title: 'Scrum: El Framework Ágil más Popular',
-    excerpt: 'Scrum organiza el trabajo en sprints de duración fija, con roles definidos como Product Owner, Scrum Master y el equipo de desarrollo.',
-    section: 'stories',
-    tags: ['scrum', 'agile', 'sprints']
-  },
-  {
-    id: 3,
-    title: 'Kanban: Visualiza tu Flujo de Trabajo',
-    excerpt: 'Kanban utiliza tableros visuales para gestionar el trabajo en progreso y optimizar el flujo de tareas en equipos de TI.',
-    section: 'stories',
-    tags: ['kanban', 'flujo', 'visualización']
-  },
-  {
-    id: 4,
-    title: 'DevOps: Uniendo Desarrollo y Operaciones',
-    excerpt: 'DevOps es una cultura y conjunto de prácticas que une los equipos de desarrollo y operaciones para acelerar la entrega de software.',
-    section: 'news',
-    tags: ['devops', 'ci/cd', 'automatización']
-  },
-  {
-    id: 5,
-    title: 'ITIL 4: Gestión de Servicios de TI',
-    excerpt: 'ITIL 4 es el marco de referencia más adoptado para la gestión de servicios de TI, con un enfoque en la creación de valor.',
-    section: 'news',
-    tags: ['itil', 'gestión', 'servicios']
-  },
-  {
-    id: 6,
-    title: 'Lean IT: Eliminando el Desperdicio en TI',
-    excerpt: 'Lean IT aplica los principios de manufactura esbelta al sector tecnológico para maximizar el valor y minimizar el desperdicio.',
-    section: 'stories',
-    tags: ['lean', 'eficiencia', 'mejora continua']
+      // Si el item clicado NO estaba abierto, abrirlo
+      if (!isOpen) {
+        parentItem.classList.add('is-open');
+        this.setAttribute('aria-expanded', 'true');
+        if (answer) { showElement(answer); }
+      }
+    });
   }
-];
-
-function matchesQuery(article, query) {
-  var q = query.toLowerCase().trim();
-  if (!q) return false;
-  var inTitle   = article.title.toLowerCase().indexOf(q) !== -1;
-  var inExcerpt = article.excerpt.toLowerCase().indexOf(q) !== -1;
-  var inTags    = article.tags.some(function (tag) {
-    return tag.toLowerCase().indexOf(q) !== -1;
-  });
-  return inTitle || inExcerpt || inTags;
 }
 
-function buildResultHTML(article) {
-  var safeTitle   = escapeHTML(article.title);
-  var safeExcerpt = escapeHTML(article.excerpt);
-  var safeSection = escapeHTML(article.section);
-  var safeTag     = escapeHTML(article.tags[0] || '');
+// =============================================================================
+// PASO 7 — Gestión del banner de cookies
+// =============================================================================
 
-  return '<article class="card">' +
-    '<div class="card__body">' +
-      '<span class="card__tag">' + safeTag + '</span>' +
-      '<h3 class="card__title">' + safeTitle + '</h3>' +
-      '<p class="card__excerpt">' + safeExcerpt + '</p>' +
-      '<a href="#' + safeSection + '" class="card__link" data-target="section-' + safeSection + '">' +
-        'Ver sección' +
-      '</a>' +
-    '</div>' +
-  '</article>';
-}
+function initCookieBanner() {
+  var consent = localStorage.getItem('cookie_consent');
 
-function renderSearchResults(results, searchResults) {
-  if (!searchResults) return;
-
-  if (results.length === 0) {
-    searchResults.innerHTML = DOMPurify.sanitize(
-      '<p class="search__no-results">No se encontraron resultados.</p>'
-    );
-    searchResults.classList.remove('is-hidden');
+  if (consent === 'accepted' || consent === 'rejected') {
+    // El banner ya inicia con is-hidden en el HTML; no es necesario ocultarlo
+    // de nuevo, pero se llama hideElement por robustez ante cualquier estado.
+    if (cookieBanner) { hideElement(cookieBanner); }
+    if (consent === 'accepted') { activateAnalytics(); }
     return;
   }
 
-  var html = results.map(buildResultHTML).join('');
-  searchResults.innerHTML = DOMPurify.sanitize(html);
-  searchResults.classList.remove('is-hidden');
-}
+  // Sin consentimiento previo: mostrar el banner
+  if (cookieBanner) { showElement(cookieBanner); }
 
-function performSearch(searchInput, searchResults) {
-  var rawQuery = searchInput ? searchInput.value : '';
-  var query    = rawQuery.trim();
-
-  if (!query) {
-    if (searchResults) searchResults.classList.add('is-hidden');
-    return;
+  if (acceptBtn) {
+    acceptBtn.addEventListener('click', function() {
+      localStorage.setItem('cookie_consent', 'accepted');
+      hideElement(cookieBanner);
+      document.body.classList.add('has-consent');
+      activateAnalytics();
+    });
   }
 
-  var results = SEARCH_DATA.filter(function (article) {
-    return matchesQuery(article, query);
-  });
-
-  renderSearchResults(results, searchResults);
+  if (rejectBtn) {
+    rejectBtn.addEventListener('click', function() {
+      localStorage.setItem('cookie_consent', 'rejected');
+      hideElement(cookieBanner);
+    });
+  }
 }
 
-function initSearch(searchInput, searchBtn, searchResults) {
-  if (!searchBtn || !searchInput) return;
+// =============================================================================
+// PASO 8 — Activación de Google Analytics 4
+// =============================================================================
 
-  searchBtn.addEventListener('click', function () {
-    performSearch(searchInput, searchResults);
-  });
+function activateAnalytics() {
+  if (window._gaActivated) { return; }
+  window._gaActivated = true;
 
-  searchInput.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') {
-      performSearch(searchInput, searchResults);
-    }
-  });
-}
+  var GA_ID = 'G-XXXXXXXXXX';
 
-// ============================================================
-// BLOQUE 6 — Módulo de Cookies y Google Analytics
-// ============================================================
-
-var GA_ID = 'G-XXXXXXXXXX';
-
-function loadGoogleAnalytics() {
+  // Inyectar el script de gtag.js
   var script = document.createElement('script');
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
   script.async = true;
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
   document.head.appendChild(script);
 
+  // Inicializar dataLayer y gtag
   window.dataLayer = window.dataLayer || [];
   function gtag() { window.dataLayer.push(arguments); }
   window.gtag = gtag;
   gtag('js', new Date());
-  gtag('config', GA_ID, { anonymize_ip: true });
+  gtag('config', GA_ID);
 }
 
-function hideCookieBanner(cookieBanner) {
-  if (cookieBanner) cookieBanner.classList.add('is-hidden');
+// =============================================================================
+// PASO 9 — Datos hardcodeados: Historias
+// =============================================================================
+
+var historias = [
+  {
+    id:      'hist-001',
+    titulo:  'Agile en la práctica: lecciones del campo',
+    excerpt: 'Cómo los equipos de desarrollo adoptaron Scrum y transformaron su flujo de trabajo en menos de tres meses.',
+    imagen:  'https://placehold.co/400x220',
+    link:    '#'
+  },
+  {
+    id:      'hist-002',
+    titulo:  'DevOps: de la teoría al pipeline real',
+    excerpt: 'Un equipo de infraestructura comparte su experiencia implementando CI/CD desde cero sin herramientas de pago.',
+    imagen:  'https://placehold.co/400x220',
+    link:    '#'
+  },
+  {
+    id:      'hist-003',
+    titulo:  'Kanban para equipos no técnicos',
+    excerpt: 'La metodología Kanban no es exclusiva del software. Descubre cómo un equipo de marketing la adoptó con éxito.',
+    imagen:  'https://placehold.co/400x220',
+    link:    '#'
+  }
+];
+
+// =============================================================================
+// PASO 10 — Datos hardcodeados: Noticias
+// =============================================================================
+
+var noticias = [
+  {
+    id:      'news-001',
+    titulo:  'ISO 27001:2022 — Novedades clave para equipos TI',
+    excerpt: 'La nueva versión del estándar de seguridad de la información trae cambios estructurales que afectan a toda la industria.',
+    fecha:   '10 Jun 2025',
+    imagen:  'https://placehold.co/400x220',
+    link:    '#'
+  },
+  {
+    id:      'news-002',
+    titulo:  'ITIL 4 y la gestión de servicios en la nube',
+    excerpt: 'Cómo el marco ITIL 4 se adapta a entornos cloud-native y qué implica para los equipos de operaciones modernos.',
+    fecha:   '05 Jun 2025',
+    imagen:  'https://placehold.co/400x220',
+    link:    '#'
+  },
+  {
+    id:      'news-003',
+    titulo:  'El auge de los marcos de trabajo híbridos en 2025',
+    excerpt: 'Scrum, SAFe y Kanban conviven en organizaciones que buscan escalar sin perder agilidad. Un análisis del mercado actual.',
+    fecha:   '01 Jun 2025',
+    imagen:  'https://placehold.co/400x220',
+    link:    '#'
+  }
+];
+
+// =============================================================================
+// PASO 11 — Renderizado de tarjetas
+// =============================================================================
+
+function renderCards(data, containerId, tipo) {
+  var container = document.getElementById(containerId);
+  if (!container) { return; }
+
+  // Limpiar el contenedor antes de insertar
+  container.innerHTML = '';
+
+  for (var i = 0; i < data.length; i++) {
+    var item = data[i];
+
+    // Crear el article
+    var article = document.createElement('article');
+    article.className = 'card';
+    article.id = DOMPurify.sanitize(item.id);
+
+    // Imagen con lazy loading preservado (atributo nativo, no afectado por sanitización)
+    var img = document.createElement('img');
+    img.className = 'card__image';
+    img.src = DOMPurify.sanitize(item.imagen);
+    img.alt = DOMPurify.sanitize(item.titulo);
+    img.loading = 'lazy';
+    article.appendChild(img);
+
+    // Cuerpo de la tarjeta
+    var body = document.createElement('div');
+    body.className = 'card__body';
+
+    // Fecha (solo noticias)
+    if (tipo === 'noticia' && item.fecha) {
+      var dateSpan = document.createElement('span');
+      dateSpan.className = 'card__date';
+      dateSpan.textContent = DOMPurify.sanitize(item.fecha);
+      body.appendChild(dateSpan);
+    }
+
+    // Título
+    var title = document.createElement('h3');
+    title.className = 'card__title';
+    title.textContent = DOMPurify.sanitize(item.titulo);
+    body.appendChild(title);
+
+    // Excerpt
+    var excerpt = document.createElement('p');
+    excerpt.className = 'card__excerpt';
+    excerpt.textContent = DOMPurify.sanitize(item.excerpt);
+    body.appendChild(excerpt);
+
+    // Enlace
+    var link = document.createElement('a');
+    link.className = 'card__link';
+    link.href = DOMPurify.sanitize(item.link);
+    link.textContent = 'Leer más';
+    body.appendChild(link);
+
+    article.appendChild(body);
+    container.appendChild(article);
+  }
 }
 
-function initCookieBanner(cookieBanner, cookieAcceptBtn, cookieRejectBtn) {
-  if (!cookieBanner) return;
+// =============================================================================
+// PASO 12 — Actualización del año en el footer
+// =============================================================================
 
-  var consent = localStorage.getItem('cookie-consent');
-
-  if (consent === 'accepted') {
-    hideCookieBanner(cookieBanner);
-    loadGoogleAnalytics();
-    return;
-  }
-
-  if (consent === 'rejected') {
-    hideCookieBanner(cookieBanner);
-    return;
-  }
-
-  cookieBanner.classList.remove('is-hidden');
-
-  if (cookieAcceptBtn) {
-    cookieAcceptBtn.addEventListener('click', function () {
-      localStorage.setItem('cookie-consent', 'accepted');
-      hideCookieBanner(cookieBanner);
-      loadGoogleAnalytics();
-    });
-  }
-
-  if (cookieRejectBtn) {
-    cookieRejectBtn.addEventListener('click', function () {
-      localStorage.setItem('cookie-consent', 'rejected');
-      hideCookieBanner(cookieBanner);
-    });
+function updateFooterYear() {
+  if (footerYear) {
+    footerYear.textContent = new Date().getFullYear();
   }
 }
 
-// ============================================================
-// BLOQUE 7 — Bootstrap: DOMContentLoaded
-// ============================================================
+// =============================================================================
+// PASO 13 — Inicialización
+// =============================================================================
 
-document.addEventListener('DOMContentLoaded', function () {
-  var navMain         = document.getElementById('nav-main');
-  var navMobileToggle = document.getElementById('nav-mobile-toggle');
-  var navMobileMenu   = document.getElementById('nav-mobile-menu');
-  var cookieBanner    = document.getElementById('cookie-banner');
-  var cookieAcceptBtn = document.getElementById('cookie-accept-btn');
-  var cookieRejectBtn = document.getElementById('cookie-reject-btn');
-  var faqList         = document.getElementById('faq-list');
-  var searchInput     = document.getElementById('search-input');
-  var searchBtn       = document.getElementById('search-btn');
-  var searchResults   = document.getElementById('search-results');
+(function init() {
+  // Renderizar contenido dinámico en los contenedores con ID correcto
+  renderCards(historias, 'historias-grid', 'historia');
+  renderCards(noticias,  'noticias-grid',  'noticia');
 
-  initNavigation(navMain, navMobileMenu, navMobileToggle);
-  initMobileMenu(navMobileMenu, navMobileToggle);
-  initFAQ(faqList);
-  initSearch(searchInput, searchBtn, searchResults);
-  initCookieBanner(cookieBanner, cookieAcceptBtn, cookieRejectBtn);
-});
+  // Actualizar año del footer
+  updateFooterYear();
+
+  // Inicializar componentes
+  initFaq();
+  initCookieBanner();
+
+  // Establecer sección inicial
+  navigateTo('section-home');
+})();

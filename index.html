@@ -3,94 +3,133 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>STAR FIGHTER — Arcade 80s</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <meta name="description" content="Explora metodologías de informática y TI: Agile, Scrum, Kanban, DevOps y más. Historias, noticias y recursos editoriales.">
+  <!-- CSP: unsafe-inline requerido exclusivamente para snippet GA4 inline -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' https://cdn.jsdelivr.net https://www.googletagmanager.com 'unsafe-inline';
+                 style-src 'self' 'unsafe-inline';
+                 img-src 'self' data: https://placehold.co;
+                 connect-src https://www.google-analytics.com;">
+  <title>Metodologías TI</title>
+  <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 <body>
-  <div id="game-wrapper">
-    <div class="star-field" aria-hidden="true"></div>
 
-    <div id="screen-menu" class="screen">
-      <h1 class="game-title">STAR FIGHTER</h1>
-      <p class="game-subtitle">ARCADE 80s</p>
+  <header id="site-header">
+    <a href="#">Metodologías TI</a>
+    <button id="nav-toggle"
+            aria-label="Abrir menú de navegación"
+            aria-expanded="false"
+            aria-controls="nav-menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav aria-label="Navegación principal">
+      <ul id="nav-menu" class="nav__list is-hidden">
+        <li class="nav__item">
+          <a class="nav__link is-active" href="#" data-target="section-home">Inicio</a>
+        </li>
+        <li class="nav__item">
+          <a class="nav__link" href="#" data-target="section-historias">Historias</a>
+        </li>
+        <li class="nav__item">
+          <a class="nav__link" href="#" data-target="section-noticias">Noticias</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
 
-      <div class="difficulty-selector">
-        <p class="selector-label">DIFICULTAD</p>
-        <div class="btn-group">
-          <button id="btn-difficulty-easy"   class="btn-arcade is-active">FÁCIL</button>
-          <button id="btn-difficulty-medium" class="btn-arcade">NORMAL</button>
-          <button id="btn-difficulty-hard"   class="btn-arcade">DIFÍCIL</button>
-        </div>
-      </div>
+  <main id="main-content">
 
-      <button id="btn-start" class="btn-arcade btn-arcade--primary">INICIAR JUEGO</button>
+    <section id="section-home" aria-labelledby="home-heading">
+      <h1 id="home-heading">Metodologías de Informática y TI</h1>
+      <p>
+        Bienvenido al espacio editorial dedicado a las metodologías que transforman el desarrollo de software y la gestión de proyectos tecnológicos.
+        Aquí encontrarás análisis, historias y noticias sobre Agile, Scrum, Kanban, DevOps y mucho más.
+        Explora el contenido y descubre cómo estas prácticas impulsan equipos y organizaciones hacia la mejora continua.
+      </p>
 
-      <div class="controls-hint">
-        <p>← → GIRAR &nbsp;|&nbsp; ↑ ↓ ACELERAR &nbsp;|&nbsp; ESPACIO DISPARAR</p>
-        <p>ESC / P PAUSA</p>
-      </div>
-    </div>
+      <div id="faq-container">
 
-    <div id="screen-game" class="screen" hidden>
-      <div class="hud-bar">
-        <div class="hud-stat">
-          <span class="hud-stat__label">SCORE</span>
-          <span id="hud-score" class="hud-stat__value">000000</span>
-        </div>
-        <div class="hud-stat">
-          <span class="hud-stat__label">NIVEL</span>
-          <span id="hud-level" class="hud-stat__value">01</span>
-        </div>
-        <div class="hud-stat">
-          <span class="hud-stat__label">VIDAS</span>
-          <span id="hud-lives" class="hud-stat__value">3</span>
-        </div>
-        <div class="hud-stat">
-          <span id="hud-powerup-indicator" class="hud-stat__value" hidden>— —</span>
-        </div>
-      </div>
-
-      <canvas id="game-canvas"></canvas>
-    </div>
-
-    <div id="screen-pause" class="screen" hidden>
-      <div class="overlay-panel">
-        <h2 class="overlay-panel__title">— PAUSA —</h2>
-        <button id="btn-resume" class="btn-arcade btn-arcade--primary">CONTINUAR</button>
-      </div>
-    </div>
-
-    <div id="screen-gameover" class="screen" hidden>
-      <div class="overlay-panel">
-        <h2 class="overlay-panel__title">GAME OVER</h2>
-
-        <div class="result-stats">
-          <div class="hud-stat">
-            <span class="hud-stat__label">PUNTUACIÓN FINAL</span>
-            <span id="gameover-score-value" class="hud-stat__value">000000</span>
-          </div>
-          <div class="hud-stat">
-            <span class="hud-stat__label">NIVEL ALCANZADO</span>
-            <span id="gameover-level-value" class="hud-stat__value">01</span>
+        <div class="faq__item">
+          <button class="faq__question" aria-expanded="false">
+            ¿Qué es la metodología Agile?
+          </button>
+          <div class="faq__answer is-hidden">
+            <p>Agile es un conjunto de principios y valores para el desarrollo de software que prioriza la colaboración, la adaptación al cambio y la entrega continua de valor. Se basa en el Manifiesto Ágil de 2001 y engloba marcos como Scrum, Kanban y XP.</p>
           </div>
         </div>
 
-        <button id="btn-restart" class="btn-arcade btn-arcade--danger">REINICIAR</button>
-      </div>
-    </div>
+        <div class="faq__item">
+          <button class="faq__question" aria-expanded="false">
+            ¿Cuál es la diferencia entre Scrum y Kanban?
+          </button>
+          <div class="faq__answer is-hidden">
+            <p>Scrum organiza el trabajo en sprints de duración fija con roles definidos (Product Owner, Scrum Master, equipo de desarrollo) y ceremonias regulares. Kanban, en cambio, es un sistema de flujo continuo que visualiza el trabajo en un tablero y limita el trabajo en progreso (WIP) sin iteraciones fijas.</p>
+          </div>
+        </div>
 
-    <div id="screen-levelup" class="screen" hidden>
-      <div class="overlay-panel">
-        <h2 class="overlay-panel__title">¡NIVEL SUPERADO!</h2>
-        <p class="overlay-panel__subtitle">
-          NIVEL <span id="levelup-level-value">02</span>
-        </p>
-      </div>
-    </div>
+        <div class="faq__item">
+          <button class="faq__question" aria-expanded="false">
+            ¿Qué es DevOps y por qué es relevante?
+          </button>
+          <div class="faq__answer is-hidden">
+            <p>DevOps es una cultura y conjunto de prácticas que integra los equipos de desarrollo (Dev) y operaciones (Ops) para acortar el ciclo de vida del software y entregar con mayor frecuencia y fiabilidad. Es relevante porque reduce silos organizacionales, automatiza procesos y mejora la calidad del producto final.</p>
+          </div>
+        </div>
 
-    <div class="scanline" aria-hidden="true"></div>
+        <div class="faq__item">
+          <button class="faq__question" aria-expanded="false">
+            ¿Qué es Lean Software Development?
+          </button>
+          <div class="faq__answer is-hidden">
+            <p>Lean Software Development adapta los principios de manufactura Lean al desarrollo de software. Se centra en eliminar desperdicios, amplificar el aprendizaje, decidir lo más tarde posible, entregar lo más rápido posible y empoderar al equipo para lograr la integridad del producto.</p>
+          </div>
+        </div>
+
+        <div class="faq__item">
+          <button class="faq__question" aria-expanded="false">
+            ¿Qué es el marco SAFe y cuándo se utiliza?
+          </button>
+          <div class="faq__answer is-hidden">
+            <p>SAFe (Scaled Agile Framework) es un marco de trabajo que permite aplicar principios Agile y Lean a escala empresarial, coordinando múltiples equipos que trabajan en un mismo producto o programa. Se utiliza cuando una organización necesita alinear decenas o cientos de equipos ágiles hacia objetivos estratégicos comunes.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="section-historias" class="is-hidden" aria-labelledby="historias-heading">
+      <h2 id="historias-heading">Historias</h2>
+      <div id="historias-grid" class="cards-grid"></div>
+    </section>
+
+    <section id="section-noticias" class="is-hidden" aria-labelledby="noticias-heading">
+      <h2 id="noticias-heading">Noticias</h2>
+      <div id="noticias-grid" class="cards-grid"></div>
+    </section>
+
+  </main>
+
+  <footer id="site-footer">
+    <p>&copy; <span id="footer-year"></span> Metodologías TI. Todos los derechos reservados.</p>
+  </footer>
+
+  <div id="cookie-banner" class="is-hidden">
+    <p class="cookie-banner__text">
+      Este sitio utiliza cookies para mejorar tu experiencia y analizar el tráfico mediante Google Analytics.
+      Al aceptar, consientes el uso de cookies de acuerdo con nuestra política de privacidad.
+    </p>
+    <div class="cookie-banner__actions">
+      <button id="cookie-accept-btn">Aceptar</button>
+      <button id="cookie-reject-btn">Rechazar</button>
+    </div>
   </div>
 
-  <script src="js/game.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <script src="./assets/js/main.js"></script>
+
 </body>
 </html>
