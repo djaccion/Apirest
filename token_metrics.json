@@ -1,8 +1,8 @@
 {
-  "tokens_input": 108825,
-  "tokens_output": 39472,
-  "tokens_total": 148297,
-  "estimated_hours": 17.7,
+  "tokens_input": 137209,
+  "tokens_output": 45168,
+  "tokens_total": 182377,
+  "estimated_hours": 18.4,
   "squad_days_equivalent": 2.3,
   "hours_by_agent": {
     "arquitecto": {
@@ -10,28 +10,28 @@
       "calls": 1,
       "hoursPerCall": 1.5,
       "volumeMultiplier": 1,
-      "tokens": 2643
+      "tokens": 2639
     },
     "tech_lead": {
       "hours": 5.7,
       "calls": 4,
       "hoursPerCall": 0.8,
       "volumeMultiplier": 1.78,
-      "tokens": 22798
+      "tokens": 22846
     },
     "desarrollador": {
-      "hours": 5.3,
-      "calls": 5,
+      "hours": 6.7,
+      "calls": 6,
       "hoursPerCall": 0.5,
-      "volumeMultiplier": 2.11,
-      "tokens": 56775
+      "volumeMultiplier": 2.25,
+      "tokens": 83556
     },
     "qa": {
-      "hours": 5.2,
-      "calls": 6,
+      "hours": 4.4,
+      "calls": 5,
       "hoursPerCall": 0.4,
-      "volumeMultiplier": 2.17,
-      "tokens": 66081
+      "volumeMultiplier": 2.2,
+      "tokens": 73336
     }
   },
   "modelo": "claude-sonnet-4-6",
@@ -59,30 +59,30 @@
       "skill_name": "test"
     }
   ],
-  "timestamp": "2026-11-11T14:31:33.493Z",
+  "timestamp": "2026-11-20T18:35:32.608Z",
   "by_agent": {
     "arquitecto": {
       "input": 910,
-      "output": 1733,
+      "output": 1729,
       "calls": 1,
       "skill_name": "DISEÑO-ARQUITECTURA"
     },
     "tech_lead": {
-      "input": 13298,
+      "input": 13346,
       "output": 9500,
       "calls": 4,
       "skill_name": "MICROPLANIFICACION-DISEÑO"
     },
     "desarrollador": {
-      "input": 36011,
-      "output": 20764,
-      "calls": 5,
+      "input": 56427,
+      "output": 27129,
+      "calls": 6,
       "skill_name": "FRONTEND-DESARROLLO"
     },
     "qa": {
-      "input": 58606,
-      "output": 7475,
-      "calls": 6,
+      "input": 66526,
+      "output": 6810,
+      "calls": 5,
       "skill_name": "test"
     }
   }
