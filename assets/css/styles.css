@@ -1,49 +1,33 @@
-/* === VARIABLES CSS === */
-:root {
-  /* Colores */
-  --color-primary:    #1a6fc4;
-  --color-secondary:  #0d4a8a;
-  --color-text:       #1a1a2e;
-  --color-bg:         #f5f7fa;
-  --color-surface:    #ffffff;
-  --color-border:     #d1d9e6;
+/* ============================================================
+   styles.css — XP-14 Página Web Metodologías TI
+   Archivo único de estilos. Ningún otro CSS existe en el proyecto.
+   ============================================================ */
 
-  /* Tipografía */
-  --font-heading: 'Roboto Slab', Georgia, serif;
-  --font-body:    'Inter', system-ui, sans-serif;
+/* ============================================================
+   SECCIÓN A — Reset mínimo
+   ============================================================ */
 
-  /* Espaciado */
-  --spacing-sm:   8px;
-  --spacing-md:   16px;
-  --spacing-lg:   32px;
-  --spacing-xl:   64px;
-
-  /* Forma */
-  --radius-base:  8px;
-
-  /* Animación */
-  --transition-base: 0.25s ease;
-
-  /* Z-index */
-  --z-header:        100;
-  --z-overlay:       200;
-  --z-cookie-banner: 300;
-}
-
-/* === RESET Y BASE GLOBAL === */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol {
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: var(--font-body);
-  color: var(--color-text);
-  background: var(--color-bg);
-  line-height: 1.6;
+ul,
+ol {
+  list-style: none;
 }
 
 img {
@@ -52,431 +36,818 @@ img {
 }
 
 a {
-  color: var(--color-primary);
   text-decoration: none;
+  color: inherit;
 }
 
-a:hover {
-  text-decoration: underline;
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font: inherit;
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-heading);
+[hidden] {
+  display: none !important;
+}
+
+/* ============================================================
+   SECCIÓN B — Tokens de diseño en :root
+   ============================================================ */
+
+:root {
+  /* Paleta */
+  --color-primary:        #2563EB;
+  --color-primary-dark:   #1D4ED8;
+  --color-secondary:      #7C3AED;
+  --color-accent:         #F59E0B;
+  --color-text:           #1F2937;
+  --color-text-muted:     #6B7280;
+  --color-bg:             #FFFFFF;
+  --color-bg-alt:         #F3F4F6;
+  --color-border:         #E5E7EB;
+  --color-error:          #DC2626;
+  --color-success:        #16A34A;
+
+  /* Tipografía */
+  --font-base:            system-ui, -apple-system, sans-serif;
+  --font-size-base:       1rem;
+  --font-size-sm:         0.875rem;
+  --font-size-lg:         1.125rem;
+  --font-size-xl:         1.5rem;
+  --font-size-2xl:        2rem;
+  --font-size-3xl:        2.75rem;
+  --line-height-base:     1.6;
+  --font-weight-normal:   400;
+  --font-weight-medium:   500;
+  --font-weight-bold:     700;
+
+  /* Espaciado (escala de 4px) */
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+  --space-24:  6rem;
+
+  /* Layout */
+  --container-max:        75rem;
+  --container-padding:    var(--space-4);
+  --nav-height:           4rem;
+  --border-radius-sm:     0.25rem;
+  --border-radius-md:     0.5rem;
+  --border-radius-lg:     1rem;
+
+  /* Transiciones */
+  --transition-fast:      150ms ease;
+  --transition-base:      250ms ease;
+  --transition-slow:      400ms ease;
+
+  /* Sombras */
+  --shadow-sm:   0 1px 3px rgba(0, 0, 0, .08);
+  --shadow-md:   0 4px 12px rgba(0, 0, 0, .12);
+  --shadow-lg:   0 8px 24px rgba(0, 0, 0, .16);
+
+  /* Z-index */
+  --z-base:       1;
+  --z-nav:      100;
+  --z-overlay:  200;
+  --z-cookie:   300;
+  --z-top:      400;
+}
+
+/* ============================================================
+   SECCIÓN C — Estilos base de body y tipografía global
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--nav-height);
+}
+
+body {
+  font-family: var(--font-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+/* Bloqueo de scroll cuando hay overlay activo */
+body.has-overlay {
+  overflow: hidden;
+}
+
+/* Padding inferior cuando el cookie banner está visible */
+body.has-cookie-bar {
+  padding-bottom: 6rem;
+}
+
+h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
   line-height: 1.2;
 }
 
-/* === ACCESIBILIDAD BASE === */
-.sr-only {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
-
-:focus-visible {
-  outline: 3px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-:focus:not(:focus-visible) {
-  outline: none;
-}
-
-/* === LAYOUT: HEADER Y NAV === */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-header);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.site-brand {
-  font-family: var(--font-heading);
-  font-size: 1.25rem;
-  color: var(--color-primary);
-  font-weight: 700;
-}
-
-.nav-menu {
-  display: flex;
-  list-style: none;
-  gap: var(--spacing-md);
-}
-
-.nav-link {
-  color: var(--color-text);
-  font-weight: 500;
-  padding: var(--spacing-sm) var(--spacing-sm);
-  border-radius: var(--radius-base);
-  transition: color var(--transition-base), background var(--transition-base);
-}
-
-.nav-link:hover {
-  color: var(--color-primary);
-  background: var(--color-bg);
-  text-decoration: none;
-}
-
-.nav-link.is-active {
-  color: var(--color-primary);
-  border-bottom: 2px solid var(--color-primary);
-}
-
-.nav-toggle {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--spacing-sm);
-  color: var(--color-text);
-  font-size: 1.5rem;
-}
-
-/* === LÓGICA DE VISIBILIDAD DE SECCIONES === */
-
-/* Secciones principales — ocultas por defecto */
-.page-section {
-  display: none;
-}
-
-.page-section.is-active {
-  display: block;
-}
-
-/* Overlays — ocultos por defecto */
-.overlay {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition-base);
-}
-
-.overlay.is-visible {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* FAQ items — cerrados por defecto */
-.faq-answer {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.faq-item.is-open .faq-answer {
-  max-height: 500px;
-}
-
-/* Nav mobile — cerrado por defecto */
-@media (max-width: 768px) {
-  .nav-menu {
-    display: none;
-  }
-
-  .nav-menu.is-open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--color-surface);
-    border-bottom: 1px solid var(--color-border);
-    padding: var(--spacing-md);
-    gap: var(--spacing-sm);
-    z-index: var(--z-header);
-  }
-
-  .nav-toggle {
-    display: block;
-  }
-}
-
-/* === LAYOUT: CONTENIDO PRINCIPAL === */
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--spacing-lg) var(--spacing-md);
-}
-
-/* === SECCIÓN HOME === */
-#section-home h1 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  margin-bottom: var(--spacing-md);
-  color: var(--color-text);
-}
-
-.lead {
-  font-size: 1.2rem;
-  color: var(--color-text);
-  margin-bottom: var(--spacing-lg);
-  max-width: 720px;
-}
-
-.section-description {
-  margin-bottom: var(--spacing-lg);
-  color: var(--color-text);
-}
-
-#section-home h2 {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  margin-bottom: var(--spacing-md);
-  color: var(--color-secondary);
-}
-
-/* === CARDS GRID === */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-xl);
-}
-
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-base);
-  padding: var(--spacing-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  transition: box-shadow var(--transition-base);
-}
-
-.card:hover {
-  box-shadow: 0 4px 16px rgba(26, 111, 196, 0.12);
-}
-
-.card-meta {
-  font-size: 0.8rem;
-  color: var(--color-primary);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.card-title {
-  font-family: var(--font-heading);
-  font-size: 1.15rem;
-  color: var(--color-text);
+h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
   line-height: 1.3;
 }
 
-.card-body {
-  font-size: 0.95rem;
+h3 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.4;
+}
+
+h4 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+}
+
+/* ============================================================
+   SECCIÓN D — Utilidad .container
+   ============================================================ */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+
+/* ============================================================
+   SECCIÓN E — Navegación (#main-nav, .nav, .nav__*)
+   ============================================================ */
+
+#main-nav,
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--nav-height);
+  z-index: var(--z-nav);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.nav__logo {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+}
+
+/* Botón hamburguesa */
+.nav__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--border-radius-sm);
   color: var(--color-text);
+  transition: background-color var(--transition-fast);
+}
+
+.nav__toggle:hover {
+  background-color: var(--color-bg-alt);
+}
+
+/* Lista de navegación — móvil primero */
+/* FIX #4 y #7: Estado inicial oculto en móvil. Sin .is-visible el menú
+   está fuera de pantalla e invisible. Se usa clip + visibility para
+   mantener el elemento en el DOM sin ocupar espacio visual ni ser
+   interactuable, permitiendo la transición de entrada. */
+.nav__list {
+  display: flex;
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  width: 100%;
+  background: var(--color-bg);
+  flex-direction: column;
+  padding: var(--space-4);
+  gap: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-overlay);
+
+  /* Estado inicial oculto en móvil */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.5rem);
+  transition:
+    opacity var(--transition-base),
+    visibility var(--transition-base),
+    transform var(--transition-base);
+  pointer-events: none;
+}
+
+/* FIX #4 y #7: El menú solo es visible cuando tiene .is-visible */
+.nav__list.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.nav__item {
+  width: 100%;
+}
+
+.nav__link {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.nav__link:hover {
+  color: var(--color-primary);
+  background-color: var(--color-bg-alt);
+}
+
+.nav__link.is-active {
+  color: var(--color-primary);
+  background-color: var(--color-bg-alt);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Desktop: >= 48em */
+@media (min-width: 48em) {
+  .nav__toggle {
+    display: none;
+  }
+
+  /* FIX: En desktop el menú siempre es visible, se restablecen
+     todos los valores de ocultamiento móvil. No se usa !important
+     en display porque en desktop el menú no necesita el mecanismo
+     de .is-visible — siempre está visible. */
+  .nav__list {
+    position: static;
+    flex-direction: row;
+    width: auto;
+    background: transparent;
+    padding: 0;
+    gap: var(--space-1);
+    border-top: none;
+    box-shadow: none;
+    z-index: auto;
+
+    /* Restablecer estado de visibilidad para desktop */
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .nav__item {
+    width: auto;
+  }
+}
+
+/* ============================================================
+   SECCIÓN F — Layout de secciones (.section, main padding)
+   ============================================================ */
+
+/* Compensar el nav fijo */
+main {
+  padding-top: var(--nav-height);
+}
+
+.section {
+  padding-block: var(--space-16);
+}
+
+.section:nth-child(even) {
+  background-color: var(--color-bg-alt);
+}
+
+.section__header {
+  text-align: center;
+  margin-bottom: var(--space-12);
+}
+
+.section__header h2 {
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.section__header p {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.section__body {
+  /* contenedor genérico del cuerpo de sección */
+}
+
+/* ============================================================
+   SECCIÓN G — Grid (.grid, .grid--2col, .grid--3col)
+   ============================================================ */
+
+.grid {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.grid--2col {
+  grid-template-columns: 1fr;
+}
+
+.grid--3col {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 40em) {
+  .grid--2col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 48em) {
+  .grid--3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ============================================================
+   SECCIÓN H — Hero (.hero, .hero__*)
+   ============================================================ */
+
+.hero {
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--color-bg) 0%,
+    var(--color-bg-alt) 100%
+  );
+  text-align: center;
+  padding-block: var(--space-24);
+}
+
+.hero__content {
+  max-width: 50rem;
+  margin-inline: auto;
+}
+
+.hero__title {
+  color: var(--color-text);
+  margin-bottom: var(--space-6);
+}
+
+.hero__title span {
+  color: var(--color-primary);
+}
+
+.hero__subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-8);
+  max-width: 36rem;
+  margin-inline: auto;
+}
+
+.hero__cta {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   SECCIÓN I — Botones (.btn, .btn--primary, .btn--secondary, .btn--ghost)
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.btn--primary:hover {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.btn--secondary {
+  background-color: var(--color-bg-alt);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn--secondary:hover {
+  background-color: var(--color-border);
+}
+
+.btn--ghost {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.btn--ghost:hover {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+/* ============================================================
+   SECCIÓN J — Cards (.card, .card__*)
+   ============================================================ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-0.25rem);
+}
+
+.card__image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--space-6);
+  gap: var(--space-3);
+}
+
+.card__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.card__excerpt {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-base);
   flex: 1;
 }
 
-/* === SECCIÓN HISTORIAS === */
-#section-historias h2 {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  margin-bottom: var(--spacing-lg);
-  color: var(--color-secondary);
-}
-
-/* === SECCIÓN NOTICIAS === */
-#section-noticias h2 {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  margin-bottom: var(--spacing-lg);
-  color: var(--color-secondary);
-}
-
-/* === SECCIÓN FAQ === */
-#section-faq h2 {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  margin-bottom: var(--spacing-lg);
-  color: var(--color-secondary);
-}
-
-.faq-item {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-base);
-  margin-bottom: var(--spacing-md);
-  background: var(--color-surface);
-  overflow: hidden;
-}
-
-.faq-question {
-  width: 100%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--spacing-md) var(--spacing-lg);
-  text-align: left;
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  color: var(--color-text);
+.card__meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
   display: flex;
-  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.card__link {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+}
+
+/* ============================================================
+   SECCIÓN K — FAQ (.faq, .faq__item, .faq__question, .faq__answer)
+   ============================================================ */
+
+.faq {
+  max-width: 48rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.faq__item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  background: var(--color-bg);
+  transition: box-shadow var(--transition-fast);
+}
+
+.faq__item:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.faq__question {
+  width: 100%;
+  display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  transition: background var(--transition-base), color var(--transition-base);
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  text-align: left;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  gap: var(--space-4);
 }
 
-.faq-question:hover {
-  background: var(--color-bg);
+.faq__question:hover {
+  background-color: var(--color-bg-alt);
   color: var(--color-primary);
 }
 
-.faq-item.is-open .faq-question {
-  color: var(--color-primary);
-  background: var(--color-bg);
-}
-
-.faq-question::after {
-  content: '+';
-  font-size: 1.4rem;
-  font-weight: 300;
+/* Icono chevron via pseudo-elemento */
+.faq__question::after {
+  content: '';
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
   flex-shrink: 0;
   transition: transform var(--transition-base);
 }
 
-.faq-item.is-open .faq-question::after {
-  transform: rotate(45deg);
+.faq__item.is-open .faq__question {
+  color: var(--color-primary);
+  background-color: var(--color-bg-alt);
 }
 
-.faq-answer > p,
-.faq-answer > * {
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: 0.95rem;
-  color: var(--color-text);
+.faq__item.is-open .faq__question::after {
+  transform: rotate(-135deg);
 }
 
-/* === COOKIE BANNER === */
+.faq__answer {
+  padding: 0 var(--space-6);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-slow), padding var(--transition-base);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-base);
+}
+
+.faq__item.is-open .faq__answer {
+  max-height: 30rem;
+  padding-block: var(--space-4);
+}
+
+/* ============================================================
+   SECCIÓN L — Cookie Banner (.cookie-banner, .cookie-banner__*)
+   ============================================================ */
+
+/* FIX #1 y #3: El banner usa exclusivamente .is-visible para mostrarse.
+   El atributo hidden NO se usa en este componente. Estado inicial oculto
+   via opacity/transform para permitir la transición de entrada. */
 .cookie-banner {
   position: fixed;
   bottom: 0;
   left: 0;
-  right: 0;
-  z-index: var(--z-cookie-banner);
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  padding: var(--spacing-md) var(--spacing-lg);
+  width: 100%;
+  z-index: var(--z-cookie);
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: var(--space-4) var(--space-6);
+  box-shadow: var(--shadow-lg);
+
+  /* Estado inicial: oculto con transición */
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base);
+  pointer-events: none;
+}
+
+.cookie-banner.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.cookie-banner .container {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
 }
 
-@media (min-width: 640px) {
-  .cookie-banner {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.cookie-banner p {
-  font-size: 0.9rem;
-  color: var(--color-text);
+.cookie-banner__text {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
   flex: 1;
+  min-width: 15rem;
 }
 
-.cookie-banner-actions {
-  display: flex;
-  gap: var(--spacing-sm);
-  flex-shrink: 0;
-}
-
-/* === BOTONES === */
-.btn {
-  display: inline-block;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-base);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base);
-  text-align: center;
-  white-space: nowrap;
-}
-
-.btn-primary {
-  background: var(--color-primary);
-  color: var(--color-surface);
-  border-color: var(--color-primary);
-}
-
-.btn-primary:hover {
-  background: var(--color-secondary);
-  border-color: var(--color-secondary);
-  color: var(--color-surface);
-  text-decoration: none;
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.btn-secondary:hover {
-  background: var(--color-primary);
-  color: var(--color-surface);
-  text-decoration: none;
-}
-
-/* === FOOTER === */
-.site-footer {
-  background: var(--color-secondary);
-  color: var(--color-surface);
-  text-align: center;
-  padding: var(--spacing-lg) var(--spacing-md);
-  font-size: 0.875rem;
-  margin-top: var(--spacing-xl);
-}
-
-.site-footer a {
-  color: var(--color-surface);
+.cookie-banner__text a {
+  color: var(--color-accent);
   text-decoration: underline;
 }
 
-.site-footer a:hover {
-  color: var(--color-border);
+.cookie-banner__actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
-/* === RESPONSIVE GENERAL === */
-@media (max-width: 768px) {
-  .site-header {
-    padding: var(--spacing-sm) var(--spacing-md);
-    position: relative;
+/* Ajuste de botones dentro del banner oscuro */
+.cookie-banner .btn--primary {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.cookie-banner .btn--primary:hover {
+  background-color: #D97706;
+}
+
+.cookie-banner .btn--secondary {
+  background-color: transparent;
+  color: var(--color-bg);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cookie-banner .btn--secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================================
+   SECCIÓN M — Botón Back to Top (#back-to-top)
+   ============================================================ */
+
+/* FIX #2 y #3: El botón usa exclusivamente .is-visible para mostrarse.
+   El atributo hidden NO se usa en este componente. Estado inicial oculto
+   via opacity/transform para permitir la transición de entrada. */
+#back-to-top {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-6);
+  z-index: var(--z-top);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  font-size: var(--font-size-lg);
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    background-color var(--transition-fast);
+  pointer-events: none;
+}
+
+#back-to-top.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#back-to-top:hover {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================
+   SECCIÓN N — Footer (.footer, .footer__copy)
+   ============================================================ */
+
+.footer {
+  background-color: var(--color-text);
+  color: var(--color-bg);
+  padding-block: var(--space-8);
+  text-align: center;
+}
+
+.footer__copy {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ============================================================
+   SECCIÓN O — Accesibilidad y utilidades
+   ============================================================ */
+
+/* Skip link para teclado */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-4);
+  z-index: calc(var(--z-top) + 1);
+  background: var(--color-primary);
+  color: var(--color-bg);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-medium);
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+}
+
+/* Focus visible global */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Texto solo para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================
+   SECCIÓN P — Responsive ajustes finales
+   ============================================================ */
+
+@media (max-width: 47.9375em) {
+  h1 {
+    font-size: var(--font-size-2xl);
   }
 
-  main {
-    padding: var(--spacing-md) var(--spacing-sm);
+  h2 {
+    font-size: var(--font-size-xl);
   }
 
-  .cards-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+  .hero {
+    padding-block: var(--space-16);
   }
 
-  .faq-question {
-    padding: var(--spacing-md);
+  .section {
+    padding-block: var(--space-12);
   }
 
-  .faq-answer > p,
-  .faq-answer > * {
-    padding: var(--spacing-sm) var(--spacing-md);
+  .cookie-banner .container {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .cookie-banner {
-    padding: var(--spacing-md);
+  #back-to-top {
+    bottom: var(--space-6);
+    right: var(--space-4);
+  }
+}
+
+@media (min-width: 48em) {
+  :root {
+    --container-padding: var(--space-8);
+  }
+}
+
+@media (min-width: 64em) {
+  :root {
+    --container-padding: var(--space-12);
   }
 }
